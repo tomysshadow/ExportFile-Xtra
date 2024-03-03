@@ -1,0 +1,268 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{8581494c-b4bf-4b25-9641-43e7bb1ba13e}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;hpj;bat;for;f90</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{26c1a80a-3e0e-4439-9957-6d69c5a15a9a}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;fi;fd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{b89f192a-2eab-40c5-8363-3f9f4a6300e2}</UniqueIdentifier>
+      <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;cnt;rtf;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\source\Script.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\drmedfix.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Asset.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\TypeLabels.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Label.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Formats.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\shared.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\IconValues.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Agent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Path.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Args.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Options.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Media.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\ValueConverter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\ExportFileValueConverter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\BitmapImporter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\WinBMPAgent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Stream.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Mixer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Registry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Script.def">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\source\Script.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\shared.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\drmedfix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\GlobalHandle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\MoaIDHash.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\IgnoreCaseComparer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\MappedVector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\scope_guard.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\TypeLabels.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Formats.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Asset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\IconValues.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Agent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Path.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Args.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Media.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Registry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Options.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\BitmapImporter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\ValueConverter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\WinBMPAgent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\MacPICTAgent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\exportfile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\ExportFileValueConverter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Label.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Stream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Mixer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\source\dversion.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon8_Mask.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon8_MaskLinked.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon8_BW.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon8_BWLinked.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon8_Color.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon8_ColorLinked.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon9_Mask.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon9_MaskLinked.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon9_BW.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon9_BWLinked.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon9_Color.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon9_ColorLinked.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon10_Mask.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon10_MaskLinked.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon10_BW.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon10_BWLinked.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon10_Color.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon10_ColorLinked.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon11_Mask.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon11_MaskLinked.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon11_BW.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon11_BWLinked.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon11_Color.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon11_ColorLinked.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon12_Mask.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon12_MaskLinked.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon12_BW.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon12_BWLinked.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon12_Color.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon12_ColorLinked.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+</Project>

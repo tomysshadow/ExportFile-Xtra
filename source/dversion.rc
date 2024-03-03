@@ -1,0 +1,164 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+/////////////////////////////////////////////////////////////////////////////
+// English (United States) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 0,4,0,0
+ PRODUCTVERSION 0,4,0,0
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40004L
+ FILETYPE 0x2L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "CompanyName", "TOMYSSHADOW"
+            VALUE "FileDescription", "ExportFile Xtra"
+            VALUE "FileVersion", "0.4.0.0"
+            VALUE "InternalName", "ExportFile"
+            VALUE "LegalCopyright", "Copyright © Anthony Kleine 2024"
+            VALUE "OriginalFilename", "ExportFile.x32"
+            VALUE "ProductName", "ExportFile"
+            VALUE "ProductVersion", "0.4.0.0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_ASSET_INFO_MAP_ICON_MASK BITMAP                  "Bitmap\\AssetInfoMapIcon8_Mask.bmp"
+
+IDB_ASSET_INFO_MAP_ICON_MASK_LINKED BITMAP                  "Bitmap\\AssetInfoMapIcon8_MaskLinked.bmp"
+
+IDB_ASSET_INFO_MAP_ICON_BW BITMAP                  "Bitmap\\AssetInfoMapIcon8_BW.bmp"
+
+IDB_ASSET_INFO_MAP_ICON_BW_LINKED BITMAP                  "Bitmap\\AssetInfoMapIcon8_BWLinked.bmp"
+
+IDB_ASSET_INFO_MAP_ICON_COLOR BITMAP                  "Bitmap\\AssetInfoMapIcon8_Color.bmp"
+
+IDB_ASSET_INFO_MAP_ICON_COLOR_LINKED BITMAP                  "Bitmap\\AssetInfoMapIcon8_ColorLinked.bmp"
+
+IDB_BITMAP1             BITMAP                  "Bitmap\\AssetInfoMapIcon9_Mask.bmp"
+
+IDB_BITMAP2             BITMAP                  "Bitmap\\AssetInfoMapIcon9_MaskLinked.bmp"
+
+IDB_BITMAP3             BITMAP                  "Bitmap\\AssetInfoMapIcon9_BW.bmp"
+
+IDB_BITMAP4             BITMAP                  "Bitmap\\AssetInfoMapIcon9_BWLinked.bmp"
+
+IDB_BITMAP5             BITMAP                  "Bitmap\\AssetInfoMapIcon9_Color.bmp"
+
+IDB_BITMAP6             BITMAP                  "Bitmap\\AssetInfoMapIcon9_ColorLinked.bmp"
+
+IDB_BITMAP7             BITMAP                  "Bitmap\\AssetInfoMapIcon10_Mask.bmp"
+
+IDB_BITMAP8             BITMAP                  "Bitmap\\AssetInfoMapIcon10_MaskLinked.bmp"
+
+IDB_BITMAP9             BITMAP                  "Bitmap\\AssetInfoMapIcon10_BW.bmp"
+
+IDB_BITMAP10            BITMAP                  "Bitmap\\AssetInfoMapIcon10_BWLinked.bmp"
+
+IDB_BITMAP11            BITMAP                  "Bitmap\\AssetInfoMapIcon10_Color.bmp"
+
+IDB_BITMAP12            BITMAP                  "Bitmap\\AssetInfoMapIcon10_ColorLinked.bmp"
+
+IDB_BITMAP13            BITMAP                  "Bitmap\\AssetInfoMapIcon11_Mask.bmp"
+
+IDB_BITMAP14            BITMAP                  "Bitmap\\AssetInfoMapIcon11_MaskLinked.bmp"
+
+IDB_BITMAP15            BITMAP                  "Bitmap\\AssetInfoMapIcon11_BW.bmp"
+
+IDB_BITMAP16            BITMAP                  "Bitmap\\AssetInfoMapIcon11_BWLinked.bmp"
+
+IDB_BITMAP17            BITMAP                  "Bitmap\\AssetInfoMapIcon11_Color.bmp"
+
+IDB_BITMAP18            BITMAP                  "Bitmap\\AssetInfoMapIcon11_ColorLinked.bmp"
+
+IDB_BITMAP19            BITMAP                  "Bitmap\\AssetInfoMapIcon12_Mask.bmp"
+
+IDB_BITMAP20            BITMAP                  "Bitmap\\AssetInfoMapIcon12_MaskLinked.bmp"
+
+IDB_BITMAP21            BITMAP                  "Bitmap\\AssetInfoMapIcon12_BW.bmp"
+
+IDB_BITMAP22            BITMAP                  "Bitmap\\AssetInfoMapIcon12_BWLinked.bmp"
+
+IDB_BITMAP23            BITMAP                  "Bitmap\\AssetInfoMapIcon12_Color.bmp"
+
+IDB_BITMAP24            BITMAP                  "Bitmap\\AssetInfoMapIcon12_ColorLinked.bmp"
+
+#endif    // English (United States) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (Canada) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENC)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_CAN
+#pragma code_page(1252)
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+#endif    // English (Canada) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

@@ -1,0 +1,248 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <SccProjectName />
+    <SccLocalPath />
+    <ProjectGuid>{E7886012-8A7B-45CD-86F7-4A2B5C6E7AD0}</ProjectGuid>
+    <ProjectName>ExportFile</ProjectName>
+    <WindowsTargetPlatformVersion>7.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v141_xp</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v141_xp</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>14.0.24730.2</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <TargetName>ExportFile</TargetName>
+    <OutDir>$(SolutionDir)..\$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <TargetExt>.x32</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <TargetName>ExportFile</TargetName>
+    <OutDir>$(SolutionDir)..\$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <TargetExt>.x32</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <AdditionalIncludeDirectories>..\..\..\..\Include;..\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_CRT_NO_VA_START_VALIDATION;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeaderOutputFile>.\Release/Script.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>.\Release/</AssemblerListingLocation>
+      <ObjectFileName>.\Release/</ObjectFileName>
+      <ProgramDataBaseFileName>.\Release/</ProgramDataBaseFileName>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <CallingConvention>StdCall</CallingConvention>
+      <CompileAs>Default</CompileAs>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>winmm.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <ModuleDefinitionFile>.\Script.def</ModuleDefinitionFile>
+      <SubSystem>Windows</SubSystem>
+      <ImportLibrary>.\Release/Script.lib</ImportLibrary>
+      <TargetMachine>MachineX86</TargetMachine>
+      <OutputFile>$(OutDir)ExportFile.x32</OutputFile>
+    </Link>
+    <Midl>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TargetEnvironment>Win32</TargetEnvironment>
+      <TypeLibraryName>.\Release/Script.tlb</TypeLibraryName>
+      <HeaderFileName />
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <PostBuildEvent>
+      <Command>xcopy "$(SolutionDir)..\$(Configuration)\$(ProjectName).x32" "%EXPORTFILE_DIRECTOR_XTRAS_DIR%\$(ProjectName).x32" /y
+rmdir "$(SolutionDir)..\ExportFile Test\Exported Files" /s /q
+"$(SolutionDir)..\ExportFile Test\ExportFile Test Movie Player.exe" "$(SolutionDir)..\$(Configuration)\ExportFile.x32"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\..\..\..\Include;..\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_CRT_NO_VA_START_VALIDATION;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeaderOutputFile>.\Debug/Script.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>.\Debug/</AssemblerListingLocation>
+      <ObjectFileName>.\Debug/</ObjectFileName>
+      <ProgramDataBaseFileName>.\Debug/</ProgramDataBaseFileName>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CallingConvention>StdCall</CallingConvention>
+      <CompileAs>Default</CompileAs>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>winmm.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <ModuleDefinitionFile>.\Script.def</ModuleDefinitionFile>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <ImportLibrary>.\Debug/Script.lib</ImportLibrary>
+      <TargetMachine>MachineX86</TargetMachine>
+      <OutputFile>$(OutDir)ExportFile.x32</OutputFile>
+    </Link>
+    <Midl>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TargetEnvironment>Win32</TargetEnvironment>
+      <TypeLibraryName>.\Debug/Script.tlb</TypeLibraryName>
+      <HeaderFileName />
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <PostBuildEvent>
+      <Command>xcopy "$(SolutionDir)..\$(Configuration)\$(ProjectName).x32" "%EXPORTFILE_DIRECTOR_XTRAS_DIR%\$(ProjectName).x32" /y
+rmdir "$(SolutionDir)..\ExportFile Test\Exported Files" /s /q
+"$(SolutionDir)..\ExportFile Test\ExportFile Test Movie Player.exe" "$(SolutionDir)..\$(Configuration)\ExportFile.x32"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\source\Agent.cpp" />
+    <ClCompile Include="..\source\Args.cpp" />
+    <ClCompile Include="..\source\Asset.cpp" />
+    <ClCompile Include="..\source\BitmapImporter.cpp" />
+    <ClCompile Include="..\source\Media.cpp" />
+    <ClCompile Include="..\source\drmedfix.c" />
+    <ClCompile Include="..\source\ExportFileValueConverter.cpp" />
+    <ClCompile Include="..\source\Formats.cpp" />
+    <ClCompile Include="..\source\IconValues.cpp" />
+    <ClCompile Include="..\source\Label.cpp" />
+    <ClCompile Include="..\source\Mixer.cpp" />
+    <ClCompile Include="..\source\Options.cpp" />
+    <ClCompile Include="..\source\Path.cpp" />
+    <ClCompile Include="..\source\Registry.cpp" />
+    <ClCompile Include="..\source\Script.cpp">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">WIN32;_DEBUG;_WINDOWS</PreprocessorDefinitions>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">WIN32;NDEBUG;_WINDOWS</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\source\shared.cpp" />
+    <ClCompile Include="..\source\Stream.cpp" />
+    <ClCompile Include="..\source\TypeLabels.cpp" />
+    <ClCompile Include="..\source\ValueConverter.cpp" />
+    <ClCompile Include="..\source\WinBMPAgent.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\README.md" />
+    <None Include="Script.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\source\Agent.h" />
+    <ClInclude Include="..\source\Args.h" />
+    <ClInclude Include="..\source\Asset.h" />
+    <ClInclude Include="..\source\BitmapImporter.h" />
+    <ClInclude Include="..\source\Media.h" />
+    <ClInclude Include="..\source\drmedfix.h" />
+    <ClInclude Include="..\source\exportfile.h" />
+    <ClInclude Include="..\source\Formats.h" />
+    <ClInclude Include="..\source\GlobalHandle.h" />
+    <ClInclude Include="..\source\IconValues.h" />
+    <ClInclude Include="..\source\IgnoreCaseComparer.h" />
+    <ClInclude Include="..\source\Label.h" />
+    <ClInclude Include="..\source\MacPICTAgent.h" />
+    <ClInclude Include="..\source\MappedVector.h" />
+    <ClInclude Include="..\source\Mixer.h" />
+    <ClInclude Include="..\source\MoaIDHash.h" />
+    <ClInclude Include="..\source\Options.h" />
+    <ClInclude Include="..\source\Path.h" />
+    <ClInclude Include="..\source\Registry.h" />
+    <ClInclude Include="..\source\resource.h" />
+    <ClInclude Include="..\source\scope_guard.hpp" />
+    <ClInclude Include="..\source\Script.h" />
+    <ClInclude Include="..\source\shared.h" />
+    <ClInclude Include="..\source\Stream.h" />
+    <ClInclude Include="..\source\TypeLabels.h" />
+    <ClInclude Include="..\source\ValueConverter.h" />
+    <ClInclude Include="..\source\ExportFileValueConverter.h" />
+    <ClInclude Include="..\source\WinBMPAgent.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\source\dversion.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon10_BW.bmp" />
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon10_BWLinked.bmp" />
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon10_Color.bmp" />
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon10_ColorLinked.bmp" />
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon10_Mask.bmp" />
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon10_MaskLinked.bmp" />
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon11_BW.bmp" />
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon11_BWLinked.bmp" />
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon11_Color.bmp" />
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon11_ColorLinked.bmp" />
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon11_Mask.bmp" />
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon11_MaskLinked.bmp" />
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon12_BW.bmp" />
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon12_BWLinked.bmp" />
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon12_Color.bmp" />
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon12_ColorLinked.bmp" />
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon12_Mask.bmp" />
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon12_MaskLinked.bmp" />
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon8_BW.bmp" />
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon8_BWLinked.bmp" />
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon8_Color.bmp" />
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon8_ColorLinked.bmp" />
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon8_Mask.bmp" />
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon8_MaskLinked.bmp" />
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon9_BW.bmp" />
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon9_BWLinked.bmp" />
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon9_Color.bmp" />
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon9_ColorLinked.bmp" />
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon9_Mask.bmp" />
+    <Image Include="..\source\Bitmap\AssetInfoMapIcon9_MaskLinked.bmp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
