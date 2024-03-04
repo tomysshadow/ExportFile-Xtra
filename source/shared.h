@@ -143,7 +143,7 @@ inline bool memoryShift(void *mem, size_t memSize, void *sourceMem, size_t sourc
 
 #define DIRECTOR_UTF8(productVersionMajor) ((productVersionMajor) >= 11)
 
-#define FILESYSTEM_DIRECTOR_PATH(element, productVersionMajor) (DIRECTOR_UTF8(productVersionMajor) ? std::filesystem::u8path(element) : std::filesystem::path(element))
+#define FILESYSTEM_DIRECTOR_UTF8_PATH(element, productVersionMajor) (DIRECTOR_UTF8(productVersionMajor) ? std::filesystem::u8path(element) : std::filesystem::path(element))
 
 #ifdef MACINTOSH
 #define kCFStringEncodingDirector(productVersionMajor) (DIRECTOR_UTF8(productVersionMajor) ? kCFStringEncodingUTF8 : kCFStringEncodingASCII)

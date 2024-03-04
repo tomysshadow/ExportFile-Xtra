@@ -761,7 +761,7 @@ STDMETHODIMP TStdXtra_IMoaRegister::Register(PIMoaCache cacheInterfacePointer, P
 
 		const char* VER_MAJORVERSION_STRING = "0";
 		const char* VER_MINORVERSION_STRING = "4";
-		const char* VER_BUGFIXVERSION_STRING = "0";
+		const char* VER_BUGFIXVERSION_STRING = "1";
 
 		const size_t VERSION_STRING_SIZE = min(256, kMoaMmMaxXtraMessageTable);
 		char versionString[VERSION_STRING_SIZE] = "";
@@ -3189,12 +3189,10 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultDirname(Args* argsPointer) {
 				(
 					std::filesystem::current_path()
 
-					/ FILESYSTEM_DIRECTOR_PATH(
+					/ std::filesystem::path(
 						Path::Info::elementOrEmpty(
 							dirnameOptional
-						),
-						
-						pObj->productVersionMajor
+						)
 					)
 				).string()
 			);
@@ -3218,7 +3216,7 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultDirname(Args* argsPointer) {
 
 			ThrowErr(workingDirectoryPathNameInterfacePointer->GetPath((PMoaChar)workingDirectoryPathStringPointer, workingDirectoryPathStringSize));
 
-			pathInfo.setDirnameOptional((FILESYSTEM_DIRECTOR_PATH((PMoaChar)workingDirectoryPathStringPointer, pObj->productVersionMajor) / Path::Info::elementOrEmpty(dirnameOptional)).string());
+			pathInfo.setDirnameOptional((std::filesystem::path((PMoaChar)workingDirectoryPathStringPointer) / Path::Info::elementOrEmpty(dirnameOptional)).string());
 			*/
 		} else {
 			#ifdef MACINTOSH
@@ -3260,7 +3258,7 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultDirname(Args* argsPointer) {
 
 			pathInfo.setDirnameOptional(
 				(
-					FILESYSTEM_DIRECTOR_PATH(
+					FILESYSTEM_DIRECTOR_UTF8_PATH(
 						(const char*)CW2A(
 							pathWide,
 
@@ -3272,12 +3270,10 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultDirname(Args* argsPointer) {
 						pObj->productVersionMajor
 					)
 
-					/ FILESYSTEM_DIRECTOR_PATH(
+					/ std::filesystem::path(
 						Path::Info::elementOrEmpty(
 							dirnameOptional
-						),
-
-						pObj->productVersionMajor
+						)
 					)
 				).string()
 			);

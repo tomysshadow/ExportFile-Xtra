@@ -76,7 +76,7 @@ MoaError Formats::Format::createTempFile(PIMoaFile tempFileInterfacePointer) {
 	MoaChar pathnameSpec[MOA_MAX_PATHNAME] = "";
 	RETURN_ERR(tempFileInterfacePointer->GetPathnameSpec(pathnameSpec, MOA_MAX_PATHNAME));
 
-	bool hasParentPath = FILESYSTEM_DIRECTOR_PATH(pathnameSpec, productVersionMajor).has_parent_path();
+	bool hasParentPath = std::filesystem::path(pathnameSpec).has_parent_path();
 
 	// folder paths must be 12 characters shorter than MAX_PATH in order
 	// to allow an 8.3 filename to exist before MAX_PATH is reached

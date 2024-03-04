@@ -87,21 +87,25 @@ STDMETHODIMP CWinBMPAgent_IMoaRegister::Register(PIMoaCache cacheInterfacePointe
 
 		ThrowErr(registryEntryDictInterfacePointer->Put(kMoaDictType_CString, fileCreator, FILE_CREATOR_SIZE, kAgentRegKey_FileCreator));
 
-		const MoaLong TYPES_SIZE = 10;
-		MoaChar types[TYPES_SIZE] = "BMPfBMP  ";
+		const MoaLong TYPES_SIZE = 5;
+		MoaChar types[TYPES_SIZE] = "WBMP";
 
 		ThrowErr(registryEntryDictInterfacePointer->Put(kMoaDictType_CString, types, TYPES_SIZE, kAgentRegKey_FileTypes));
 		ThrowErr(registryEntryDictInterfacePointer->Put(kMoaDictType_CString, types, TYPES_SIZE, kAgentRegKey_MacScrapTypes));
 
-		const MoaLong FILE_EXTS_SIZE = 18;
-		MoaChar fileExts[FILE_EXTS_SIZE] = "*.bmp;*.dib;*.rle";
+		// importFileInto in projectors ignores the Hidden key, so
+		// this must be assigned some other extension to never be used
+		const MoaLong FILE_EXTS_SIZE = 9;
+		MoaChar fileExts[FILE_EXTS_SIZE] = "*.winbmp";
 
 		ThrowErr(registryEntryDictInterfacePointer->Put(kMoaDictType_CString, fileExts, FILE_EXTS_SIZE, kAgentRegKey_FileExts));
 
+		/*
 		const MoaLong MIME_TYPE_SIZE = 10;
 		MoaChar mimeType[MIME_TYPE_SIZE] = "image/bmp";
 
 		ThrowErr(registryEntryDictInterfacePointer->Put(kMoaDictType_CString, mimeType, MIME_TYPE_SIZE, kAgentRegKey_MimeType));
+		*/
 
 		registryEntryDictInterfacePointer = NULL;
 		ThrowErr(cacheInterfacePointer->AddRegistryEntry(xtraEntryDictInterfacePointer, &CLSID_CWinBMPAgent, &IID_IMoaReader, &registryEntryDictInterfacePointer));
