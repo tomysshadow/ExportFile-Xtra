@@ -76,6 +76,8 @@ MoaError Formats::Format::createTempFile(PIMoaFile tempFileInterfacePointer) {
 	MoaChar pathnameSpec[MOA_MAX_PATHNAME] = "";
 	RETURN_ERR(tempFileInterfacePointer->GetPathnameSpec(pathnameSpec, MOA_MAX_PATHNAME));
 
+	// GetPathnameSpec gives results in the current codepage instead of UTF-8
+	// for this check it doesn't really matter
 	bool hasParentPath = std::filesystem::path(pathnameSpec).has_parent_path();
 
 	// folder paths must be 12 characters shorter than MAX_PATH in order

@@ -45,7 +45,7 @@ namespace Path {
 		MoaError makePathNameInterfacePointer();
 		MoaError makePath();
 
-		static std::string toRelativePath(const std::string &path);
+		static std::string toRelativePath(const std::string &path, unsigned long productVersionMajor);
 		static std::string toBasename(std::string filename);
 		static std::string toExtension(std::string filename);
 		static std::string toFilename(const std::string &basename, const std::string &extension);

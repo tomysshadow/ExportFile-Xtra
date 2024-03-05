@@ -3186,38 +3186,22 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultDirname(Args* argsPointer) {
 
 		if (LOCATION_SYMBOL == pObj->symbols.Current) {
 			pathInfo.setDirnameOptional(
-				(
-					std::filesystem::current_path()
+				FILESYSTEM_DIRECTOR_STRING(
+					(
+						std::filesystem::current_path()
 
-					/ std::filesystem::path(
-						Path::Info::elementOrEmpty(
-							dirnameOptional
+						/ FILESYSTEM_DIRECTOR_PATH(
+							Path::Info::elementOrEmpty(
+								dirnameOptional
+							),
+
+							pObj->productVersionMajor
 						)
-					)
-				).string()
+					),
+
+					pObj->productVersionMajor
+				)
 			);
-
-			// this does not produce a result consistent with
-			// using a relative path
-			/*
-			if (!pathNameInterfacePointer) {
-				ThrowErr(pObj->pCallback->MoaCreateInstance(&CLSID_CMoaPath, &IID_IMoaPathName, (PPMoaVoid)&pathNameInterfacePointer));
-				ThrowNull(pathNameInterfacePointer);
-			}
-
-			ThrowErr(pathNameInterfacePointer->GetWorkingDirectory(&workingDirectoryPathNameInterfacePointer));
-			ThrowNull(workingDirectoryPathNameInterfacePointer);
-
-			MoaLong workingDirectoryPathStringSize = 0;
-			ThrowErr(workingDirectoryPathNameInterfacePointer->GetPathSize(&workingDirectoryPathStringSize));
-
-			workingDirectoryPathStringPointer = pObj->pCalloc->NRAlloc(workingDirectoryPathStringSize);
-			ThrowNull(workingDirectoryPathStringPointer);
-
-			ThrowErr(workingDirectoryPathNameInterfacePointer->GetPath((PMoaChar)workingDirectoryPathStringPointer, workingDirectoryPathStringSize));
-
-			pathInfo.setDirnameOptional((std::filesystem::path((PMoaChar)workingDirectoryPathStringPointer) / Path::Info::elementOrEmpty(dirnameOptional)).string());
-			*/
 		} else {
 			#ifdef MACINTOSH
 			// I've never used a Mac, so
@@ -3257,25 +3241,31 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultDirname(Args* argsPointer) {
 			ThrowErr(SHGetFolderPathW(NULL, csidl, NULL, SHGFP_TYPE_CURRENT, pathWide));
 
 			pathInfo.setDirnameOptional(
-				(
-					FILESYSTEM_DIRECTOR_UTF8_PATH(
-						(const char*)CW2A(
-							pathWide,
+				FILESYSTEM_DIRECTOR_STRING(
+					(
+						FILESYSTEM_DIRECTOR_PATH(
+							(const char*)CW2A(
+								pathWide,
 
-							CP_DIRECTOR(
-								pObj->productVersionMajor
-							)
-						),
+								CP_DIRECTOR(
+									pObj->productVersionMajor
+								)
+							),
 
-						pObj->productVersionMajor
-					)
-
-					/ std::filesystem::path(
-						Path::Info::elementOrEmpty(
-							dirnameOptional
+							pObj->productVersionMajor
 						)
-					)
-				).string()
+
+						/ FILESYSTEM_DIRECTOR_PATH(
+							Path::Info::elementOrEmpty(
+								dirnameOptional
+							),
+
+							pObj->productVersionMajor
+						)
+					),
+
+					pObj->productVersionMajor
+				)
 			);
 			#endif
 		}

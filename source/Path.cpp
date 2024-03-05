@@ -332,7 +332,7 @@ MoaError Path::Info::makePath() {
 	return kMoaErr_NoErr;
 }
 
-std::string Path::Info::toRelativePath(const std::string &path) {
+std::string Path::Info::toRelativePath(const std::string &path, unsigned long productVersionMajor) {
 	if (path.empty()) {
 		return path;
 	}
@@ -341,7 +341,16 @@ std::string Path::Info::toRelativePath(const std::string &path) {
 	// even if its corresponding absolute path would be longer than MAX_PATH
 	// note: we can't use GetRelativePath, Director doesn't implement it
 	// so we can use the filesystem functionality here instead
-	std::string relativePath = std::filesystem::path(path).lexically_relative(std::filesystem::current_path()).string();
+	std::string relativePath = FILESYSTEM_DIRECTOR_STRING(
+		FILESYSTEM_DIRECTOR_PATH(
+			path,
+			productVersionMajor
+		).lexically_relative(
+			std::filesystem::current_path()
+		),
+
+		productVersionMajor
+	);
 
 	// only use it if it's not periods or whitespace (the path can be expressed relatively)
 	// and the length is shorter (so it's beneficial to use)
@@ -666,7 +675,7 @@ MoaError Path::Info::incrementFilename() {
 	// we must get every argument ourselves to satisfy both
 	// this path should exist (we wouldn't be incrementing the name otherwise)
 	// so FindFirstFileW should not error here
-	std::string relativePath = toRelativePath(path);
+	std::string relativePath = toRelativePath(path, productVersionMajor);
 
 	// this shouldn't be true, even for the current directory
 	// but we check it to avoid undefined behaviour with FindFirstFile
@@ -729,7 +738,7 @@ bool Path::Info::getPath(std::string &path, bool relative) {
 		return false;
 	}
 
-	path = relative ? toRelativePath(this->path) : this->path;
+	path = relative ? toRelativePath(this->path, productVersionMajor) : this->path;
 	return true;
 }
 
@@ -873,7 +882,14 @@ bool Path::Info::getDirnameOptional(std::optional<std::string> &dirnameOptional)
 
 	if (dirnameOptional.has_value()) {
 		// if the dirname has . or .. in it then get rid of those here
-		std::string dirname = std::filesystem::path(dirnameOptional.value()).lexically_normal().string();
+		std::string dirname = FILESYSTEM_DIRECTOR_STRING(
+			FILESYSTEM_DIRECTOR_PATH(
+				dirnameOptional.value(),
+				productVersionMajor
+			).lexically_normal(),
+			
+			productVersionMajor
+		);
 
 		// a whitespace dirname is not valid
 		// unspecified is valid, "." is valid, but not whitespace
@@ -929,7 +945,7 @@ bool Path::Info::getBasenameOptional(std::optional<std::string> &basenameOptiona
 
 		// should be ensured by validate (when it calls getValidFileName on this)
 		/*
-		if (std::filesystem::path(basenameOptional.value()).has_parent_path()) {
+		if (FILESYSTEM_DIRECTOR_PATH(basenameOptional.value(), productVersionMajor).has_parent_path()) {
 			return false;
 		}
 		*/
@@ -994,7 +1010,7 @@ bool Path::Info::getExtensionOptional(std::optional<std::string> &extensionOptio
 	if (extensionOptional.has_value()) {
 		// should be ensured by validate
 		/*
-		if (std::filesystem::path(EXTENSION).has_parent_path()) {
+		if (FILESYSTEM_DIRECTOR_PATH(EXTENSION, productVersionMajor).has_parent_path()) {
 			return false;
 		}
 		*/
@@ -1053,9 +1069,14 @@ MoaError Path::Info::setPath(const std::string &path) {
 	// the filename is trimmed here so if it ends in . the filename and extension don't mismatch
 	RETURN_ERR(
 		setPathNameInterfacePointer->InitFromString(
-			std::filesystem::path(
-				path
-			).lexically_normal().string().c_str(),
+			FILESYSTEM_DIRECTOR_STRING(
+				FILESYSTEM_DIRECTOR_PATH(
+					path,
+					productVersionMajor
+				).lexically_normal(),
+
+				productVersionMajor
+			).c_str(),
 			
 			kMoaPathDialect_LOCAL,
 			FALSE,
