@@ -35,6 +35,7 @@ Debug.zip
 Release.zip
 ExportFile Resources.zip
 ExportFile Test/Exported Files/
+ExportFile Test/Xtras/ExportFile.x32
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/

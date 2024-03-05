@@ -96,9 +96,10 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)..\$(Configuration)\$(ProjectName).x32" "%EXPORTFILE_DIRECTOR_XTRAS_DIR%\$(ProjectName).x32" /y
+      <Command>xcopy "$(SolutionDir)..\$(Configuration)\$(ProjectName).x32" "%EXPORTFILE_DIRECTOR_XTRAS_DIR%" /y
+xcopy "$(SolutionDir)..\$(Configuration)\$(ProjectName).x32" "$(SolutionDir)..\ExportFile Test\Xtras" /y
 rmdir "$(SolutionDir)..\ExportFile Test\Exported Files" /s /q
-"$(SolutionDir)..\ExportFile Test\ExportFile Test Movie Player.exe" "$(SolutionDir)..\$(Configuration)\ExportFile.x32"</Command>
+"$(SolutionDir)..\ExportFile Test\Projector.exe"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -141,9 +142,10 @@ rmdir "$(SolutionDir)..\ExportFile Test\Exported Files" /s /q
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)..\$(Configuration)\$(ProjectName).x32" "%EXPORTFILE_DIRECTOR_XTRAS_DIR%\$(ProjectName).x32" /y
+      <Command>xcopy "$(SolutionDir)..\$(Configuration)\$(ProjectName).x32" "%EXPORTFILE_DIRECTOR_XTRAS_DIR%" /y
+xcopy "$(SolutionDir)..\$(Configuration)\$(ProjectName).x32" "$(SolutionDir)..\ExportFile Test\Xtras" /y
 rmdir "$(SolutionDir)..\ExportFile Test\Exported Files" /s /q
-"$(SolutionDir)..\ExportFile Test\ExportFile Test Movie Player.exe" "$(SolutionDir)..\$(Configuration)\ExportFile.x32"</Command>
+"$(SolutionDir)..\ExportFile Test\Projector.exe"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
