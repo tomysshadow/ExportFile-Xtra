@@ -41,6 +41,7 @@ written permission of Adobe.
 
 #ifdef WINDOWS
 #include <Shlobj.h>
+#include <process.h>
 #endif
 
 /* Begin Xtra */
@@ -761,7 +762,7 @@ STDMETHODIMP TStdXtra_IMoaRegister::Register(PIMoaCache cacheInterfacePointer, P
 
 		const char* VER_MAJORVERSION_STRING = "0";
 		const char* VER_MINORVERSION_STRING = "4";
-		const char* VER_BUGFIXVERSION_STRING = "1";
+		const char* VER_BUGFIXVERSION_STRING = "2";
 
 		const size_t VERSION_STRING_SIZE = min(256, kMoaMmMaxXtraMessageTable);
 		char versionString[VERSION_STRING_SIZE] = "";

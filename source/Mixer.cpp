@@ -5,6 +5,10 @@
 #include <chrono>
 #include <thread>
 
+#ifdef WINDOWS
+#include <process.h>
+#endif
+
 // errors returned from this function go off into the void
 // so we should only return the error when it is impossible to continue
 // ideally, even if the file write fails, the mixerSaved handler is still called

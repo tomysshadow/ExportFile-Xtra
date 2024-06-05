@@ -1,4 +1,4 @@
-# ExportFile Xtra 0.4.1
+# ExportFile Xtra 0.4.2
 ## By Anthony Kleine
 
 ExportFile Xtra exports the content of Director cast members out to files. It can export all built-in cast member types, as well as Xtra Media.
