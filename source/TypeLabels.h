@@ -33,6 +33,6 @@ namespace TypeLabel {
 
 		public:
 		TypeLabels(PIMoaMmValue mmValueInterfacePointer);
-		const MAP& get() const;
+		const MAP &get() const;
 	};
 };

@@ -118,7 +118,7 @@ inline bool memoryEquals(const void* mem, const void* mem2, size_t size) {
 	return !memcmp(mem, mem2, size);
 }
 
-inline bool memoryShift(void *mem, size_t memSize, void *sourceMem, size_t sourceMemSize, size_t shift, bool direction) {
+inline bool memoryShift(void* mem, size_t memSize, void* sourceMem, size_t sourceMemSize, size_t shift, bool direction) {
 	#pragma warning(push)
 	#pragma warning(disable : 4133)
 	if (sourceMem < mem || (char*)sourceMem + sourceMemSize > (char*)mem + memSize) {

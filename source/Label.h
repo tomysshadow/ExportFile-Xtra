@@ -116,7 +116,7 @@ namespace Label {
 
 			public:
 			Info(PIMoaMmValue mmValueInterfacePointer);
-			const Label::Info::MAP& get() const;
+			const Label::Info::MAP &get() const;
 		};
 	}
 };
