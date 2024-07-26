@@ -195,10 +195,7 @@ MoaError Stream::copy(PIMoaStream writeStreamInterfacePointer, MoaUlong size) {
 	MoaStreamCount numberOfBytesCopied = 0;
 
 	do {
-		if (size != -1) {
-			numberOfBytesToRead = min(size, numberOfBytesToRead);
-		}
-
+		numberOfBytesToRead = min(size, numberOfBytesToRead);
 		RETURN_ERR(readPartial((PMoaVoid)buffer, numberOfBytesToRead, numberOfBytesCopied));
 
 		numberOfBytesToWrite = numberOfBytesCopied;
