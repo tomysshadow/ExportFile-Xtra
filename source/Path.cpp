@@ -384,7 +384,7 @@ std::string Path::Info::toRelativePath(const std::string &path, unsigned long pr
 	return path;
 }
 
-std::string Path::Info::toBasename(std::string filename) {
+std::string Path::Info::toBasename(const std::string &filename) {
 	// here we don't use std::filesystem::path
 	// because we want the "dumb" logic of, if there's a period
 	// then there is an extension
@@ -392,15 +392,15 @@ std::string Path::Info::toBasename(std::string filename) {
 	std::string::size_type periodIndex = filename.rfind(PERIOD);
 
 	return periodIndex == std::string::npos
-		? filename
+	? filename
 
-		: filename.substr(
+	: filename.substr(
 		0,
 		periodIndex
-		);
+	);
 }
 
-std::string Path::Info::toExtension(std::string filename) {
+std::string Path::Info::toExtension(const std::string &filename) {
 	const std::string::size_type PERIOD_SIZE = sizeof(PERIOD);
 
 	std::string::size_type periodIndex = filename.rfind(PERIOD);
@@ -467,7 +467,7 @@ Path::Info::Info(unsigned long productVersionMajor, PIMoaCallback callbackInterf
 	callocInterfacePointer->AddRef();
 }
 
-Path::Info::Info(std::string path, unsigned long productVersionMajor, PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer)
+Path::Info::Info(const std::string &path, unsigned long productVersionMajor, PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer)
 	: productVersionMajor(productVersionMajor),
 	callbackInterfacePointer(callbackInterfacePointer),
 	callocInterfacePointer(callocInterfacePointer) {

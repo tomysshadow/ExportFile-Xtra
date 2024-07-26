@@ -46,8 +46,8 @@ namespace Path {
 		MoaError makePath();
 
 		static std::string toRelativePath(const std::string &path, unsigned long productVersionMajor);
-		static std::string toBasename(std::string filename);
-		static std::string toExtension(std::string filename);
+		static std::string toBasename(const std::string &filename);
+		static std::string toExtension(const std::string &filename);
 		static std::string toFilename(const std::string &basename, const std::string &extension);
 		static std::string& trimExtension(std::string &extension);
 		static bool elementPeriodsOrWhitespace(const std::string &element);
@@ -64,7 +64,7 @@ namespace Path {
 		};
 
 		Info(unsigned long productVersionMajor, PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer);
-		Info(std::string path, unsigned long productVersionMajor, PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer);
+		Info(const std::string &path, unsigned long productVersionMajor, PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer);
 		~Info();
 		Info(const Info &info);
 		Info &operator=(const Info &info);
