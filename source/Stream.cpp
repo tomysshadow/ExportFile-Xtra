@@ -187,6 +187,10 @@ MoaError Stream::flush() {
 MoaError Stream::copy(PIMoaStream writeStreamInterfacePointer, MoaUlong size) {
 	RETURN_NULL(writeStreamInterfacePointer);
 
+	if (!size) {
+		return kMoaErr_NoErr;
+	}
+
 	const size_t BUFFER_SIZE = 0x8000;
 	char buffer[BUFFER_SIZE] = {};
 
