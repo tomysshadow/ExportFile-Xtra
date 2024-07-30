@@ -389,7 +389,7 @@ MoaError Media::WinBMPMedia::allocateSourceBitmap(PIMoaReceptorPixels receptorPi
 	// first, the source bitmap file header
 	// we read it here (but don't validate it yet, as we don't need to use it yet)
 	// this has the offset to the bits which will be useful for later
-	sourceBitmapFileHeaderOptional.emplace(BITMAPFILEHEADER());
+	sourceBitmapFileHeaderOptional.emplace();
 	BITMAPFILEHEADER &sourceBitmapFileHeader = sourceBitmapFileHeaderOptional.value();
 
 	const MoaStreamCount SOURCE_BITMAP_FILE_HEADER_SIZE = sizeof(sourceBitmapFileHeader);
@@ -757,7 +757,7 @@ MoaError Media::WinBMPMedia::getPixelFormat(PIMoaReceptorPixels receptorPixelsIn
 		pixelFormatOptional = std::nullopt;
 	};
 
-	pixelFormatOptional.emplace(MoaPixelFormat());
+	pixelFormatOptional.emplace();
 	MoaPixelFormat &pixelFormat = pixelFormatOptional.value();
 
 	MoaLong colorSpaceCount = 1;

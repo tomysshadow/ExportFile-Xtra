@@ -3674,7 +3674,7 @@ MoaError TStdXtra_IMoaMmXScript::GetArgLabelDefault(Args* argsPointer, Media::Di
 			if (empty) {
 				// don't redundantly look this up if GetArgAgentDefault is called later
 				// (this might be undone later by GetArgAgent, which is intended)
-				directorMediaPointer->agentInfoMapOptional.emplace(Agent::Info::MAP());
+				directorMediaPointer->agentInfoMapOptional.emplace();
 			} else {
 				/*
 				if (!agentPositionPointer) {
@@ -3715,7 +3715,7 @@ MoaError TStdXtra_IMoaMmXScript::GetArgLabelDefault(Args* argsPointer, Media::Di
 					argsPointer->agentStringOptional = "";
 
 					directorMediaPointer->labelInfoMapIterator = LABEL_INFO_NOT_FOUND;
-					directorMediaPointer->agentInfoMapOptional.emplace(Agent::Info::MAP());
+					directorMediaPointer->agentInfoMapOptional.emplace();
 				}
 			}
 		} else {
@@ -3732,7 +3732,7 @@ MoaError TStdXtra_IMoaMmXScript::GetArgLabelDefault(Args* argsPointer, Media::Di
 
 	if (directorMediaPointer) {
 		directorMediaPointer->labelInfoMapIterator = LABEL_INFO_NOT_FOUND;
-		directorMediaPointer->agentInfoMapOptional.emplace(Agent::Info::MAP());
+		directorMediaPointer->agentInfoMapOptional.emplace();
 	}
 
 	moa_catch_end
@@ -4277,7 +4277,7 @@ MoaError TStdXtra_IMoaMmXScript::GetLabelMappedVector(Args* argsPointer, Media::
 	ThrowNull(directorMediaPointer);
 
 	if (!directorMediaPointer->labelMappedVectorOptional.has_value()) {
-		directorMediaPointer->labelMappedVectorOptional.emplace(Label::MAPPED_VECTOR());
+		directorMediaPointer->labelMappedVectorOptional.emplace();
 
 		Label::MAPPED_VECTOR &labelMappedVector = directorMediaPointer->labelMappedVectorOptional.value();
 
@@ -4449,13 +4449,13 @@ MoaError TStdXtra_IMoaMmXScript::GetLabelAgentInfoMap(Args* argsPointer, Media::
 			if (err == kMoaErr_NoErr) {
 				if (!directorMediaPointer->agentInfoMapOptional.has_value()) {
 					// succeeded, but no map found, so create an empty one
-					directorMediaPointer->agentInfoMapOptional.emplace(Agent::Info::MAP());
+					directorMediaPointer->agentInfoMapOptional.emplace();
 				}
 			} else {
 				// error occured, map may be invalid, so empty it
 				// we don't throw this error because most likely, we just failed to get a reader
 				// precisely because this label can't be used with agents, so it should be an empty map
-				directorMediaPointer->agentInfoMapOptional.emplace(Agent::Info::MAP());
+				directorMediaPointer->agentInfoMapOptional.emplace();
 			}
 
 			(*pObj->labelAgentInfoMapPointer)[LABEL_SYMBOL] = directorMediaPointer->agentInfoMapOptional.value();
@@ -4594,7 +4594,7 @@ MoaError TStdXtra_IMoaMmXScript::GetAgentInfoMapSLOW(Args* argsPointer, Media::D
 	ThrowNull(directorMediaPointer);
 
 	if (!directorMediaPointer->agentInfoMapOptional.has_value()) {
-		directorMediaPointer->agentInfoMapOptional.emplace(Agent::Info::MAP());
+		directorMediaPointer->agentInfoMapOptional.emplace();
 
 		ThrowErr(GetAgentHiddenReaderSet(directorMediaPointer));
 
