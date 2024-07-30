@@ -1162,7 +1162,7 @@ MoaError TStdXtra_IMoaMmXScript::GetExportFileDefaultOptions(PMoaDrCallInfo call
 	ThrowErr(GetArgOptionsDefault(&args, &directorMedia, x));
 
 	if (!args.optionsOptional.has_value()) {
-		args.optionsOptional.emplace(Options(pObj->mmValueInterfacePointer));
+		args.optionsOptional.emplace(pObj->mmValueInterfacePointer);
 	}
 
 	ThrowErr(pObj->exportFileValueConverterPointer->toValue(args.optionsOptional.value(), callPtr->resultValue));
@@ -2922,7 +2922,7 @@ MoaError TStdXtra_IMoaMmXScript::GetArgLong(PMoaDrCallInfo callPtr, std::optiona
 			ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(argumentValue, voidP));
 		}
 
-		argOptional.emplace(MoaLong(0));
+		argOptional.emplace(0);
 
 		if (!voidP) {
 			ThrowErr(pObj->mmValueInterfacePointer->ValueToInteger(&argumentValue, &argOptional.value()));
@@ -3052,7 +3052,7 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPath(PMoaDrCallInfo callPtr, Args* argsPo
 		if (voidP) {
 			// we can't call GetArgPathDefault here because the label and agent haven't been found yet
 			// instead, it is deferred to GetArgOptions
-			argsPointer->pathInfoOptional.emplace(Path::Info(pObj->productVersionMajor, pObj->pCallback, pObj->pCalloc));
+			argsPointer->pathInfoOptional.emplace(pObj->productVersionMajor, pObj->pCallback, pObj->pCalloc);
 		} else {
 			MoaChar pathnameSpec[MOA_MAX_PATHNAME] = "";
 
@@ -3064,7 +3064,7 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPath(PMoaDrCallInfo callPtr, Args* argsPo
 					Throw(kMoaMmErr_ValueTypeMismatch);
 				}
 
-				argsPointer->pathInfoOptional.emplace(Path::Info(pObj->productVersionMajor, pObj->pCallback, pObj->pCalloc));
+				argsPointer->pathInfoOptional.emplace(pObj->productVersionMajor, pObj->pCallback, pObj->pCalloc);
 				Path::Info &pathInfo = argsPointer->pathInfoOptional.value();
 
 				ThrowErr(pObj->exportFileValueConverterPointer->getAProp(argumentValue, pObj->symbols.Dirname, dirnameValue));
@@ -3102,7 +3102,7 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPath(PMoaDrCallInfo callPtr, Args* argsPo
 				ThrowErr(err);
 
 				try {
-					argsPointer->pathInfoOptional.emplace(Path::Info(pathnameSpec, pObj->productVersionMajor, pObj->pCallback, pObj->pCalloc));
+					argsPointer->pathInfoOptional.emplace(pathnameSpec, pObj->productVersionMajor, pObj->pCallback, pObj->pCalloc);
 				} catch (Path::Info::Invalid) {
 					Throw(kMoaErr_BadParam);
 				}
@@ -3155,7 +3155,7 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultDirname(Args* argsPointer) {
 	ThrowNull(argsPointer);
 
 	if (!argsPointer->pathInfoOptional.has_value()) {
-		argsPointer->pathInfoOptional.emplace(Path::Info(pObj->productVersionMajor, pObj->pCallback, pObj->pCalloc));
+		argsPointer->pathInfoOptional.emplace(pObj->productVersionMajor, pObj->pCallback, pObj->pCalloc);
 	}
 
 	Path::Info &pathInfo = argsPointer->pathInfoOptional.value();
@@ -3292,7 +3292,7 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultExtension(Args* argsPointer, M
 	ThrowNull(directorMediaPointer);
 
 	if (!argsPointer->pathInfoOptional.has_value()) {
-		argsPointer->pathInfoOptional.emplace(Path::Info(pObj->productVersionMajor, pObj->pCallback, pObj->pCalloc));
+		argsPointer->pathInfoOptional.emplace(pObj->productVersionMajor, pObj->pCallback, pObj->pCalloc);
 	}
 
 	Path::Info &pathInfo = argsPointer->pathInfoOptional.value();
@@ -3385,7 +3385,7 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultBasename(Args* argsPointer, Mo
 	ThrowNull(argsPointer);
 
 	if (!argsPointer->pathInfoOptional.has_value()) {
-		argsPointer->pathInfoOptional.emplace(Path::Info(pObj->productVersionMajor, pObj->pCallback, pObj->pCalloc));
+		argsPointer->pathInfoOptional.emplace(pObj->productVersionMajor, pObj->pCallback, pObj->pCalloc);
 	}
 
 	Path::Info &pathInfo = argsPointer->pathInfoOptional.value();
@@ -3585,7 +3585,7 @@ MoaError TStdXtra_IMoaMmXScript::GetArgLabelDefault(Args* argsPointer, Media::Di
 		}
 
 		if (!argsPointer->pathInfoOptional.has_value()) {
-			argsPointer->pathInfoOptional.emplace(Path::Info(pObj->productVersionMajor, pObj->pCallback, pObj->pCalloc));
+			argsPointer->pathInfoOptional.emplace(pObj->productVersionMajor, pObj->pCallback, pObj->pCalloc);
 		}
 
 		// bad param happens here if bad path passed in
@@ -3712,7 +3712,7 @@ MoaError TStdXtra_IMoaMmXScript::GetArgLabelDefault(Args* argsPointer, Media::Di
 					// to GetArgOptions calling this again
 					// (it might get set to the user specified agent later, which is fine)
 					argsPointer->labelSymbolVariant = labelSymbolVariant;
-					argsPointer->agentStringOptional.emplace("");
+					argsPointer->agentStringOptional = "";
 
 					directorMediaPointer->labelInfoMapIterator = LABEL_INFO_NOT_FOUND;
 					directorMediaPointer->agentInfoMapOptional.emplace(Agent::Info::MAP());
@@ -3814,7 +3814,7 @@ MoaError TStdXtra_IMoaMmXScript::GetArgAgentDefault(Args* argsPointer, Media::Di
 	if (!argsPointer->agentStringOptional.has_value()
 		&& !directorMediaPointer->agentInfoMapOptional.has_value()) {
 		if (!argsPointer->pathInfoOptional.has_value()) {
-			argsPointer->pathInfoOptional.emplace(Path::Info(pObj->productVersionMajor, pObj->pCallback, pObj->pCalloc));
+			argsPointer->pathInfoOptional.emplace(pObj->productVersionMajor, pObj->pCallback, pObj->pCalloc);
 		}
 
 		// bad param happens here if bad path passed in
@@ -3899,7 +3899,7 @@ MoaError TStdXtra_IMoaMmXScript::GetArgOptions(PMoaDrCallInfo callPtr, Args* arg
 			ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(argumentValue, voidP, kMoaMmValueType_PropList));
 		}
 
-		argsPointer->optionsOptional.emplace(Options(pObj->mmValueInterfacePointer));
+		argsPointer->optionsOptional.emplace(pObj->mmValueInterfacePointer);
 		Options &options = argsPointer->optionsOptional.value();
 
 		if (!voidP) {
@@ -4063,7 +4063,7 @@ MoaError TStdXtra_IMoaMmXScript::GetArgOptionsDefaultAgentOptions(Args* argsPoin
 
 	if (!argsPointer->agentStringOptional.value().empty()) {
 		if (!argsPointer->optionsOptional.has_value()) {
-			argsPointer->optionsOptional.emplace(Options(pObj->mmValueInterfacePointer));
+			argsPointer->optionsOptional.emplace(pObj->mmValueInterfacePointer);
 		}
 
 		Options &options = argsPointer->optionsOptional.value();

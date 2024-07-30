@@ -273,7 +273,7 @@ MoaError Asset::Assets::Info::getAssetInfoMapIcons(BitmapImporter &bitmapImporte
 		return kMoaErr_NoErr;
 	}
 
-	iconValuesOptional.emplace(IconValues(mmValueInterfacePointer, mmImageInterfacePointer));
+	iconValuesOptional.emplace(mmValueInterfacePointer, mmImageInterfacePointer);
 
 	IconValues &iconValues = iconValuesOptional.value();
 	IconValues::ICON_VALUE_MAP iconValueMap = iconValues.toIconValueMap();
