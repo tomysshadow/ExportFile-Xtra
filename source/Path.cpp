@@ -11,8 +11,9 @@ bool Path::filterPatternExtensions(std::string filterPattern, EXTENSION_MAPPED_V
 	// clear because we want to pass out a new mapped vector instead of appending
 	extensions.clear();
 
+	const std::regex FILTER_PATTERN_EXTENSIONS("^\\*\\.([^\\.;]+);*");
+
 	std::smatch matches = {};
-	std::regex filterPatternExtensions("^\\*\\.([^\\.;]+);*");
 
 	// clear again on failure
 	MAKE_SCOPE_EXIT(clearExtensionsScopeExit) {
@@ -21,7 +22,7 @@ bool Path::filterPatternExtensions(std::string filterPattern, EXTENSION_MAPPED_V
 
 	// note: although the documentation says there must not be a trailing semicolon
 	// in practice, the MP4 Audio agent includes one anyway so we must handle it
-	while (std::regex_search(filterPattern, matches, filterPatternExtensions)
+	while (std::regex_search(filterPattern, matches, FILTER_PATTERN_EXTENSIONS)
 		&& matches.length() > 1) {
 		const std::string &MATCH = matches[1];
 
@@ -607,8 +608,9 @@ MoaError Path::Info::incrementFilename() {
 	unsigned long number = 2;
 
 	{
+		const std::regex INCREMENT_FILENAME("^([^\\(]*)\\((\\d{0,3})\\)(.*)$");
+
 		std::smatch matches = {};
-		std::regex incrementFilename("^([^\\(]*)\\((\\d{0,3})\\)(.*)$");
 
 		// search for the first pair of (brackets)
 		// not required to have spaces before or after them
@@ -616,7 +618,7 @@ MoaError Path::Info::incrementFilename() {
 		// can have any number inside, or empty (which counts as zero)
 		// which we add 1 to, in order to increment the filename
 		// if no (brackets) found, stick them on the end of the basename, after a space
-		if (std::regex_search(filenameOptional.value(), matches, incrementFilename)
+		if (std::regex_search(filenameOptional.value(), matches, INCREMENT_FILENAME)
 		&& matches.length() > 3) {
 			const unsigned long MIN_NUMBER = 1;
 			const unsigned long MAX_NUMBER = 999;
