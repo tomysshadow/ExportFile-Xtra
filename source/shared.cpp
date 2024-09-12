@@ -91,6 +91,7 @@ MoaError writeStreamPartial(PMoaVoid buffer, MoaStreamCount numberOfBytesToWrite
 	return err;
 }
 
+#ifdef WINDOWS
 MoaError setFileAttributeHiddenWide(bool hidden, LPCWSTR pathWideStringPointer) {
 	RETURN_NULL(pathWideStringPointer);
 
@@ -102,3 +103,4 @@ MoaError setFileAttributeHiddenWide(bool hidden, LPCWSTR pathWideStringPointer) 
 		: fileAttributes & ~FILE_ATTRIBUTE_HIDDEN;
 	return osErr(SetFileAttributesW(pathWideStringPointer, fileAttributes));
 }
+#endif
