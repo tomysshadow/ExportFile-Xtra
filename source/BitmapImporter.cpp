@@ -132,7 +132,8 @@ MoaError BitmapImporter::createMember() {
 	}
 
 	// no free slots
-	RETURN_ERR(drMovieInterfacePointer->NewCast("BitmapImporter", FALSE, &castIndex));
+	MoaChar castName[] = "BitmapImporter";
+	RETURN_ERR(drMovieInterfacePointer->NewCast(castName, FALSE, &castIndex));
 	RETURN_NULL(castIndex);
 	return createMemberInCast(castIndex);
 }

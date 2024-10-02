@@ -54,7 +54,7 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 
 	public:
 	SIZE_TYPE findIndex(const ValueType &value) const {
-		MAP::const_iterator mapIterator = _map.find(value);
+		typename MAP::const_iterator mapIterator = _map.find(value);
 
 		if (mapIterator == _map.cend()) {
 			return NPOS;
@@ -258,7 +258,7 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 	// so this doesn't use the other overloads
 	// once again this returns true if the value was erased, false otherwise
 	bool erase(const ValueType &value) {
-		MAP::const_iterator mapIterator = _map.find(value);
+		typename MAP::const_iterator mapIterator = _map.find(value);
 
 		if (mapIterator == _map.cend()) {
 			return false;

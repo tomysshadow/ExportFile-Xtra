@@ -762,7 +762,7 @@ STDMETHODIMP TStdXtra_IMoaRegister::Register(PIMoaCache cacheInterfacePointer, P
 
 		const char* VER_MAJORVERSION_STRING = "0";
 		const char* VER_MINORVERSION_STRING = "4";
-		const char* VER_BUGFIXVERSION_STRING = "4";
+		const char* VER_BUGFIXVERSION_STRING = "5";
 
 		const size_t VERSION_STRING_SIZE = min(256, kMoaMmMaxXtraMessageTable);
 		char versionString[VERSION_STRING_SIZE] = "";
@@ -4244,7 +4244,10 @@ MoaError TStdXtra_IMoaMmXScript::GetTypeDisplayName(MoaMmSymbol typeSymbol, std:
 		ThrowErr(pObj->drPlayerInterfacePointer->GetCastMemTypeDisplayName(typeSymbol, (PMoaChar)typeDisplayNameStringPointer, typeDisplayNameStringSize));
 	}
 
-	*typeDisplayNamePointer = Asset::trimEllipsis(std::string((PMoaChar)typeDisplayNameStringPointer));
+	{
+		std::string typeDisplayNameString = (PMoaChar)typeDisplayNameStringPointer;
+		*typeDisplayNamePointer = Asset::trimEllipsis(typeDisplayNameString);
+	}
 
 	moa_catch
 

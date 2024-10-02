@@ -1119,9 +1119,12 @@ MoaError Path::Info::setPath(const std::string &path) {
 		: NULL;
 
 	// trim off the period if it's there
-	extensionOptional = extensionStringPointer
-		? trimExtension(std::string(extensionStringPointer))
-		: "";
+	if (extensionStringPointer) {
+		std::string extensionString = extensionStringPointer;
+		extensionOptional = trimExtension(extensionString);
+	} else {
+		extensionOptional = "";
+	}
 
 	// basename
 	// this sometimes gets the name with the extension so can't be used
