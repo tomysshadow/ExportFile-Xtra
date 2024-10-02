@@ -4217,6 +4217,7 @@ MoaError TStdXtra_IMoaMmXScript::GetLoaded(PMoaLong loadedPointer, PIMoaDrCastMe
 
 MoaError TStdXtra_IMoaMmXScript::GetTypeDisplayName(MoaMmSymbol typeSymbol, std::string* typeDisplayNamePointer) {
 	PMoaVoid typeDisplayNameStringPointer = NULL;
+	std::string typeDisplayName = "";
 
 	moa_try
 
@@ -4244,10 +4245,8 @@ MoaError TStdXtra_IMoaMmXScript::GetTypeDisplayName(MoaMmSymbol typeSymbol, std:
 		ThrowErr(pObj->drPlayerInterfacePointer->GetCastMemTypeDisplayName(typeSymbol, (PMoaChar)typeDisplayNameStringPointer, typeDisplayNameStringSize));
 	}
 
-	{
-		std::string typeDisplayNameString = (PMoaChar)typeDisplayNameStringPointer;
-		*typeDisplayNamePointer = Asset::trimEllipsis(typeDisplayNameString);
-	}
+	typeDisplayName = (PMoaChar)typeDisplayNameStringPointer;
+	*typeDisplayNamePointer = Asset::trimEllipsis(typeDisplayName);
 
 	moa_catch
 
