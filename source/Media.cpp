@@ -763,8 +763,7 @@ MoaError Media::WinBMPMedia::getPixelFormat(PIMoaReceptorPixels receptorPixelsIn
 	MoaLong colorSpaceCount = 1;
 
 	// default list if bitdepth not recognized (default to 24-bit)
-	const size_t COLOR_SPACES_SIZE = 2;
-	MoaLong COLOR_SPACES[COLOR_SPACES_SIZE] = { RPCS_RGB, RPCS_RGB };
+	MoaLong COLOR_SPACES[] = { RPCS_RGB, RPCS_RGB };
 
 	if (sourceBitmapInfoHeader.biCompression == BI_RGB) {
 		if (sourceBitmapInfoHeader.biBitCount == 32) {
@@ -796,7 +795,7 @@ MoaError Media::WinBMPMedia::getPixelFormat(PIMoaReceptorPixels receptorPixelsIn
 
 	// both should ideally be provided
 	// (PNG Writer just gives up if there's no TOP_DOWN option)
-	const size_t DIRECTIONS_SIZE = 2;
+	const MoaLong DIRECTIONS_SIZE = 2;
 	MoaLong DIRECTIONS[DIRECTIONS_SIZE] = { BOTTOM_UP, TOP_DOWN };
 
 	RETURN_ERR(
