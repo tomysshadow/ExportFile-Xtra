@@ -812,7 +812,7 @@ MoaError Media::WinBMPMedia::getPixelFormat(PIMoaReceptorPixels receptorPixelsIn
 
 	// the colors duke, the colors!!!
 	size_t colorsBitmapInfoSize = sourceBitmapInfoSize;
-	std::shared_ptr<char[]> colorsBitmapInfoPointer = std::shared_ptr<char[]>(new char[colorsBitmapInfoSize]);
+	std::shared_ptr<char[]> colorsBitmapInfoPointer(new char[colorsBitmapInfoSize]);
 	RETURN_NULL(colorsBitmapInfoPointer);
 
 	DWORD colorsSize = sourceBitmapInfoColorsSize;

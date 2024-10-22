@@ -165,7 +165,7 @@ unsigned int __declspec(noinline) threadNoInline(void* argList) {
 	#endif
 
 	// this doesn't really need to be precise, just needs to be some kinda small amount of time
-	const std::chrono::milliseconds MILLISECONDS = std::chrono::milliseconds(25);
+	const std::chrono::milliseconds MILLISECONDS(25);
 
 	unsigned int result = 0;
 	MoaError err = kMoaErr_NoErr;
