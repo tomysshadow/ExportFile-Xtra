@@ -15,7 +15,7 @@ namespace Mixer {
 		HWND handle = NULL;
 
 		// these are fine to store statically
-		// they will not need to outlive the DLL unloading
+		// they will not need to outlive the module unloading
 		static HMODULE moduleHandle;
 		static ATOM registeredClass;
 

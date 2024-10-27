@@ -201,7 +201,7 @@ unsigned int __declspec(noinline) threadNoInline(void* argList) {
 #ifdef WINDOWS
 void Mixer::Window::create() {
 	if (!moduleHandle) {
-		// shouldn't increment the refcount, this object won't outlive the DLL
+		// shouldn't increment the refcount, this object won't outlive the module
 		if (!GetModuleHandleEx(
 			GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS
 			| GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
@@ -234,7 +234,7 @@ void Mixer::Window::create() {
 	}
 
 	handle = CreateWindowEx(
-		WS_OVERLAPPED,
+		NULL,
 		className,
 		TEXT("Mixer"),
 		WS_CHILD,
