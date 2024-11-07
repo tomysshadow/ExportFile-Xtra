@@ -64,6 +64,7 @@ template <typename T = void*> class GlobalHandleLock {
 	T* lock = NULL;
 	bool resource = false;
 	size_t resourceSize = 0;
+
 	public:
 	GlobalHandleLock(GlobalHandle globalHandle)
 		: globalHandle(globalHandle) {
@@ -162,7 +163,6 @@ template <typename T = void*> class GlobalHandleLock {
 		if (resource) {
 			return resourceSize;
 		}
-
 		return GlobalSize(globalHandle);
 		#endif
 	}
