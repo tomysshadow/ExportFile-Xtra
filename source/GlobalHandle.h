@@ -34,9 +34,16 @@ template <typename T = void*> class GlobalHandleLock {
 		}
 		#endif
 		#ifdef WINDOWS
+		SetLastError(NO_ERROR);
+
 		if (resource) {
+			// may be a no-op, in which case the last error must be NO_ERROR beforehand
 			if (!UnlockResource(globalHandle)) {
-				if (FreeResource(globalHandle) != NULL) {
+				if (GetLastError() != NO_ERROR) {
+					throw std::runtime_error("Failed to Unlock Resource Handle");
+				}
+
+				if (FreeResource(globalHandle)) {
 					throw std::runtime_error("Failed to Free Resource Handle");
 				}
 			}
@@ -48,7 +55,7 @@ template <typename T = void*> class GlobalHandleLock {
 				throw std::runtime_error("Failed to Unlock Global Handle");
 			}
 
-			if (GlobalFree(globalHandle) != NULL) {
+			if (GlobalFree(globalHandle)) {
 				throw std::runtime_error("Failed to Free Global Handle");
 			}
 		}
@@ -85,7 +92,7 @@ template <typename T = void*> class GlobalHandleLock {
 		}
 
 		if (resource) {
-			LoadResource(resourceHandle);
+			LoadResource(globalHandle);
 		}
 
 		create();
@@ -105,6 +112,9 @@ template <typename T = void*> class GlobalHandleLock {
 			throw std::runtime_error("Failed to Load Resource");
 		}
 
+		SetLastError(ERROR_SUCCESS);
+
+		// may return zero without an error occuring, in which case the last error must be ERROR_SUCCESS beforehand
 		resourceSize = SizeofResource(moduleHandle, resourceHandle);
 
 		if (!resourceSize && GetLastError() != ERROR_SUCCESS) {
