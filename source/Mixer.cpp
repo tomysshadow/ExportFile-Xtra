@@ -147,20 +147,20 @@ unsigned int __declspec(noinline) threadNoInline(void* argList) {
 	Media::MixerMedia* mixerMediaPointer = (Media::MixerMedia*)argList;
 
 	if (!mixerMediaPointer) {
-		throw std::runtime_error("mixerMediaPointer must not be zero");
+		throw std::logic_error("mixerMediaPointer must not be zero");
 	}
 
 	#ifdef WINDOWS
 	HMODULE moduleHandle = mixerMediaPointer->moduleHandle;
 
 	if (!moduleHandle) {
-		throw std::runtime_error("moduleHandle must not be NULL");
+		throw std::logic_error("moduleHandle must not be NULL");
 	}
 
 	HWND windowHandle = mixerMediaPointer->window.getHandle();
 
 	if (!windowHandle) {
-		throw std::runtime_error("windowHandle must not be NULL");
+		throw std::logic_error("windowHandle must not be NULL");
 	}
 	#endif
 

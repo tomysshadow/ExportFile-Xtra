@@ -59,7 +59,7 @@ Stream::Stream(PIMoaCallback callbackInterfacePointer)
 		}
 
 		if (!fileInterfacePointer) {
-			throw std::runtime_error("fileInterfacePointer must not be NULL");
+			throw std::logic_error("fileInterfacePointer must not be NULL");
 		}
 
 		err = fileInterfacePointer->SetNewTempSpec(NULL);
@@ -81,7 +81,7 @@ Stream::Stream(PIMoaCallback callbackInterfacePointer)
 		}
 
 		if (!streamInterfacePointer) {
-			throw std::runtime_error("streamInterfacePointer must not be NULL");
+			throw std::logic_error("streamInterfacePointer must not be NULL");
 		}
 	}
 }
@@ -103,7 +103,7 @@ Stream::Stream(ConstPMoaChar pathStringPointer, bool replace, PIMoaCallback call
 	}
 
 	if (!fileInterfacePointer) {
-		throw std::runtime_error("fileInterfacePointer must not be NULL");
+		throw std::logic_error("fileInterfacePointer must not be NULL");
 	}
 
 	err = fileInterfacePointer->SetPathnameSpec(pathStringPointer, FALSE);
@@ -133,7 +133,7 @@ Stream::Stream(ConstPMoaChar pathStringPointer, bool replace, PIMoaCallback call
 	}
 
 	if (!streamInterfacePointer) {
-		throw std::runtime_error("streamInterfacePointer must not be NULL");
+		throw std::logic_error("streamInterfacePointer must not be NULL");
 	}
 }
 

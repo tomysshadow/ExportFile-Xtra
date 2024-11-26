@@ -161,7 +161,7 @@ namespace Formats {
 				globalHandleLockPointer = std::make_unique<MEDIA_DATA_GLOBAL_HANDLE_LOCK>(mediaData);
 
 				if (!globalHandleLockPointer) {
-					throw std::runtime_error("globalHandleLockPointer must not be zero");
+					throw std::logic_error("globalHandleLockPointer must not be zero");
 				}
 			}
 
@@ -178,7 +178,7 @@ namespace Formats {
 				globalHandleLockPointer = std::make_unique<MEDIA_DATA_GLOBAL_HANDLE_LOCK>(resource, mediaData);
 
 				if (!globalHandleLockPointer) {
-					throw std::runtime_error("globalHandleLockPointer must not be zero");
+					throw std::logic_error("globalHandleLockPointer must not be zero");
 				}
 			}
 			#endif
@@ -195,7 +195,7 @@ namespace Formats {
 				globalHandleLockPointer = std::make_unique<MEDIA_DATA_GLOBAL_HANDLE_LOCK>(moduleHandle, resourceHandle);
 
 				if (!globalHandleLockPointer) {
-					throw std::runtime_error("globalHandleLockPointer must not be zero");
+					throw std::logic_error("globalHandleLockPointer must not be zero");
 				}
 			}
 			#endif

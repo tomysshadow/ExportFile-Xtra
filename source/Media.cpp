@@ -160,7 +160,7 @@ Media::MixerMedia::MixerMedia(const ExportFileValueConverter &exportFileValueCon
 	};
 
 	if (!drMovieInterfacePointer) {
-		throw std::runtime_error("drMovieInterfacePointer must not be NULL");
+		throw std::logic_error("drMovieInterfacePointer must not be NULL");
 	}
 
 	// may be null if Director version doesn't need it
