@@ -638,10 +638,11 @@ MoaError Path::Info::incrementFilename() {
 		}
 	}
 
-	std::ostringstream oStringStream;
-	oStringStream << basename << "(" << number << ")" << extension;
+	std::ostringstream outputStringStream;
+	outputStringStream.exceptions(std::ostringstream::badbit);
+	outputStringStream << basename << "(" << number << ")" << extension;
 
-	setFilenameOptional(oStringStream.str());
+	setFilenameOptional(outputStringStream.str());
 	setBasenameOptional(std::nullopt);
 	setExtensionOptional(std::nullopt);
 	#endif
