@@ -11,6 +11,7 @@
 #include <variant>
 #include <filesystem>
 #include <stdint.h>
+#include <ctype.h>
 #include <string.h>
 
 #include "mmtypes.h"
