@@ -426,7 +426,7 @@ STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_AgentHiddenReaderSet_TStdX
 
 	if (equalID) {
 		MoaBool hidden = FALSE;
-		const MoaLong HIDDEN_SIZE = sizeof(hidden);
+		static const MoaLong HIDDEN_SIZE = sizeof(hidden);
 
 		err = registryEntryDictInterfacePointer->Get(kMoaDictType_Bool, &hidden, HIDDEN_SIZE, kReaderRegKey_Hidden);
 
@@ -760,11 +760,11 @@ STDMETHODIMP TStdXtra_IMoaRegister::Register(PIMoaCache cacheInterfacePointer, P
 		ThrowErr(cacheInterfacePointer->AddRegistryEntry(xtraEntryDictInterfacePointer, &CLSID_TStdXtra, &IID_IMoaMmXScript, &registryEntryDictInterfacePointer));
 		ThrowNull(registryEntryDictInterfacePointer);
 
-		const char* VER_MAJORVERSION_STRING = "0";
-		const char* VER_MINORVERSION_STRING = "4";
-		const char* VER_BUGFIXVERSION_STRING = "9";
+		static const char* VER_MAJORVERSION_STRING = "0";
+		static const char* VER_MINORVERSION_STRING = "5";
+		static const char* VER_BUGFIXVERSION_STRING = "0";
 
-		const size_t VERSION_STRING_SIZE = min(256, kMoaMmMaxXtraMessageTable);
+		static const size_t VERSION_STRING_SIZE = min(256, kMoaMmMaxXtraMessageTable);
 		char versionString[VERSION_STRING_SIZE] = "";
 
 		if (sprintf_s(versionString, VERSION_STRING_SIZE, versionInfo, VER_MAJORVERSION_STRING, VER_MINORVERSION_STRING, VER_BUGFIXVERSION_STRING) == -1) {
@@ -813,9 +813,9 @@ STDMETHODIMP TStdXtra_IMoaMmXScript::Call(PMoaDrCallInfo callPtr) {
 
 	ThrowNull(callPtr);
 
-	const MoaLong ARGS_BASE_STANDARD_SYNTAX = 0;
-	const MoaLong ARGS_BASE_ALTERNATE_SYNTAX_EXPORT_FILE = 1;
-	const MoaLong ARGS_BASE_ALTERNATE_SYNTAX_CALL = 2;
+	static const MoaLong ARGS_BASE_STANDARD_SYNTAX = 0;
+	static const MoaLong ARGS_BASE_ALTERNATE_SYNTAX_EXPORT_FILE = 1;
+	static const MoaLong ARGS_BASE_ALTERNATE_SYNTAX_CALL = 2;
 
 	MoaError err = kMoaErr_NoErr;
 
@@ -2327,8 +2327,8 @@ MoaError TStdXtra_IMoaMmXScript::HandleCreateFileError(Args* argsPointer, Media:
 	// (so now there's a file not found error)
 	// we only do this to a maximum of twenty retries, in case there's some scenario
 	// where two errors alternate back and forth, to not get stuck in an infinite loop
-	const int DEFAULT_RETRIES = 10;
-	const int MAX_RETRIES = DEFAULT_RETRIES + DEFAULT_RETRIES;
+	static const int DEFAULT_RETRIES = 10;
+	static const int MAX_RETRIES = DEFAULT_RETRIES + DEFAULT_RETRIES;
 
 	MoaError err2 = kMoaErr_NoErr;
 
@@ -2454,7 +2454,7 @@ MoaError TStdXtra_IMoaMmXScript::HandleDuplicateSpec(Args* argsPointer, Media::D
 		// retry more than once
 		// also on Mac the filename is only incremented by one number per loop
 		// even if the file exists already, so this must be at least 1000
-		const int MAX_RETRIES = 1000;
+		static const int MAX_RETRIES = 1000;
 
 		if (!argsPointer->pathInfoOptional.has_value()) {
 			Throw(kMoaErr_InternalError);
@@ -2811,7 +2811,7 @@ MoaError TStdXtra_IMoaMmXScript::AddAgentInfoExtensions(ConstPMoaChar agentInfoN
 	ThrowNull(agentInfoPathExtensionsPointer);
 	ThrowNull(mixFormatInfoInterfacePointer);
 
-	const MoaUlong FILTER_PATTERN_SIZE = 7;
+	static const MoaUlong FILTER_PATTERN_SIZE = 7;
 
 	MoaUlong fileExtListSize = stringSize(agentInfoNameStringPointer) + 1 + FILTER_PATTERN_SIZE + 1;
 
@@ -2946,7 +2946,7 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPropertyName(PMoaDrCallInfo callPtr, PMoa
 	ThrowNull(propertyNameSymbolPointer);
 
 	{
-		const MoaLong PROPERTY_NAME_ARG_INDEX = 2;
+		static const MoaLong PROPERTY_NAME_ARG_INDEX = 2;
 
 		MoaMmValue argumentValue = kVoidMoaMmValueInitializer;
 		AccessArgByIndex(PROPERTY_NAME_ARG_INDEX, &argumentValue);
@@ -4548,7 +4548,7 @@ MoaError TStdXtra_IMoaMmXScript::GetReceptorIDs(Args* argsPointer, Media::Direct
 	MoaLong &receptorCount = *receptorCountPointer;
 	ThrowErr(readerInterfacePointer->CountUnderstoodReceptorIDs(&receptorCount));
 
-	const MoaUlong MOA_INTERFACE_ID_SIZE = sizeof(MoaInterfaceID);
+	static const MoaUlong MOA_INTERFACE_ID_SIZE = sizeof(MoaInterfaceID);
 
 	MoaUlong receptorIDsSize = receptorCount * MOA_INTERFACE_ID_SIZE;
 
@@ -4746,14 +4746,14 @@ MoaError TStdXtra_IMoaMmXScript::GetAgentInfoHidden(Agent::HIDDEN_READER_SET* ag
 
 	if (err == kMoaErr_NoErr
 		&& writerRegistryEntryDictInterfacePointer) {
-		const MoaLong AGENT_REGISTRY_ENTRY_DICT_INTERFACE_POINTER_SIZE = sizeof(agentRegistryEntryDictInterfacePointer);
+		static const MoaLong AGENT_REGISTRY_ENTRY_DICT_INTERFACE_POINTER_SIZE = sizeof(agentRegistryEntryDictInterfacePointer);
 
 		err = writerRegistryEntryDictInterfacePointer->Get(kMoaDictType_Dict, &agentRegistryEntryDictInterfacePointer, AGENT_REGISTRY_ENTRY_DICT_INTERFACE_POINTER_SIZE, kWriterRegKey_AgentRegDict);
 
 		if (err == kMoaErr_NoErr
 			&& agentRegistryEntryDictInterfacePointer) {
 			agentInfoPointer->hidden = FALSE;
-			const MoaLong HIDDEN_SIZE = sizeof(agentInfoPointer->hidden);
+			static const MoaLong HIDDEN_SIZE = sizeof(agentInfoPointer->hidden);
 
 			// do not error if this fails
 			agentRegistryEntryDictInterfacePointer->Get(kMoaDictType_Bool, &agentInfoPointer->hidden, HIDDEN_SIZE, kReaderRegKey_Hidden);

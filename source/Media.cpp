@@ -246,8 +246,8 @@ MoaError Media::MixerMedia::Lingo::getSymbols() {
 }
 
 MoaError Media::MixerMedia::Lingo::getDefaultValues() {
-	const MoaLong DEFAULT_RESULT_VALUE = IS_ERROR(kMoaErr_InternalError);
-	const MoaLong DEFAULT_ERR_CODE_VALUE = HRESULT_CODE(kMoaErr_InternalError);
+	static const MoaLong DEFAULT_RESULT_VALUE = IS_ERROR(kMoaErr_InternalError);
+	static const MoaLong DEFAULT_ERR_CODE_VALUE = HRESULT_CODE(kMoaErr_InternalError);
 
 	RETURN_ERR(mmValueInterfacePointer->IntegerToValue(DEFAULT_RESULT_VALUE, &defaultResultValue));
 	RETURN_ERR(mmValueInterfacePointer->IntegerToValue(DEFAULT_ERR_CODE_VALUE, &defaultErrCodeValue));
@@ -351,7 +351,7 @@ void Media::MixerMedia::Lingo::callHandler(MoaMmValue &memberValue, MoaError mix
 	MoaError err2 = mmValueInterfacePointer->IntegerToValue(errCode, &errCodeValue);
 
 	// default values so this will theoretically NEVER fail
-	const MoaLong ARGS_SIZE = 3;
+	static const MoaLong ARGS_SIZE = 3;
 	MoaMmValue args[ARGS_SIZE] = { memberValue, err == kMoaErr_NoErr ? resultValue : defaultResultValue, err2 == kMoaErr_NoErr ? errCodeValue : defaultErrCodeValue };
 
 	// don't care if this fails, handler may not be defined
@@ -392,7 +392,7 @@ MoaError Media::WinBMPMedia::allocateSourceBitmap(PIMoaReceptorPixels receptorPi
 	sourceBitmapFileHeaderOptional.emplace();
 	BITMAPFILEHEADER &sourceBitmapFileHeader = sourceBitmapFileHeaderOptional.value();
 
-	const MoaStreamCount SOURCE_BITMAP_FILE_HEADER_SIZE = sizeof(sourceBitmapFileHeader);
+	static const MoaStreamCount SOURCE_BITMAP_FILE_HEADER_SIZE = sizeof(sourceBitmapFileHeader);
 
 	RETURN_ERR(readStreamSafe(&sourceBitmapFileHeader, SOURCE_BITMAP_FILE_HEADER_SIZE, readStreamInterfacePointer));
 
@@ -413,7 +413,7 @@ MoaError Media::WinBMPMedia::allocateSourceBitmap(PIMoaReceptorPixels receptorPi
 		// we need this ugly get call because this is technically a char pointer
 		BITMAPINFOHEADER &sourceBitmapInfoHeader = ((PBITMAPINFO)sourceBitmapInfoPointer.get())->bmiHeader;
 
-		const MoaStreamCount SOURCE_BITMAP_INFO_HEADER_SIZE = sizeof(sourceBitmapInfoHeader);
+		static const MoaStreamCount SOURCE_BITMAP_INFO_HEADER_SIZE = sizeof(sourceBitmapInfoHeader);
 
 		RETURN_ERR(readStreamSafe(&sourceBitmapInfoHeader, SOURCE_BITMAP_INFO_HEADER_SIZE, readStreamInterfacePointer));
 
@@ -552,7 +552,7 @@ bool Media::WinBMPMedia::getImageSize(MoaLong colorSpace, ULONG absWidth, ULONG 
 	#if defined READ_RPCS_INDEXED_RGB || defined READ_RPCS_RGB16
 	typedef std::map<MoaLong, WORD> BIT_COUNT_MAP;
 
-	const BIT_COUNT_MAP _BIT_COUNT_MAP = {
+	static const BIT_COUNT_MAP _BIT_COUNT_MAP = {
 		{ RPCS_INDEXED_RGB, 8 },
 		{ RPCS_RGB16, 16 },
 		{ RPCS_RGB, 24 },
@@ -584,7 +584,7 @@ bool Media::WinBMPMedia::getSamplesPerPixel(MoaLong colorSpace, MoaShort &sample
 	#if defined READ_RPCS_INDEXED_RGB || defined READ_RPCS_RGB16
 	typedef std::map<MoaLong, MoaShort> SAMPLES_PER_PIXEL_MAP;
 
-	const SAMPLES_PER_PIXEL_MAP _SAMPLES_PER_PIXEL_MAP = {
+	static const SAMPLES_PER_PIXEL_MAP _SAMPLES_PER_PIXEL_MAP = {
 		{ RPCS_INDEXED_RGB, 1 },
 		{ RPCS_RGB16, 3 },
 		{ RPCS_RGB, 3 },
@@ -621,14 +621,14 @@ bool Media::WinBMPMedia::getColorTableIndexedRGB(BITMAPINFO &bitmapInfo, MoaPixe
 		return false;
 	}
 
-	const MoaLong ENTRY_SIZE = sizeof(TMoaCTableEntry);
+	static const MoaLong ENTRY_SIZE = sizeof(TMoaCTableEntry);
 
 	if (!ENTRY_SIZE) {
 		return false;
 	}
 
-	const MoaLong ENTRIES_SIZE = sizeof(pixelFormat.cs.colorTable.Entry);
-	const MoaLong NUM_ENTRIES_ALLOC = ENTRIES_SIZE / ENTRY_SIZE;
+	static const MoaLong ENTRIES_SIZE = sizeof(pixelFormat.cs.colorTable.Entry);
+	static const MoaLong NUM_ENTRIES_ALLOC = ENTRIES_SIZE / ENTRY_SIZE;
 
 	pixelFormat.cs.colorTable.Header.iNumEntries = colorsUsed;
 	pixelFormat.cs.colorTable.Header.iNumEntriesAlloc = NUM_ENTRIES_ALLOC;
@@ -713,15 +713,15 @@ bool Media::WinBMPMedia::getBitmapInfoColorsSize(const BITMAPINFOHEADER &bitmapI
 			return false;
 		}
 
-		const DWORD RGBQUAD_SIZE = sizeof(RGBQUAD);
+		static const DWORD RGBQUAD_SIZE = sizeof(RGBQUAD);
 
 		colorsSize = colorsUsed * RGBQUAD_SIZE;
 		return true;
 	}
 
 	if (bitmapInfoHeader.biCompression == BI_BITFIELDS) {
-		const DWORD DWORD_SIZE = sizeof(DWORD);
-		const DWORD COLOR_MASKS_SIZE = DWORD_SIZE * 3;
+		static const DWORD DWORD_SIZE = sizeof(DWORD);
+		static const DWORD COLOR_MASKS_SIZE = DWORD_SIZE * 3;
 
 		colorsSize = COLOR_MASKS_SIZE;
 	}
@@ -785,7 +785,7 @@ MoaError Media::WinBMPMedia::getPixelFormat(PIMoaReceptorPixels receptorPixelsIn
 	}
 
 	// no thumbnail size, only the canonical size available
-	const MoaLong DIMENSION_COUNT = 1;
+	static const MoaLong DIMENSION_COUNT = 1;
 
 	ULONG absSourceWidth = abs(sourceBitmapInfoHeader.biWidth);
 	pixelFormat.dim.pixels.x = absSourceWidth;
@@ -795,7 +795,7 @@ MoaError Media::WinBMPMedia::getPixelFormat(PIMoaReceptorPixels receptorPixelsIn
 
 	// both should ideally be provided
 	// (PNG Writer just gives up if there's no TOP_DOWN option)
-	const MoaLong DIRECTIONS_SIZE = 2;
+	static const MoaLong DIRECTIONS_SIZE = 2;
 	MoaLong DIRECTIONS[DIRECTIONS_SIZE] = { BOTTOM_UP, TOP_DOWN };
 
 	RETURN_ERR(
@@ -923,7 +923,7 @@ MoaError Media::WinBMPMedia::getPixelFormat(PIMoaReceptorPixels receptorPixelsIn
 	pixelFormat.cs.flags = pixelFormat.cs.colorSpace == RPCS_RGBA ? RPCSFLAGS_TRANSPARENT : RPCSFLAGS_NONE;
 
 	// can't be an integer divide: must be able to round down OR up to nearest number
-	const double METERS_TO_INCHES = 0.0254;
+	static const double METERS_TO_INCHES = 0.0254;
 
 	pixelFormat.dim.resolution.x = (MoaCoord)round(METERS_TO_INCHES * bitmapInfoHeader.biXPelsPerMeter);
 	pixelFormat.dim.resolution.y = (MoaCoord)round(METERS_TO_INCHES * bitmapInfoHeader.biYPelsPerMeter);
@@ -1112,7 +1112,7 @@ MoaError Media::WinBMPMedia::getMappedView(PIMoaReceptorPixels receptorPixelsInt
 		// it creates its own internal file mapping
 		// so because it is a mapped view, we can use VirtualQuery to get the size
 		MEMORY_BASIC_INFORMATION memoryBasicInformation = {};
-		const SIZE_T MEMORY_BASIC_INFORMATION_SIZE = sizeof(memoryBasicInformation);
+		static const SIZE_T MEMORY_BASIC_INFORMATION_SIZE = sizeof(memoryBasicInformation);
 
 		RETURN_ERR(
 			osErr(

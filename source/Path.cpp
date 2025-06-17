@@ -11,7 +11,7 @@ bool Path::filterPatternExtensions(std::string filterPattern, EXTENSION_MAPPED_V
 	// clear because we want to pass out a new mapped vector instead of appending
 	extensions.clear();
 
-	const std::regex FILTER_PATTERN_EXTENSIONS("^\\*\\.([^\\.;]+);*");
+	static const std::regex FILTER_PATTERN_EXTENSIONS("^\\*\\.([^\\.;]+);*");
 
 	std::smatch matches = {};
 
@@ -402,7 +402,7 @@ std::string Path::Info::toBasename(const std::string &filename) {
 }
 
 std::string Path::Info::toExtension(const std::string &filename) {
-	const std::string::size_type PERIOD_SIZE = sizeof(PERIOD);
+	static const std::string::size_type PERIOD_SIZE = sizeof(PERIOD);
 
 	std::string::size_type periodIndex = filename.rfind(PERIOD);
 
@@ -608,7 +608,7 @@ MoaError Path::Info::incrementFilename() {
 	unsigned long number = 2;
 
 	{
-		const std::regex INCREMENT_FILENAME("^([^\\(]*)\\((\\d{0,3})\\)(.*)$");
+		static const std::regex INCREMENT_FILENAME("^([^\\(]*)\\((\\d{0,3})\\)(.*)$");
 
 		std::smatch matches = {};
 
@@ -620,8 +620,8 @@ MoaError Path::Info::incrementFilename() {
 		// if no (brackets) found, stick them on the end of the basename, after a space
 		if (std::regex_search(filenameOptional.value(), matches, INCREMENT_FILENAME)
 		&& matches.length() > 3) {
-			const unsigned long MIN_NUMBER = 1;
-			const unsigned long MAX_NUMBER = 999;
+			static const unsigned long MIN_NUMBER = 1;
+			static const unsigned long MAX_NUMBER = 999;
 
 			basename = matches[1];
 

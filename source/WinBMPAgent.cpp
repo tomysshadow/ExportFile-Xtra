@@ -71,23 +71,23 @@ STDMETHODIMP CWinBMPAgent_IMoaRegister::Register(PIMoaCache cacheInterfacePointe
 		ThrowErr(cacheInterfacePointer->AddRegistryEntry(xtraEntryDictInterfacePointer, &CLSID_CWinBMPAgent, &IID_IMoaAgent, &registryEntryDictInterfacePointer));
 		ThrowNull(registryEntryDictInterfacePointer);
 
-		const MoaLong NAME_SIZE = 7;
+		static const MoaLong NAME_SIZE = 7;
 		MoaChar name[NAME_SIZE] = "WinBMP";
 
 		ThrowErr(registryEntryDictInterfacePointer->Put(kMoaDictType_CString, name, NAME_SIZE, kAgentRegKey_Name));
 
 		// IMPORTANT: this should NOT be kMoaCfFormatName_BMP
 		// (it interferes with Director's default BMP reading behaviour otherwise)
-		const MoaLong FORMAT_SIZE = sizeof(kMoaCfFormatName_WinBMP);
+		static const MoaLong FORMAT_SIZE = sizeof(kMoaCfFormatName_WinBMP);
 
 		ThrowErr(registryEntryDictInterfacePointer->Put(kMoaDictType_CString, kMoaCfFormatName_WinBMP, FORMAT_SIZE, kAgentRegKey_Format));
 
-		const MoaLong FILE_CREATOR_SIZE = 5;
+		static const MoaLong FILE_CREATOR_SIZE = 5;
 		MoaChar fileCreator[FILE_CREATOR_SIZE] = "????";
 
 		ThrowErr(registryEntryDictInterfacePointer->Put(kMoaDictType_CString, fileCreator, FILE_CREATOR_SIZE, kAgentRegKey_FileCreator));
 
-		const MoaLong TYPES_SIZE = 5;
+		static const MoaLong TYPES_SIZE = 5;
 		MoaChar types[TYPES_SIZE] = "WBMP";
 
 		ThrowErr(registryEntryDictInterfacePointer->Put(kMoaDictType_CString, types, TYPES_SIZE, kAgentRegKey_FileTypes));
@@ -95,13 +95,13 @@ STDMETHODIMP CWinBMPAgent_IMoaRegister::Register(PIMoaCache cacheInterfacePointe
 
 		// importFileInto in projectors ignores the Hidden key, so
 		// this must be assigned some other extension to never be used
-		const MoaLong FILE_EXTS_SIZE = 9;
+		static const MoaLong FILE_EXTS_SIZE = 9;
 		MoaChar fileExts[FILE_EXTS_SIZE] = "*.winbmp";
 
 		ThrowErr(registryEntryDictInterfacePointer->Put(kMoaDictType_CString, fileExts, FILE_EXTS_SIZE, kAgentRegKey_FileExts));
 
 		/*
-		const MoaLong MIME_TYPE_SIZE = 10;
+		static const MoaLong MIME_TYPE_SIZE = 10;
 		MoaChar mimeType[MIME_TYPE_SIZE] = "image/bmp";
 
 		ThrowErr(registryEntryDictInterfacePointer->Put(kMoaDictType_CString, mimeType, MIME_TYPE_SIZE, kAgentRegKey_MimeType));
@@ -112,17 +112,17 @@ STDMETHODIMP CWinBMPAgent_IMoaRegister::Register(PIMoaCache cacheInterfacePointe
 		ThrowNull(registryEntryDictInterfacePointer);
 
 		MoaBool hasUI = FALSE;
-		const MoaLong HAS_UI_SIZE = sizeof(hasUI);
+		static const MoaLong HAS_UI_SIZE = sizeof(hasUI);
 
 		ThrowErr(registryEntryDictInterfacePointer->Put(kMoaDictType_Bool, &hasUI, HAS_UI_SIZE, kReaderRegKey_HasUI));
 
 		// hidden so we don't compete with Director's default BMP reading behaviour
 		MoaBool hidden = TRUE;
-		const MoaLong HIDDEN_SIZE = sizeof(hidden);
+		static const MoaLong HIDDEN_SIZE = sizeof(hidden);
 
 		ThrowErr(registryEntryDictInterfacePointer->Put(kMoaDictType_Bool, &hidden, HIDDEN_SIZE, kReaderRegKey_Hidden));
 
-		const MoaLong IID_I_MOA_RECEPTOR_PIXELS_SIZE = sizeof(IID_IMoaReceptorPixels);
+		static const MoaLong IID_I_MOA_RECEPTOR_PIXELS_SIZE = sizeof(IID_IMoaReceptorPixels);
 
 		ThrowErr(registryEntryDictInterfacePointer->Put(kMoaDictType_Bytes, &IID_IMoaReceptorPixels, IID_I_MOA_RECEPTOR_PIXELS_SIZE, kReaderRegKey_UnderstoodReceptors));
 	}

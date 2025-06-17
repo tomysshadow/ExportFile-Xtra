@@ -165,7 +165,7 @@ unsigned int __declspec(noinline) threadNoInline(void* argList) {
 	#endif
 
 	// this doesn't really need to be precise, just needs to be some kinda small amount of time
-	const std::chrono::milliseconds MILLISECONDS(25);
+	static const std::chrono::milliseconds MILLISECONDS(25);
 
 	unsigned int result = 0;
 	MoaError err = kMoaErr_NoErr;
@@ -215,16 +215,16 @@ void Mixer::Window::create() {
 		}
 	}
 
-	const TCHAR className[] = TEXT("Mixer");
+	static const TCHAR CLASS_NAME[] = TEXT("Mixer");
 
 	if (!registeredClass) {
 		WNDCLASSEX windowClassEx = {};
-		const UINT WINDOW_CLASS_EX_SIZE = sizeof(windowClassEx);
+		static const UINT WINDOW_CLASS_EX_SIZE = sizeof(windowClassEx);
 
 		windowClassEx.cbSize = WINDOW_CLASS_EX_SIZE;
 		windowClassEx.lpfnWndProc = proc;
 		windowClassEx.hInstance = moduleHandle;
-		windowClassEx.lpszClassName = className;
+		windowClassEx.lpszClassName = CLASS_NAME;
 
 		registeredClass = RegisterClassEx(&windowClassEx);
 
@@ -235,7 +235,7 @@ void Mixer::Window::create() {
 
 	handle = CreateWindowEx(
 		NULL,
-		className,
+		CLASS_NAME,
 		TEXT("Mixer"),
 		WS_CHILD,
 		CW_USEDEFAULT,

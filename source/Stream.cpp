@@ -191,7 +191,7 @@ MoaError Stream::copy(PIMoaStream writeStreamInterfacePointer, MoaUlong size) {
 		return kMoaErr_NoErr;
 	}
 
-	const size_t BUFFER_SIZE = 0x8000;
+	static const size_t BUFFER_SIZE = 0x8000;
 	char buffer[BUFFER_SIZE] = {};
 
 	MoaStreamCount numberOfBytesToRead = BUFFER_SIZE;

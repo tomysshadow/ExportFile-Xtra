@@ -22,9 +22,9 @@ written permission of Adobe.
 #include "moaxtra.h"
 #endif
 
-const short HDR_SIZE_DIRECTOR5 = 0x001E;
-const short XHDR_SIZE_DIRECTOR5 = 0x1E00;
-const short HDR_SIZE_DIRECTOR7 = 0x0000;
+static const short HDR_SIZE_DIRECTOR5 = 0x001E;
+static const short XHDR_SIZE_DIRECTOR5 = 0x1E00;
+static const short HDR_SIZE_DIRECTOR7 = 0x0000;
 
 /****************************************************************************
  *

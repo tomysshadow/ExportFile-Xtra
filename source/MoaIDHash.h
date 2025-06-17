@@ -21,7 +21,7 @@ namespace std {
 /*
 struct MoaIDComparer {
     bool operator()(const MoaID &moaID, const MoaID &moaID2) const {
-        const size_t MOA_ID_SIZE = sizeof(MoaID);
+        static const size_t MOA_ID_SIZE = sizeof(MoaID);
         return memcmp(&moaID, &moaID2, MOA_ID_SIZE) == -1;
     }
 };

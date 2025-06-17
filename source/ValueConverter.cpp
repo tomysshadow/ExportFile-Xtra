@@ -30,24 +30,24 @@ MoaError ValueConverter::getSymbols() {
 	return kMoaErr_NoErr;
 }
 
+typedef std::map<MoaDictTypeID, MoaLong> VALUE_SIZE_MAP;
+
+static const VALUE_SIZE_MAP DICT_TYPE_ID_VALUE_SIZE_MAP = {
+	{kMoaDictType_Dict, sizeof(PIMoaDict)},
+	{kMoaDictType_PIMoaUnknown, sizeof(PIMoaUnknown)},
+	{kMoaDictType_Long, sizeof(MoaLong)},
+	{kMoaDictType_Float, sizeof(MoaFloat)},
+	{kMoaDictType_Wide, sizeof(MoaWide)},
+	{kMoaDictType_Bool, sizeof(MoaBool)},
+	{kMoaDictType_MoaID, sizeof(MoaID)},
+	{kMoaDictType_Double, sizeof(MoaDouble)},
+	{kMoaDictType_MoaPoint, sizeof(MoaPoint)},
+	{kMoaDictType_MoaRect, sizeof(MoaRect)}
+};
+
 MoaError ValueConverter::appendToDictInterfacePointer(const MoaMmValue &propListValue, PROP_LIST_DICT_VALUE_MAP &propListDictValueMap, MoaDictTypeID dictTypeID, ConstPMoaChar keyStringPointer, PIMoaDict dictInterfacePointer) {
 	RETURN_NULL(keyStringPointer);
 	RETURN_NULL(dictInterfacePointer);
-
-	typedef std::map<MoaDictTypeID, MoaLong> DICT_TYPE_ID_VALUE_SIZE_MAP;
-
-	const DICT_TYPE_ID_VALUE_SIZE_MAP dictTypeIDValueSizeMap = {
-		{kMoaDictType_Dict, sizeof(PIMoaDict)},
-		{kMoaDictType_PIMoaUnknown, sizeof(PIMoaUnknown)},
-		{kMoaDictType_Long, sizeof(MoaLong)},
-		{kMoaDictType_Float, sizeof(MoaFloat)},
-		{kMoaDictType_Wide, sizeof(MoaWide)},
-		{kMoaDictType_Bool, sizeof(MoaBool)},
-		{kMoaDictType_MoaID, sizeof(MoaID)},
-		{kMoaDictType_Double, sizeof(MoaDouble)},
-		{kMoaDictType_MoaPoint, sizeof(MoaPoint)},
-		{kMoaDictType_MoaRect, sizeof(MoaRect)}
-	};
 
 	PMoaVoid valueBuffer = NULL;
 	MoaLong valueSize = 0;
@@ -56,9 +56,9 @@ MoaError ValueConverter::appendToDictInterfacePointer(const MoaMmValue &propList
 		freeMemory(valueBuffer, callocInterfacePointer);
 	};
 
-	DICT_TYPE_ID_VALUE_SIZE_MAP::const_iterator dictTypeIDValueSizeMapIterator = dictTypeIDValueSizeMap.find(dictTypeID);
+	VALUE_SIZE_MAP::const_iterator dictTypeIDValueSizeMapIterator = DICT_TYPE_ID_VALUE_SIZE_MAP.find(dictTypeID);
 
-	if (dictTypeIDValueSizeMapIterator != dictTypeIDValueSizeMap.end()) {
+	if (dictTypeIDValueSizeMapIterator != DICT_TYPE_ID_VALUE_SIZE_MAP.end()) {
 		valueSize = dictTypeIDValueSizeMapIterator->second;
 
 		valueBuffer = callocInterfacePointer->NRAlloc(valueSize);
@@ -154,24 +154,9 @@ MoaError ValueConverter::appendToPropList(MoaMmValue &propListValue, bool append
 	RETURN_NULL(keyStringPointer);
 	RETURN_NULL(dictInterfacePointer);
 
-	typedef std::map<MoaDictTypeID, MoaLong> DICT_TYPE_ID_VALUE_SIZE_MAP;
+	VALUE_SIZE_MAP::const_iterator dictTypeIDValueSizeMapIterator = DICT_TYPE_ID_VALUE_SIZE_MAP.find(dictTypeID);
 
-	const DICT_TYPE_ID_VALUE_SIZE_MAP dictTypeIDValueSizeMap = {
-		{kMoaDictType_Dict, sizeof(PIMoaDict)},
-		{kMoaDictType_PIMoaUnknown, sizeof(PIMoaUnknown)},
-		{kMoaDictType_Long, sizeof(MoaLong)},
-		{kMoaDictType_Float, sizeof(MoaFloat)},
-		{kMoaDictType_Wide, sizeof(MoaWide)},
-		{kMoaDictType_Bool, sizeof(MoaBool)},
-		{kMoaDictType_MoaID, sizeof(MoaID)},
-		{kMoaDictType_Double, sizeof(MoaDouble)},
-		{kMoaDictType_MoaPoint, sizeof(MoaPoint)},
-		{kMoaDictType_MoaRect, sizeof(MoaRect)}
-	};
-
-	DICT_TYPE_ID_VALUE_SIZE_MAP::const_iterator dictTypeIDValueSizeMapIterator = dictTypeIDValueSizeMap.find(dictTypeID);
-
-	if (dictTypeIDValueSizeMapIterator != dictTypeIDValueSizeMap.end()
+	if (dictTypeIDValueSizeMapIterator != DICT_TYPE_ID_VALUE_SIZE_MAP.end()
 		&& dictTypeIDValueSizeMapIterator->second < valueSize) {
 		return kMoaDictErr_BufferTooSmall;
 	}
@@ -425,7 +410,7 @@ MoaError ValueConverter::toWide(const MoaMmValue &value, MoaWide &wide) {
 }
 
 MoaError ValueConverter::toID(const MoaMmValue &value, MoaID &id) {
-	const MoaLong ID_SIZE = sizeof(id);
+	static const MoaLong ID_SIZE = sizeof(id);
 
 	unsigned char* dataPointer = (unsigned char*)&id;
 	RETURN_NULL(dataPointer);
@@ -520,7 +505,7 @@ MoaError ValueConverter::toValue(const MoaID &id, MoaMmValue &value) {
 	#endif
 	*/
 
-	const MoaLong ID_SIZE = sizeof(id);
+	static const MoaLong ID_SIZE = sizeof(id);
 
 	unsigned char* dataPointer = (unsigned char*)&id;
 	RETURN_NULL(dataPointer);
@@ -628,7 +613,7 @@ MoaError ValueConverter::appendToList(const MoaMmValue &value, MoaMmValue &listV
 	MoaMmValue modifiableValue = value;
 
 	SCOPE_EXIT {
-		const size_t MOA_MM_VALUE_SIZE = sizeof(MoaMmValue);
+		static const size_t MOA_MM_VALUE_SIZE = sizeof(MoaMmValue);
 
 		if (!memoryEquals(&modifiableValue, &value, MOA_MM_VALUE_SIZE)) {
 			releaseValue(modifiableValue, mmValueInterfacePointer);
@@ -676,7 +661,7 @@ MoaError ValueConverter::appendToList(ConstPMoaChar stringPointer, MoaMmValue &l
 }
 
 MoaError ValueConverter::appendToPropList(const MoaMmValue &propertyValue, const MoaMmValue &value, MoaMmValue &propListValue) {
-	const size_t MOA_MM_VALUE_SIZE = sizeof(MoaMmValue);
+	static const size_t MOA_MM_VALUE_SIZE = sizeof(MoaMmValue);
 
 	// because AppendValueToPropList has a non-const value input
 	// we technically have to check for a different output

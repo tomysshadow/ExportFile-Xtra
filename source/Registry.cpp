@@ -4,7 +4,7 @@ MoaError Registry::Entry::getValueLong(ConstPMoaChar keyStringPointer, MoaLong &
 	RETURN_NULL(keyStringPointer);
 	RETURN_NULL(registryEntryDictInterfacePointer);
 
-	const MoaLong VALUE_SIZE = sizeof(value);
+	static const MoaLong VALUE_SIZE = sizeof(value);
 
 	MoaLong defaultValue = value;
 
@@ -22,6 +22,6 @@ MoaError Registry::Entry::setValueLong(ConstPMoaChar keyStringPointer, MoaLong v
 	RETURN_NULL(keyStringPointer);
 	RETURN_NULL(registryEntryDictInterfacePointer);
 
-	const MoaLong VALUE_SIZE = sizeof(value);
+	static const MoaLong VALUE_SIZE = sizeof(value);
 	return registryEntryDictInterfacePointer->Put(kMoaDictType_Long, &value, VALUE_SIZE, keyStringPointer);
 }

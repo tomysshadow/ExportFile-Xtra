@@ -87,7 +87,7 @@ MoaError Formats::Format::createTempFile(PIMoaFile tempFileInterfacePointer) {
 	// "ExFi" gives some clue where the temporary file came from if a crash occurs
 	// use extension of .tmp for a further clue to the file's purpose
 	// unless other specific extension required
-	const std::string PREFIX = "~ExFi";
+	static const std::string PREFIX = "~ExFi";
 	const std::string PERIOD_TEMP_FILE_EXTENSION = "." + TEMP_FILE_EXTENSION;
 
 	std::string filename = PREFIX + PERIOD_TEMP_FILE_EXTENSION;
@@ -112,7 +112,7 @@ MoaError Formats::Format::createTempFile(PIMoaFile tempFileInterfacePointer) {
 	// we also can't put this in the system temporary directory
 	// because later we'll call SwapFile on this, which requires
 	// that it be on the same volume as the file we're swapping with
-	const size_t ABC_SIZE = 4;
+	static const size_t ABC_SIZE = 4;
 	char abc[ABC_SIZE] = "";
 
 	size_t index = 2;
@@ -194,7 +194,7 @@ MoaError Formats::Format::setTempFileAttributeHidden(bool hidden, PIMoaFile temp
 	};
 
 	MoaSystemFileSpec sysSpec = "";
-	const MoaLong SYS_SPEC_SIZE = sizeof(sysSpec);
+	static const MoaLong SYS_SPEC_SIZE = sizeof(sysSpec);
 
 	RETURN_ERR(tempFileInterfacePointer->GetSysSpec(sysSpec, SYS_SPEC_SIZE));
 
@@ -508,7 +508,7 @@ MoaError Formats::WinPALETTEFormat::getPaletteGlobalHandleLock(std::unique_ptr<G
 	RETURN_NULL(paletteGlobalHandleLockPointer);
 
 	// RIFF is word-aligned
-	const DWORD WORD_SIZE = sizeof(WORD);
+	static const DWORD WORD_SIZE = sizeof(WORD);
 
 	MMIOINFO mmioinfo = {};
 	mmioinfo.pchBuffer = paletteGlobalHandleLockPointer->get();
@@ -564,7 +564,7 @@ MoaError Formats::WinPALETTEFormat::writeFile(bool agent, PIMoaFile writeFileInt
 	}
 
 	MoaSystemFileSpec sysSpec = "";
-	const MoaLong SYS_SPEC_SIZE = sizeof(sysSpec);
+	static const MoaLong SYS_SPEC_SIZE = sizeof(sysSpec);
 
 	RETURN_ERR(this->writeFileInterfacePointer->GetSysSpec(sysSpec, SYS_SPEC_SIZE));
 
@@ -984,7 +984,7 @@ MoaError Formats::XtraMediaSWFFormat::seekStream(Stream &stream, MoaUlong &size)
 	// of the Flash Asset's StreamInMedia method
 	// first, read a ChunkID
 	CHUNK_ID chunkID = 0;
-	const MoaStreamCount CHUNK_ID_SIZE = sizeof(chunkID);
+	static const MoaStreamCount CHUNK_ID_SIZE = sizeof(chunkID);
 
 	RETURN_ERR(stream.readSafe(&chunkID, CHUNK_ID_SIZE));
 
@@ -997,8 +997,8 @@ MoaError Formats::XtraMediaSWFFormat::seekStream(Stream &stream, MoaUlong &size)
 	chunkID &= 0x00FFFFFF;
 
 	// check if the ChunkID is SWF or SWC
-	const CHUNK_ID SWF_CHUNK_ID = 0x00535746;
-	const CHUNK_ID SWC_CHUNK_ID = 0x00535743;
+	static const CHUNK_ID SWF_CHUNK_ID = 0x00535746;
+	static const CHUNK_ID SWC_CHUNK_ID = 0x00535743;
 
 	if (chunkID == SWF_CHUNK_ID || chunkID == SWC_CHUNK_ID) {
 		// if it is, the entire stream is the SWF
@@ -1009,12 +1009,12 @@ MoaError Formats::XtraMediaSWFFormat::seekStream(Stream &stream, MoaUlong &size)
 	// this value is 1 if the SWF is embedded, FLLK if it's linked
 	// it is unused when reading the asset stream
 	uint32_t unused = 0;
-	const MoaStreamCount UNUSED_SIZE = sizeof(unused);
+	static const MoaStreamCount UNUSED_SIZE = sizeof(unused);
 
 	RETURN_ERR(stream.readSafe(&unused, UNUSED_SIZE));
 
 	// the SWF size
-	const MoaStreamCount SIZE_SIZE = sizeof(size);
+	static const MoaStreamCount SIZE_SIZE = sizeof(size);
 
 	RETURN_ERR(stream.readSafe(&size, SIZE_SIZE));
 
@@ -1046,7 +1046,7 @@ MoaError Formats::XtraMediaW3DFormat::seekStream(Stream &stream, MoaUlong &size)
 	// of the Shockwave 3D Asset's StreamInMedia method
 	// first, read a ChunkID
 	CHUNK_ID chunkID = 0;
-	const MoaStreamCount CHUNK_ID_SIZE = sizeof(chunkID);
+	static const MoaStreamCount CHUNK_ID_SIZE = sizeof(chunkID);
 
 	RETURN_ERR(stream.readSafe(&chunkID, CHUNK_ID_SIZE));
 
@@ -1062,8 +1062,8 @@ MoaError Formats::XtraMediaW3DFormat::seekStream(Stream &stream, MoaUlong &size)
 	// if the W3D size is less than 16 bytes, it is invalid
 	// the 3DMD ChunkID is likely just a placeholder
 	// so that the stream is not empty
-	const CHUNK_ID THREEDEM_CHUNK_ID = 0x3344454D;
-	const uint32_t MIN_W3D_SIZE = 16;
+	static const CHUNK_ID THREEDEM_CHUNK_ID = 0x3344454D;
+	static const uint32_t MIN_W3D_SIZE = 16;
 
 	if (chunkID == THREEDEM_CHUNK_ID) {
 		// the next two values are unused when reading the asset stream
@@ -1071,13 +1071,13 @@ MoaError Formats::XtraMediaW3DFormat::seekStream(Stream &stream, MoaUlong &size)
 		// the size and constant value 0x20000000 look suspiciously similar to
 		// the ID tags used in the 3DS model format
 		uint32_t unused = 0;
-		const MoaStreamCount UNUSED_SIZE = sizeof(unused);
+		static const MoaStreamCount UNUSED_SIZE = sizeof(unused);
 
 		RETURN_ERR(stream.readSafe(&unused, UNUSED_SIZE));
 		RETURN_ERR(stream.readSafe(&unused, UNUSED_SIZE));
 
 		// the W3D size
-		const MoaStreamCount SIZE_SIZE = sizeof(size);
+		static const MoaStreamCount SIZE_SIZE = sizeof(size);
 
 		RETURN_ERR(stream.readSafe(&size, SIZE_SIZE));
 
@@ -1267,7 +1267,7 @@ MoaError Formats::XtraMediaMixerAsyncFormat::writeFile(bool agent, PIMoaFile wri
 	RETURN_NULL(writeStreamInterfacePointer);
 
 	// CallFunction demands that the first argument be left empty
-	const MoaLong ARGS_SIZE = 2;
+	static const MoaLong ARGS_SIZE = 2;
 	MoaMmValue args[ARGS_SIZE] = { kVoidMoaMmValueInitializer, kVoidMoaMmValueInitializer };
 
 	MoaChar pathnameSpec[MOA_MAX_PATHNAME] = "";
@@ -1322,7 +1322,7 @@ MoaError Formats::XtraMediaMixerAsyncFormat::cancelFile() {
 
 	// don't call Stop if we didn't call Save first
 	if (saveStatus == kMoaStatus_False) {
-		const MoaLong ARGS_SIZE = 1;
+		static const MoaLong ARGS_SIZE = 1;
 		MoaMmValue args[ARGS_SIZE] = { kVoidMoaMmValueInitializer };
 
 		RETURN_ERR(drCastMemInterfacePointer->CallFunction(symbols.Stop, ARGS_SIZE, args, NULL));
