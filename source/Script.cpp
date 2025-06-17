@@ -760,11 +760,11 @@ STDMETHODIMP TStdXtra_IMoaRegister::Register(PIMoaCache cacheInterfacePointer, P
 		ThrowErr(cacheInterfacePointer->AddRegistryEntry(xtraEntryDictInterfacePointer, &CLSID_TStdXtra, &IID_IMoaMmXScript, &registryEntryDictInterfacePointer));
 		ThrowNull(registryEntryDictInterfacePointer);
 
-		static const char* VER_MAJORVERSION_STRING = "0";
-		static const char* VER_MINORVERSION_STRING = "5";
-		static const char* VER_BUGFIXVERSION_STRING = "0";
+		const char* VER_MAJORVERSION_STRING = "0";
+		const char* VER_MINORVERSION_STRING = "5";
+		const char* VER_BUGFIXVERSION_STRING = "0";
 
-		static const size_t VERSION_STRING_SIZE = min(256, kMoaMmMaxXtraMessageTable);
+		const size_t VERSION_STRING_SIZE = min(256, kMoaMmMaxXtraMessageTable);
 		char versionString[VERSION_STRING_SIZE] = "";
 
 		if (sprintf_s(versionString, VERSION_STRING_SIZE, versionInfo, VER_MAJORVERSION_STRING, VER_MINORVERSION_STRING, VER_BUGFIXVERSION_STRING) == -1) {
