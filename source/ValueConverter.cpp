@@ -386,18 +386,9 @@ MoaError ValueConverter::toString(const MoaMmValue &value, std::string &string, 
 MoaError ValueConverter::toWide(const MoaMmValue &value, MoaWide &wide) {
 	wide = {};
 
-	MoaMmValue hiValue = kVoidMoaMmValueInitializer;
-
-	SCOPE_EXIT {
-		releaseValue(hiValue, mmValueInterfacePointer);
-	};
-
-	RETURN_ERR(getProp(value, symbols.Hi, hiValue));
-	RETURN_ERR(mmValueInterfacePointer->ValueToInteger(&hiValue, &wide.hi));
-
 	MoaMmValue loValue = kVoidMoaMmValueInitializer;
 
-	SCOPE_EXIT {
+	SCOPE_EXIT{
 		releaseValue(loValue, mmValueInterfacePointer);
 	};
 
@@ -406,6 +397,15 @@ MoaError ValueConverter::toWide(const MoaMmValue &value, MoaWide &wide) {
 	MoaLong lo = 0;
 	RETURN_ERR(mmValueInterfacePointer->ValueToInteger(&loValue, &lo));
 	wide.lo = lo;
+
+	MoaMmValue hiValue = kVoidMoaMmValueInitializer;
+
+	SCOPE_EXIT {
+		releaseValue(hiValue, mmValueInterfacePointer);
+	};
+
+	RETURN_ERR(getProp(value, symbols.Hi, hiValue));
+	RETURN_ERR(mmValueInterfacePointer->ValueToInteger(&hiValue, &wide.hi));
 	return kMoaErr_NoErr;
 }
 
@@ -471,15 +471,6 @@ MoaError ValueConverter::toValue(const MoaWide &wide, MoaMmValue &value) {
 
 	RETURN_ERR(mmListInterfacePointer->NewPropListValue(&value));
 
-	MoaMmValue hiValue = kVoidMoaMmValueInitializer;
-
-	SCOPE_EXIT {
-		releaseValue(hiValue, mmValueInterfacePointer);
-	};
-
-	RETURN_ERR(mmValueInterfacePointer->IntegerToValue(wide.hi, &hiValue));
-	RETURN_ERR(appendToPropList(symbols.Hi, hiValue, value));
-
 	MoaMmValue loValue = kVoidMoaMmValueInitializer;
 
 	SCOPE_EXIT {
@@ -488,6 +479,15 @@ MoaError ValueConverter::toValue(const MoaWide &wide, MoaMmValue &value) {
 
 	RETURN_ERR(mmValueInterfacePointer->IntegerToValue(wide.lo, &loValue));
 	RETURN_ERR(appendToPropList(symbols.Lo, loValue, value));
+
+	MoaMmValue hiValue = kVoidMoaMmValueInitializer;
+
+	SCOPE_EXIT{
+		releaseValue(hiValue, mmValueInterfacePointer);
+	};
+
+	RETURN_ERR(mmValueInterfacePointer->IntegerToValue(wide.hi, &hiValue));
+	RETURN_ERR(appendToPropList(symbols.Hi, hiValue, value));
 
 	releaseValueScopeExit.dismiss();
 	return kMoaErr_NoErr;
