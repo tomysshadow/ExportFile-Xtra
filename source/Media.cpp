@@ -447,11 +447,6 @@ bool Media::WinBMPMedia::rgbX(RGBTRIPLE* rgbTriplePointer, DWORD stride, DWORD i
 	}
 
 	RGBTRIPLE* endPointer = (RGBTRIPLE*)((LPBYTE)rgbTriplePointer + imageSize) - 1;
-
-	if (!endPointer) {
-		return false;
-	}
-
 	RGBTRIPLE* rowPointer = NULL;
 
 	COLORREF colorRef = 0;
@@ -460,33 +455,15 @@ bool Media::WinBMPMedia::rgbX(RGBTRIPLE* rgbTriplePointer, DWORD stride, DWORD i
 	while (rgbTriplePointer <= endPointer) {
 		rowPointer = (RGBTRIPLE*)((LPBYTE)rgbTriplePointer + stride) - 1;
 
-		if (!rowPointer) {
-			return false;
-		}
-
 		while (rgbTriplePointer <= rowPointer) {
 			colorRef = RGB(rgbTriplePointer->rgbtRed, rgbTriplePointer->rgbtGreen, rgbTriplePointer->rgbtBlue);
-
 			mmRGBTriplePointer = (MoaMmRGBTriple*)rgbTriplePointer;
-
-			if (!mmRGBTriplePointer) {
-				return false;
-			}
-
 			WinToMoaRGB(colorRef, mmRGBTriplePointer);
 
 			rgbTriplePointer = rgbTriplePointer + 1;
-
-			if (!rgbTriplePointer) {
-				return false;
-			}
 		}
 
 		rgbTriplePointer = rowPointer + 1;
-
-		if (!rgbTriplePointer) {
-			return false;
-		}
 	}
 	return true;
 }
@@ -497,11 +474,6 @@ bool Media::WinBMPMedia::rgbaX(RGBQUAD* rgbQuadPointer, DWORD stride, DWORD imag
 	}
 
 	RGBQUAD* endPointer = (RGBQUAD*)((LPBYTE)rgbQuadPointer + imageSize) - 1;
-
-	if (!endPointer) {
-		return false;
-	}
-
 	RGBQUAD* rowPointer = NULL;
 
 	COLORREF colorRef = 0;
@@ -510,33 +482,15 @@ bool Media::WinBMPMedia::rgbaX(RGBQUAD* rgbQuadPointer, DWORD stride, DWORD imag
 	while (rgbQuadPointer <= endPointer) {
 		rowPointer = (RGBQUAD*)((LPBYTE)rgbQuadPointer + stride) - 1;
 
-		if (!rowPointer) {
-			return false;
-		}
-
 		while (rgbQuadPointer <= rowPointer) {
 			colorRef = RGB(rgbQuadPointer->rgbRed, rgbQuadPointer->rgbGreen, rgbQuadPointer->rgbBlue);
-
 			mmRGBTriplePointer = (MoaMmRGBTriple*)rgbQuadPointer;
-
-			if (!mmRGBTriplePointer) {
-				return false;
-			}
-
 			WinToMoaRGB(colorRef, mmRGBTriplePointer);
 
 			rgbQuadPointer = rgbQuadPointer + 1;
-
-			if (!rgbQuadPointer) {
-				return false;
-			}
 		}
 
 		rgbQuadPointer = rowPointer + 1;
-
-		if (!rgbQuadPointer) {
-			return false;
-		}
 	}
 	return true;
 }
@@ -675,7 +629,7 @@ bool Media::WinBMPMedia::getBitmapInfoColorsUsedRGB(const BITMAPINFOHEADER &bitm
 		colorsUsed = bitmapInfoHeader.biClrUsed;
 
 		if (!colorsUsed) {
-			colorsUsed = (DWORD)pow(2, bitmapInfoHeader.biBitCount);
+			colorsUsed = 1 << bitmapInfoHeader.biBitCount;
 		}
 	}
 	return true;
@@ -845,7 +799,7 @@ MoaError Media::WinBMPMedia::getPixelFormat(PIMoaReceptorPixels receptorPixelsIn
 			// the bit count used for the implicit calculation may be changing
 			// correct it if necessary
 			if (colorsBitmapInfoHeader.biBitCount != sourceBitmapInfoHeader.biBitCount && !colorsBitmapInfoHeader.biClrUsed) {
-				colorsBitmapInfoHeader.biClrUsed = (DWORD)pow(2, sourceBitmapInfoHeader.biBitCount);
+				colorsBitmapInfoHeader.biClrUsed = 1 << sourceBitmapInfoHeader.biBitCount;
 			}
 		} else {
 		#endif
