@@ -23,7 +23,7 @@ bool Path::filterPatternExtensions(std::string filterPattern, EXTENSION_MAPPED_V
 	// note: although the documentation says there must not be a trailing semicolon
 	// in practice, the MP4 Audio agent includes one anyway so we must handle it
 	while (std::regex_search(filterPattern, matches, FILTER_PATTERN_EXTENSIONS)
-		&& matches.length() > 1) {
+		&& matches.size() > 1) {
 		const std::string &MATCH = matches[1];
 
 		// don't add invalid names
@@ -297,7 +297,7 @@ MoaError Path::Info::makePathNameInterfacePointer() {
 
 	try {
 		validate();
-	} catch (Invalid) {
+	} catch (const Invalid&) {
 		return kMoaErr_BadParam;
 	}
 

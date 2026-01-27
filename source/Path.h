@@ -59,7 +59,7 @@ namespace Path {
 
 		class Invalid : public std::invalid_argument {
 			public:
-			Invalid() noexcept : std::invalid_argument("Path Info invalid") {
+			Invalid(): std::invalid_argument("Path Info invalid") {
 			}
 		};
 

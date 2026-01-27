@@ -3103,7 +3103,7 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPath(PMoaDrCallInfo callPtr, Args* argsPo
 
 				try {
 					argsPointer->pathInfoOptional.emplace(pathnameSpec, pObj->productVersionMajor, pObj->pCallback, pObj->pCalloc);
-				} catch (Path::Info::Invalid) {
+				} catch (const Path::Info::Invalid&) {
 					Throw(kMoaErr_BadParam);
 				}
 			}
