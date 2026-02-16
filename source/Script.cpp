@@ -3601,9 +3601,11 @@ MoaError TStdXtra_IMoaMmXScript::GetArgLabelDefault(Args* argsPointer, Media::Di
 
 		Label::MAPPED_VECTOR &labelMappedVector = directorMediaPointer->labelMappedVectorOptional.value();
 
-		if (!labelMappedVector.front(labelSymbolVariant)) {
+		if (labelMappedVector.empty()) {
 			Throw(kMoaDrErr_LabelNotFound);
 		}
+
+		labelSymbolVariant = labelMappedVector.front();
 
 		// shouldn't happen usually?
 		if (!std::holds_alternative<MoaMmSymbol>(labelSymbolVariant)) {

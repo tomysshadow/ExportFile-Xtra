@@ -1,4 +1,5 @@
 #pragma once
+#include "scope_guard.hpp"
 #include <stdexcept>
 #include <map>
 #include <vector>
@@ -75,24 +76,12 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 		return findIndex(value) != NPOS;
 	}
 
-	bool front(ValueType &value) const {
-		if (_vector.empty()) {
-			value = {};
-			return false;
-		}
-
-		value = _vector.front();
-		return true;
+	const ValueType &front() const {
+		return _vector.front();
 	}
 
-	bool back(ValueType &value) const {
-		if (_vector.empty()) {
-			value = {};
-			return false;
-		}
-
-		value = _vector.back();
-		return true;
+	const ValueType &back() const {
+		return _vector.back();
 	}
 
 	// allow getting const iterators only
@@ -113,6 +102,10 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 		return _vector.size();
 	}
 
+	void reserve(SIZE_TYPE size) {
+		_vector.reserve(size);
+	}
+
 	void clear() {
 		_map.clear();
 		_vector.clear();
@@ -125,29 +118,29 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 	// already in the vector, saving you a call to find if you
 	// still wanted that information in that scenario
 	bool push(const ValueType &value, SIZE_TYPE &index) {
-		index = findIndex(value);
+		std::pair<MAP::iterator, bool> emplaced = _map.emplace(value, _vector.size());
 
-		if (index != NPOS) {
+		MAKE_SCOPE_EXIT(mapScopeExit) {
+			_map.erase(emplaced.first);
+		};
+
+		if (!emplaced.second) {
+			mapScopeExit.dismiss();
+			index = emplaced.first->second;
 			return false;
 		}
 
-		index = _vector.size();
-		_map[value] = index;
 		_vector.push_back(value);
+		mapScopeExit.dismiss();
+		index = emplaced.first->second;
 		return true;
 	}
 
 	bool push(const ValueType &value, CONST_ITERATOR &iterator) {
-		iterator = findIterator(value);
-
-		if (iterator != _vector.cend()) {
-			return false;
-		}
-
-		_map[value] = _vector.size();
-		_vector.push_back(value);
-		iterator = _vector.back();
-		return true;
+		SIZE_TYPE index = 0;
+		bool result = push(value, index);
+		iterator = _vector.cbegin() + index;
+		return result;
 	}
 
 	bool push(const ValueType &value) {
@@ -155,24 +148,21 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 		return push(value, index);
 	}
 
-	bool pop(ValueType &value) {
-		if (_vector.empty()) {
-			value = {};
-			return false;
-		}
-
-		value = _vector.back();
+	ValueType pop() {
+		ValueType value = _vector.back();
 		_map.erase(value);
 		_vector.pop_back();
-		return true;
+		return value;
 	}
 
 	// this is implemented using an index
 	// because we need to insert one into the map anyway
 	// (the map needs to use indices to avoid iterator invalidation on vector erase)
 	bool replace(const ValueType &value, SIZE_TYPE index) {
-		if (index >= _vector.size()) {
-			throw std::invalid_argument("index must not be greater or equal to Size");
+		SIZE_TYPE size = _vector.size();
+		
+		if (index >= size) {
+			throw std::invalid_argument("index must not be greater than or equal to size");
 		}
 
 		// don't allow a duplicate value to get inserted at a different index
@@ -195,25 +185,24 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 	// and we need that information in order to correct the map
 	// these methods have iterator and index in the name to differentiate them from erase
 	// (what if ValueType is an iterator or index?)
-	CONST_ITERATOR eraseIterator(CONST_ITERATOR &firstIterator, CONST_ITERATOR &lastIterator) {
+	CONST_ITERATOR eraseIterator(CONST_ITERATOR beginIterator, CONST_ITERATOR endIterator) {
 		// having an iterator outside of the vector is undefined behaviour
 		// we don't check for that, since the UB has already been "committed" in that case
 		// so, we shouldn't try and make sense of that
-		// however the compiler has no way of knowing I expect the firstIterator to be
-		// before the lastIterator here, so I do check this to avoid smashing the stack
-		if (lastIterator < firstIterator) {
-			throw std::invalid_argument("lastIterator must not be less than firstIterator");
+		// however the compiler has no way of knowing I expect the beginIterator to be
+		// before the endIterator here, so I do check this to avoid smashing the stack
+		if (endIterator < beginIterator) {
+			throw std::invalid_argument("endIterator must not be less than beginIterator");
 		}
 
-		for (CONST_ITERATOR vectorIterator = firstIterator; vectorIterator != lastIterator; vectorIterator++) {
+		for (CONST_ITERATOR vectorIterator = beginIterator; vectorIterator != endIterator; vectorIterator++) {
 			_map.erase(*vectorIterator);
 		}
 
-		// first will be last...
-		SIZE_T index = lastIterator - firstIterator;
-		CONST_ITERATOR iterator = _vector.erase(firstIterator, lastIterator);
+		SIZE_TYPE index = endIterator - beginIterator;
+		CONST_ITERATOR iterator = _vector.erase(beginIterator, endIterator);
 
-		// may be zero if first and last are the same (which is valid)
+		// may be zero if begin and end are the same (which is valid)
 		if (index) {
 			for (CONST_ITERATOR vectorIterator = iterator; vectorIterator != _vector.cend(); vectorIterator++) {
 				_map[*vectorIterator] -= index;
@@ -222,31 +211,37 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 		return iterator;
 	}
 
-	CONST_ITERATOR eraseIterator(CONST_ITERATOR &iterator) {
+	CONST_ITERATOR eraseIterator(CONST_ITERATOR iterator) {
 		// would cause undefined behaviour if allowed to continue
-		if (iterator == _vector.cend()) {
-			throw std::invalid_argument("iterator must not be equal to End Iterator");
+		CONST_ITERATOR endIterator = _vector.cend();
+
+		if (iterator == endIterator) {
+			throw std::invalid_argument("iterator must not be equal to endIterator");
 		}
 		return eraseIterator(iterator, iterator + 1);
 	}
 
-	MappedVector &eraseIndex(SIZE_TYPE firstIndex, SIZE_TYPE lastIndex) {
-		if (lastIndex < firstIndex) {
-			throw std::invalid_argument("lastIndex must not be less than firstIndex");
+	MappedVector &eraseIndex(SIZE_TYPE beginIndex, SIZE_TYPE endIndex) {
+		if (endIndex < beginIndex) {
+			throw std::invalid_argument("endIndex must not be less than beginIndex");
 		}
 
-		if (lastIndex >= _vector.size()) {
-			throw std::invalid_argument("lastIndex must not be greater or equal to Size");
+		SIZE_TYPE size = _vector.size();
+
+		if (endIndex > size) {
+			throw std::invalid_argument("endIndex must not be greater than size");
 		}
 
 		CONST_ITERATOR beginIterator = _vector.cbegin();
-		eraseIterator(beginIterator + firstIndex, beginIterator + lastIndex);
+		eraseIterator(beginIterator + beginIndex, beginIterator + endIndex);
 		return *this;
 	}
 
 	MappedVector &eraseIndex(SIZE_TYPE index) {
-		if (index >= _vector.size()) {
-			throw std::invalid_argument("index must not be greater or equal to Size");
+		SIZE_TYPE size = _vector.size();
+
+		if (index >= size) {
+			throw std::invalid_argument("index must not be greater than or equal to size");
 		}
 
 		eraseIterator(_vector.cbegin() + index);
@@ -274,6 +269,8 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 
 	// these return the MappedVector reference to allow use with a temporary
 	MappedVector &concat(const VECTOR &concatVector) {
+		_vector.reserve(_vector.size() + concatVector.size());
+		
 		for (CONST_ITERATOR concatVectorIterator = concatVector.cbegin(); concatVectorIterator != concatVector.cend(); concatVectorIterator++) {
 			push(*concatVectorIterator);
 		}
