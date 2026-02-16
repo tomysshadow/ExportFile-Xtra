@@ -1,5 +1,4 @@
 #pragma once
-#include "scope_guard.hpp"
 #include <stdexcept>
 #include <map>
 #include <vector>
@@ -120,18 +119,17 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 	bool push(const ValueType &value, SIZE_TYPE &index) {
 		std::pair<MAP::iterator, bool> emplaced = _map.emplace(value, _vector.size());
 
-		MAKE_SCOPE_EXIT(mapScopeExit) {
-			_map.erase(emplaced.first);
-		};
-
 		if (!emplaced.second) {
-			mapScopeExit.dismiss();
 			index = emplaced.first->second;
 			return false;
 		}
 
-		_vector.push_back(value);
-		mapScopeExit.dismiss();
+		try {
+			_vector.push_back(value);
+		} catch (...) {
+			_map.erase(emplaced.first);
+		}
+
 		index = emplaced.first->second;
 		return true;
 	}
