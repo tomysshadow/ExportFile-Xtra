@@ -30,8 +30,8 @@
 #include "moafile.h"
 
 #ifdef WINDOWS
-#include <windows.h>
-#include <cguid.h>
+#include <Windows.h>
+#include <CGuid.h>
 #include <atlbase.h>
 #include <atlconv.h>
 #endif
