@@ -3,7 +3,11 @@
 void IconValues::destroy() {
 	// may be NULL in the event of a move
 	if (mmValueInterfacePointer) {
-		for (ICON_VALUE_MAP::iterator iconValueMapIterator = iconValueMap.begin(); iconValueMapIterator != iconValueMap.end(); iconValueMapIterator++) {
+		for (
+			ICON_VALUE_MAP::iterator iconValueMapIterator = iconValueMap.begin();
+			iconValueMapIterator != iconValueMap.end();
+			iconValueMapIterator++
+		) {
 			releaseValue(iconValueMapIterator->second, mmValueInterfacePointer);
 		}
 	}
@@ -20,7 +24,11 @@ void IconValues::duplicate(const IconValues &iconValues) {
 
 	iconValueMap = iconValues.iconValueMap;
 
-	for (ICON_VALUE_MAP::iterator iconValueMapIterator = iconValueMap.begin(); iconValueMapIterator != iconValueMap.end(); iconValueMapIterator++) {
+	for (
+		ICON_VALUE_MAP::iterator iconValueMapIterator = iconValueMap.begin();
+		iconValueMapIterator != iconValueMap.end();
+		iconValueMapIterator++
+	) {
 		// handler not defined error is fine, may be void
 		err = mmImageInterfacePointer->Duplicate(&iconValueMapIterator->second, &iconValueMapIterator->second);
 

@@ -127,7 +127,11 @@ namespace Path {
 		#ifdef WINE_BUGFIX
 		MoaError err = kMoaErr_NoErr;
 
-		for (HANDLE_VECTOR::iterator findVectorIterator = findVector.begin(); findVectorIterator != findVector.end(); findVectorIterator++) {
+		for (
+			HANDLE_VECTOR::iterator findVectorIterator = findVector.begin();
+			findVectorIterator != findVector.end();
+			findVectorIterator++
+		) {
 			err = errOrDefaultErr(osErr(closeFind(*findVectorIterator)), err);
 		}
 
@@ -320,7 +324,7 @@ namespace Path {
 		MoaLong pathStringSize = 0;
 		RETURN_ERR_BOOL(pathNameInterfacePointer->GetPathSize(&pathStringSize));
 
-		PMoaVoid pathStringPointer = callocInterfacePointer->NRAlloc(pathStringSize);
+		PMoaVoid pathStringPointer = callocInterfacePointer->NRAlloc((MoaUlong)pathStringSize);
 
 		SCOPE_EXIT {
 			freeMemory(pathStringPointer, callocInterfacePointer);
@@ -429,9 +433,9 @@ namespace Path {
 
 	bool Info::elementPeriodsOrWhitespace(const std::string &element) {
 		for (std::string::const_iterator elementIterator = element.begin(); elementIterator != element.end(); elementIterator++) {
-			const unsigned char &periodOrSpace = *elementIterator;
+			const char &periodOrSpace = *elementIterator;
 
-			if (periodOrSpace != PERIOD && !isspace(periodOrSpace)) {
+			if (periodOrSpace != PERIOD && !isspace((unsigned char)periodOrSpace)) {
 				return false;
 			}
 		}
@@ -454,9 +458,9 @@ namespace Path {
 	}
 
 	Info::Info(unsigned long productVersionMajor, PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer)
-		: productVersionMajor(productVersionMajor),
-		callbackInterfacePointer(callbackInterfacePointer),
-		callocInterfacePointer(callocInterfacePointer) {
+		: callbackInterfacePointer(callbackInterfacePointer),
+		callocInterfacePointer(callocInterfacePointer),
+		productVersionMajor(productVersionMajor) {
 		if (!callbackInterfacePointer) {
 			throw std::invalid_argument("callbackInterfacePointer must not be NULL");
 		}
@@ -470,9 +474,9 @@ namespace Path {
 	}
 
 	Info::Info(const std::string &path, unsigned long productVersionMajor, PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer)
-		: productVersionMajor(productVersionMajor),
-		callbackInterfacePointer(callbackInterfacePointer),
-		callocInterfacePointer(callocInterfacePointer) {
+		: callbackInterfacePointer(callbackInterfacePointer),
+		callocInterfacePointer(callocInterfacePointer),
+		productVersionMajor(productVersionMajor) {
 		if (!callbackInterfacePointer) {
 			throw std::invalid_argument("callbackInterfacePointer must not be NULL");
 		}
@@ -746,7 +750,11 @@ namespace Path {
 		return true;
 	}
 
-	bool Info::getElementsOrEmpty(std::string &dirname, std::string &basename, std::string &extension, std::string &filename, std::string &path, bool relative) {
+	bool Info::getElementsOrEmpty(
+		std::string &dirname, std::string &basename, std::string &extension, std::string &filename,
+		std::string &path,
+		bool relative
+	) {
 		MAKE_SCOPE_EXIT(elementsScopeExit) {
 			dirname = "";
 			basename = "";
@@ -788,7 +796,9 @@ namespace Path {
 		return true;
 	}
 
-	bool Info::getElementsOrEmpty(std::string &dirname, std::string &basename, std::string &extension, std::string &filename) {
+	bool Info::getElementsOrEmpty(
+		std::string &dirname, std::string &basename, std::string &extension, std::string &filename
+	) {
 		std::string path = "";
 		return getElementsOrEmpty(dirname, basename, extension, filename, path);
 	}
@@ -837,7 +847,14 @@ namespace Path {
 		return true;
 	}
 
-	bool Info::getElementOptionals(std::optional<std::string> &dirnameOptional, std::optional<std::string> &basenameOptional, std::optional<std::string> &extensionOptional, std::optional<std::string> &filenameOptional, std::string &path, bool relative) {
+	bool Info::getElementOptionals(
+		std::optional<std::string> &dirnameOptional,
+		std::optional<std::string> &basenameOptional,
+		std::optional<std::string> &extensionOptional,
+		std::optional<std::string> &filenameOptional,
+		std::string &path,
+		bool relative
+	) {
 		MAKE_SCOPE_EXIT(elementOptionalsScopeExit) {
 			dirnameOptional = std::nullopt;
 			basenameOptional = std::nullopt;
@@ -869,7 +886,12 @@ namespace Path {
 		return true;
 	}
 
-	bool Info::getElementOptionals(std::optional<std::string> &dirnameOptional, std::optional<std::string> &basenameOptional, std::optional<std::string> &extensionOptional, std::optional<std::string> &filenameOptional) {
+	bool Info::getElementOptionals(
+		std::optional<std::string> &dirnameOptional,
+		std::optional<std::string> &basenameOptional,
+		std::optional<std::string> &extensionOptional,
+		std::optional<std::string> &filenameOptional
+	) {
 		std::string path = "";
 		return getElementOptionals(dirnameOptional, basenameOptional, extensionOptional, filenameOptional, path);
 	}
@@ -1093,7 +1115,7 @@ namespace Path {
 		MoaLong elementStringSize = 0;
 		RETURN_ERR(setPathNameInterfacePointer->GetPathSize(&elementStringSize));
 
-		PMoaVoid elementStringPointer = callocInterfacePointer->NRAlloc(elementStringSize);
+		PMoaVoid elementStringPointer = callocInterfacePointer->NRAlloc((MoaUlong)elementStringSize);
 
 		SCOPE_EXIT {
 			freeMemory(elementStringPointer, callocInterfacePointer);

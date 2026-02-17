@@ -44,7 +44,7 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 	using SIZE_TYPE = typename VECTOR::size_type;
 	using CONST_ITERATOR = typename VECTOR::const_iterator;
 
-	static const SIZE_TYPE NPOS = -1;
+	static const SIZE_TYPE NPOS = (SIZE_TYPE)-1;
 
 	private:
 	using MAP = std::map<ValueType, SIZE_TYPE, Comparer>;
@@ -197,7 +197,7 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 			_map.erase(*vectorIterator);
 		}
 
-		SIZE_TYPE index = endIterator - beginIterator;
+		SIZE_TYPE index = (SIZE_TYPE)(endIterator - beginIterator);
 		CONST_ITERATOR iterator = _vector.erase(beginIterator, endIterator);
 
 		// may be zero if begin and end are the same (which is valid)
@@ -257,7 +257,11 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 			return false;
 		}
 
-		for (CONST_ITERATOR vectorIterator = _vector.erase(_vector.cbegin() + mapIterator->second); vectorIterator != _vector.cend(); vectorIterator++) {
+		for (
+			CONST_ITERATOR vectorIterator = _vector.erase(_vector.cbegin() + mapIterator->second);
+			vectorIterator != _vector.cend();
+			vectorIterator++
+		) {
 			_map[*vectorIterator]--;
 		}
 
@@ -269,7 +273,11 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 	MappedVector &concat(const VECTOR &concatVector) {
 		_vector.reserve(_vector.size() + concatVector.size());
 		
-		for (CONST_ITERATOR concatVectorIterator = concatVector.cbegin(); concatVectorIterator != concatVector.cend(); concatVectorIterator++) {
+		for (
+			CONST_ITERATOR concatVectorIterator = concatVector.cbegin();
+			concatVectorIterator != concatVector.cend();
+			concatVectorIterator++
+		) {
 			push(*concatVectorIterator);
 		}
 		return *this;
@@ -284,7 +292,11 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 	}
 
 	MappedVector &difference(const VECTOR &differenceVector) {
-		for (CONST_ITERATOR differenceVectorIterator = differenceVector.cbegin(); differenceVectorIterator != differenceVector.cend(); differenceVectorIterator++) {
+		for (
+			CONST_ITERATOR differenceVectorIterator = differenceVector.cbegin();
+			differenceVectorIterator != differenceVector.cend();
+			differenceVectorIterator++
+		) {
 			erase(*differenceVectorIterator);
 		}
 		return *this;
@@ -356,11 +368,15 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 
 // these are intentionally outside the class to allow for type conversions when adding/subtracting
 template <typename ValueType>
-inline MappedVector<ValueType> operator+(const MappedVector<ValueType> &addMappedVector, const MappedVector<ValueType> &addMappedVector2) {
+inline MappedVector<ValueType> operator+(
+	const MappedVector<ValueType> &addMappedVector, const MappedVector<ValueType> &addMappedVector2
+) {
 	return MappedVector<ValueType>(addMappedVector).concat(addMappedVector2);
 }
 
 template <typename ValueType>
-inline MappedVector<ValueType> operator-(const MappedVector<ValueType> &subtractMappedVector, const MappedVector<ValueType> &subtractMappedVector2) {
+inline MappedVector<ValueType> operator-(
+	const MappedVector<ValueType> &subtractMappedVector, const MappedVector<ValueType> &subtractMappedVector2
+) {
 	return MappedVector<ValueType>(subtractMappedVector).difference(subtractMappedVector2);
 }

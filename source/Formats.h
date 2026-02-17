@@ -53,16 +53,49 @@ namespace Formats {
 	// in the Format Factory
 	// where your horrors and fears come true
 	namespace FormatFactory {
-		Format::POINTER createMediaInfoFormat(Label::TYPE labelType, PMoaVoid mediaData, unsigned long productVersionMajor, PIMoaHandle handleInterfacePointer, PIMoaCalloc callocInterfacePointer);
+		Format::POINTER createMediaInfoFormat(
+			Label::TYPE labelType, PMoaVoid mediaData, unsigned long productVersionMajor,
+			PIMoaHandle handleInterfacePointer, PIMoaCalloc callocInterfacePointer
+		);
+
 		#ifdef MACINTOSH
-		Format::POINTER createMediaInfoFormat(Label::TYPE labelType, bool resource, GlobalHandleLock<>::GlobalHandle mediaData, unsigned long productVersionMajor, PIMoaCalloc callocInterfacePointer);
+		Format::POINTER createMediaInfoFormat(
+			Label::TYPE labelType, bool resource, GlobalHandleLock<>::GlobalHandle mediaData, unsigned long productVersionMajor,
+			PIMoaCalloc callocInterfacePointer
+		);
 		#endif
+
 		#ifdef WINDOWS
-		Format::POINTER createMediaInfoFormat(Label::TYPE labelType, HMODULE moduleHandle, HRSRC resourceHandle, unsigned long productVersionMajor, PIMoaCalloc callocInterfacePointer);
+		Format::POINTER createMediaInfoFormat(
+			Label::TYPE labelType, HMODULE moduleHandle, HRSRC resourceHandle, unsigned long productVersionMajor,
+			PIMoaCalloc callocInterfacePointer
+		);
 		#endif
-		Format::POINTER createMemberPropertyFormat(Label::TYPE labelType, PMoaVoid mediaData, unsigned long productVersionMajor, PIMoaMmValue mmValueInterfacePointer, PIMoaCalloc callocInterfacePointer);
-		Format::POINTER createMemberPropertyFormat(Label::TYPE labelType, PMoaVoid mediaData, unsigned long productVersionMajor, PIMoaHandle handleInterfacePointer, PIMoaDrMediaValue drMediaValueInterfacePointer, PIMoaMmValue mmValueInterfacePointer, PIMoaCalloc callocInterfacePointer);
-		Format::POINTER createXtraMediaFormat(Label::TYPE labelType, PMoaVoid mediaData, unsigned long productVersionMajor, PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer);
-		Format::POINTER createXtraMediaFormat(Label::TYPE labelType, PMoaVoid mediaData, unsigned long productVersionMajor, PIMoaDrCastMem drCastMemInterfacePointer, PIMoaMmValue mmValueInterfacePointer, PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer);
+
+		Format::POINTER createMemberPropertyFormat(
+			Label::TYPE labelType, PMoaVoid mediaData, unsigned long productVersionMajor,
+			PIMoaMmValue mmValueInterfacePointer, PIMoaCalloc callocInterfacePointer
+		);
+
+		Format::POINTER createMemberPropertyFormat(
+			Label::TYPE labelType, PMoaVoid mediaData, unsigned long productVersionMajor,
+			PIMoaHandle handleInterfacePointer,
+			PIMoaDrMediaValue drMediaValueInterfacePointer,
+			PIMoaMmValue mmValueInterfacePointer,
+			PIMoaCalloc callocInterfacePointer
+		);
+
+		Format::POINTER createXtraMediaFormat(
+			Label::TYPE labelType, PMoaVoid mediaData, unsigned long productVersionMajor,
+			PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer
+		);
+
+		Format::POINTER createXtraMediaFormat(
+			Label::TYPE labelType, PMoaVoid mediaData, unsigned long productVersionMajor,
+			PIMoaDrCastMem drCastMemInterfacePointer,
+			PIMoaMmValue mmValueInterfacePointer,
+			PIMoaCallback callbackInterfacePointer,
+			PIMoaCalloc callocInterfacePointer
+		);
 	};
 };

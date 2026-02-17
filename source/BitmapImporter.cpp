@@ -169,11 +169,17 @@ MoaError BitmapImporter::getMemberImageValue(GlobalHandleLock<>::GlobalHandle me
 	return drCastMemInterfacePointer->GetProp(symbols.Image, &memberStageImageValue);
 }
 
-BitmapImporter::BitmapImporter(const Label::Labels::Info &labelsInfo, PIMoaDrMovie drMovieInterfacePointer, PIMoaMmValue mmValueInterfacePointer, PIMoaDrUtils drUtilsInterfacePointer, PIMoaMmImage mmImageInterfacePointer)
-	: drMovieInterfacePointer(drMovieInterfacePointer),
-	mmValueInterfacePointer(mmValueInterfacePointer),
+BitmapImporter::BitmapImporter(
+	const Label::Labels::Info &labelsInfo,
+	PIMoaDrMovie drMovieInterfacePointer,
+	PIMoaMmValue mmValueInterfacePointer,
+	PIMoaDrUtils drUtilsInterfacePointer,
+	PIMoaMmImage mmImageInterfacePointer
+)
+	: mmValueInterfacePointer(mmValueInterfacePointer),
 	drUtilsInterfacePointer(drUtilsInterfacePointer),
-	mmImageInterfacePointer(mmImageInterfacePointer) {
+	mmImageInterfacePointer(mmImageInterfacePointer),
+	drMovieInterfacePointer(drMovieInterfacePointer) {
 	if (!drMovieInterfacePointer) {
 		throw std::invalid_argument("drMovieInterfacePointer must not be NULL");
 	}
@@ -213,7 +219,13 @@ BitmapImporter::BitmapImporter(const Label::Labels::Info &labelsInfo, PIMoaDrMov
 	}
 }
 
-BitmapImporter::BitmapImporter(const Label::Labels::Info &labelsInfo, PIMoaDrPlayer drPlayerInterfacePointer, PIMoaMmValue mmValueInterfacePointer, PIMoaDrUtils drUtilsInterfacePointer, PIMoaMmImage mmImageInterfacePointer)
+BitmapImporter::BitmapImporter(
+	const Label::Labels::Info &labelsInfo,
+	PIMoaDrPlayer drPlayerInterfacePointer,
+	PIMoaMmValue mmValueInterfacePointer,
+	PIMoaDrUtils drUtilsInterfacePointer,
+	PIMoaMmImage mmImageInterfacePointer
+)
 	: mmValueInterfacePointer(mmValueInterfacePointer),
 	drUtilsInterfacePointer(drUtilsInterfacePointer),
 	mmImageInterfacePointer(mmImageInterfacePointer) {

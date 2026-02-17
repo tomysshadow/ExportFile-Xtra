@@ -41,8 +41,22 @@ class BitmapImporter {
 	MoaError getMemberImageValue(GlobalHandleLock<>::GlobalHandle mediaData, MoaMmValue &memberStageImageValue, bool color = true);
 
 	public:
-	BitmapImporter(const Label::Labels::Info &labelsInfo, PIMoaDrMovie drMovieInterfacePointer, PIMoaMmValue mmValueInterfacePointer, PIMoaDrUtils drUtilsInterfacePointer, PIMoaMmImage mmImageInterfacePointer);
-	BitmapImporter(const Label::Labels::Info &labelsInfo, PIMoaDrPlayer drPlayerInterfacePointer, PIMoaMmValue mmValueInterfacePointer, PIMoaDrUtils drUtilsInterfacePointer, PIMoaMmImage mmImageInterfacePointer);
+	BitmapImporter(
+		const Label::Labels::Info &labelsInfo,
+		PIMoaDrMovie drMovieInterfacePointer,
+		PIMoaMmValue mmValueInterfacePointer,
+		PIMoaDrUtils drUtilsInterfacePointer,
+		PIMoaMmImage mmImageInterfacePointer
+	);
+
+	BitmapImporter(
+		const Label::Labels::Info &labelsInfo,
+		PIMoaDrPlayer drPlayerInterfacePointer,
+		PIMoaMmValue mmValueInterfacePointer,
+		PIMoaDrUtils drUtilsInterfacePointer,
+		PIMoaMmImage mmImageInterfacePointer
+	);
+
 	~BitmapImporter();
 	BitmapImporter(const BitmapImporter &bitmapImporter);
 	BitmapImporter(BitmapImporter &&bitmapImporter) noexcept;

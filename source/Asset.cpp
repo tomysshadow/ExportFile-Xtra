@@ -16,7 +16,11 @@ namespace Asset {
 	}
 
 	/*
-	MoaError Assets::Info::createIconAssetStream(std::optional<Stream>* streamOptionalPointer, PMoaVoid data, MoaUlong size, PIMoaCallback callbackInterfacePointer) {
+	MoaError Assets::Info::createIconAssetStream(
+		std::optional<Stream>* streamOptionalPointer,
+		PMoaVoid data, MoaUlong size,
+		PIMoaCallback callbackInterfacePointer
+	) {
 		RETURN_NULL(data);
 		RETURN_NULL(callbackInterfacePointer);
 
@@ -97,7 +101,11 @@ namespace Asset {
 			MoaMmValue foundIconValue = kVoidMoaMmValueInitializer;
 			IconValues::POINTER foundIconValues = std::make_shared<IconValues>(mmValueInterfacePointer, mmImageInterfacePointer);
 
-			for (IconValues::ICON_VALUE_MAP::iterator iconValueMapIterator = iconValueMap.begin(); iconValueMapIterator != iconValueMap.end(); iconValueMapIterator++) {
+			for (
+				IconValues::ICON_VALUE_MAP::iterator iconValueMapIterator = iconValueMap.begin();
+				iconValueMapIterator != iconValueMap.end();
+				iconValueMapIterator++
+			) {
 				// if succeeded, release the value after setting the icon value
 				// so it will be set to the found icon value
 				SCOPE_EXIT{
@@ -143,12 +151,20 @@ namespace Asset {
 		IconValues::MAP symbolIconValuesMap = {};
 		SYMBOL_VARIANT symbolVariant = 0;
 
-		for (Asset::Info::MAP::iterator assetInfoMapIterator = assetInfoMap.begin(); assetInfoMapIterator != assetInfoMap.end(); assetInfoMapIterator++) {
+		for (
+			Asset::Info::MAP::iterator assetInfoMapIterator = assetInfoMap.begin();
+			assetInfoMapIterator != assetInfoMap.end();
+			assetInfoMapIterator++
+		) {
 			RETURN_ERR(getSymbol(assetInfoMapIterator->second.subType, mmValueInterfacePointer));
 
 			IconValues::MAP &iconValuesMap = assetInfoMapIterator->second.iconValuesMap;
 
-			for (IconValues::MAP::iterator iconValuesMapIterator = iconValuesMap.begin(); iconValuesMapIterator != iconValuesMap.end(); iconValuesMapIterator++) {
+			for (
+				IconValues::MAP::iterator iconValuesMapIterator = iconValuesMap.begin();
+				iconValuesMapIterator != iconValuesMap.end();
+				iconValuesMapIterator++
+			) {
 				symbolVariant = iconValuesMapIterator->first;
 				RETURN_ERR(getSymbol(symbolVariant, mmValueInterfacePointer));
 
@@ -167,7 +183,10 @@ namespace Asset {
 		return kMoaErr_NoErr;
 	}
 
-	MoaError Assets::Info::getAssetInfoMapIcon(BitmapImporter &bitmapImporter, Label::Labels::Info &labelsInfo, IconValues &iconValues, RESOURCE_ID resourceID, RESOURCE_ID baseResourceID, XtraResourceCookie myCookie) {
+	MoaError Assets::Info::getAssetInfoMapIcon(
+		BitmapImporter &bitmapImporter, IconValues &iconValues,
+		RESOURCE_ID resourceID, RESOURCE_ID baseResourceID, XtraResourceCookie myCookie
+	) {
 		// (NULL is a valid value for myCookie)
 		//RETURN_NULL(myCookie);
 
@@ -258,7 +277,10 @@ namespace Asset {
 		//return kMoaErr_NoErr;
 	}
 
-	MoaError Assets::Info::getAssetInfoMapIcons(BitmapImporter &bitmapImporter, Label::Labels::Info &labelsInfo, unsigned long productVersionMajor, PIMoaCallback callbackInterfacePointer) {
+	MoaError Assets::Info::getAssetInfoMapIcons(
+		BitmapImporter &bitmapImporter, unsigned long productVersionMajor,
+		PIMoaCallback callbackInterfacePointer
+	) {
 		RETURN_NULL(callbackInterfacePointer);
 
 		MoaError err = callbackInterfacePointer->QueryInterface(&IID_IMoaMmImage, (PPMoaVoid)&mmImageInterfacePointer);
@@ -295,22 +317,28 @@ namespace Asset {
 		};
 		*/
 
-		for (IconValues::ICON_VALUE_MAP::iterator iconValueMapIterator = iconValueMap.begin(); iconValueMapIterator != iconValueMap.end(); iconValueMapIterator++) {
+		for (
+			IconValues::ICON_VALUE_MAP::iterator iconValueMapIterator = iconValueMap.begin();
+			iconValueMapIterator != iconValueMap.end();
+			iconValueMapIterator++
+		) {
 			RETURN_ERR(
 				getAssetInfoMapIcon(
-				bitmapImporter,
-				labelsInfo,
-				iconValues,
-				iconValueMapIterator->first,
-				baseResourceID,
-				myCookie
-			)
+					bitmapImporter,
+					iconValues,
+					iconValueMapIterator->first,
+					baseResourceID,
+					myCookie
+				)
 			);
 		}
 		return kMoaErr_NoErr;
 	}
 
-	Assets::Info::Info(BitmapImporter &bitmapImporter, Label::Labels::Info &labelsInfo, unsigned long productVersionMajor, PIMoaMmValue mmValueInterfacePointer, PIMoaCallback callbackInterfacePointer)
+	Assets::Info::Info(
+		BitmapImporter &bitmapImporter, unsigned long productVersionMajor,
+		PIMoaMmValue mmValueInterfacePointer, PIMoaCallback callbackInterfacePointer
+	)
 		: mmValueInterfacePointer(mmValueInterfacePointer) {
 		if (!mmValueInterfacePointer) {
 			throw std::invalid_argument("mmValueInterfacePointer must not be NULL");
@@ -328,7 +356,7 @@ namespace Asset {
 			throw std::runtime_error("Failed to Get Asset Info Map Symbols");
 		}
 
-		err = getAssetInfoMapIcons(bitmapImporter, labelsInfo, productVersionMajor, callbackInterfacePointer);
+		err = getAssetInfoMapIcons(bitmapImporter, productVersionMajor, callbackInterfacePointer);
 
 		if (err != kMoaErr_NoErr) {
 			throw std::runtime_error("Failed to Get Asset Info Map Icons");
@@ -361,7 +389,11 @@ namespace Asset {
 
 		MoaError err = kMoaErr_NoErr;
 
-		for (IconValues::MAP::iterator iconValuesMapIterator = foundAssetInfo->second.iconValuesMap.begin(); iconValuesMapIterator != foundAssetInfo->second.iconValuesMap.end(); iconValuesMapIterator++) {
+		for (
+			IconValues::MAP::iterator iconValuesMapIterator = foundAssetInfo->second.iconValuesMap.begin();
+			iconValuesMapIterator != foundAssetInfo->second.iconValuesMap.end();
+			iconValuesMapIterator++
+		) {
 			err = findIconValue(iconValuesMapIterator->second);
 
 			if (err != kMoaErr_NoErr) {

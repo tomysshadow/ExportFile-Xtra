@@ -61,10 +61,10 @@ inline bool stringNullOrEmpty(const char* str) {
 }
 
 inline bool stringWhitespace(const char* str) {
-	unsigned char space = *str;
+	unsigned char space = (unsigned char)*str;
 
 	while (space && isspace(space)) {
-		space = *++str;
+		space = (unsigned char)*++str;
 	}
 	return !space;
 }
@@ -134,8 +134,13 @@ inline std::shared_ptr<T[]> makeSharedArray(size_t size) {
 
 #define DIRECTOR_UTF8(productVersionMajor) ((productVersionMajor) >= 11)
 
-#define FILESYSTEM_DIRECTOR_PATH(element, productVersionMajor) (DIRECTOR_UTF8(productVersionMajor) ? std::filesystem::u8path(element) : std::filesystem::path(element))
-#define FILESYSTEM_DIRECTOR_STRING(path, productVersionMajor) (DIRECTOR_UTF8(productVersionMajor) ? (path).u8string() : (path).string())
+#define FILESYSTEM_DIRECTOR_PATH(element, productVersionMajor) (DIRECTOR_UTF8(productVersionMajor) \
+	? std::filesystem::u8path(element) \
+	: std::filesystem::path(element))
+
+#define FILESYSTEM_DIRECTOR_STRING(path, productVersionMajor) (DIRECTOR_UTF8(productVersionMajor) \
+	? (path).u8string() \
+	: (path).string())
 
 #ifdef MACINTOSH
 #define kCFStringEncodingDirector(productVersionMajor) (DIRECTOR_UTF8(productVersionMajor) ? kCFStringEncodingUTF8 : kCFStringEncodingASCII)
@@ -228,7 +233,7 @@ inline MoaError osErr(HANDLE h, bool doserrno = false) {
 }
 
 inline MoaError fileErr(MoaError err) {
-	return IS_ERROR(err) ? err : HRESULT_FROM_WIN32(err);
+	return IS_ERROR(err) ? err : HRESULT_FROM_WIN32((unsigned long)err);
 }
 #endif
 
@@ -603,8 +608,16 @@ MoaError getSymbol(SYMBOL_VARIANT &symbolVariant, PIMoaMmValue mmValueInterfaceP
 MoaError getSymbol(const SYMBOL_VARIANT &symbolVariant, MoaMmSymbol &symbol, PIMoaMmValue mmValueInterfacePointer);
 MoaError readStreamSafe(PMoaVoid buffer, MoaStreamCount numberOfBytesToRead, PIMoaStream readStreamInterfacePointer);
 MoaError writeStreamSafe(PMoaVoid buffer, MoaStreamCount numberOfBytesToWrite, PIMoaStream writeStreamInterfacePointer);
-MoaError readStreamPartial(PMoaVoid buffer, MoaStreamCount numberOfBytesToRead, MoaStreamCount &numberOfBytesRead, PIMoaStream readStreamInterfacePointer);
-MoaError writeStreamPartial(PMoaVoid buffer, MoaStreamCount numberOfBytesToWrite, MoaStreamCount &numberOfBytesWritten, PIMoaStream writeStreamInterfacePointer);
+
+MoaError readStreamPartial(
+	PMoaVoid buffer, MoaStreamCount numberOfBytesToRead,
+	MoaStreamCount &numberOfBytesRead, PIMoaStream readStreamInterfacePointer
+);
+
+MoaError writeStreamPartial(
+	PMoaVoid buffer, MoaStreamCount numberOfBytesToWrite,
+	MoaStreamCount &numberOfBytesWritten, PIMoaStream writeStreamInterfacePointer
+);
 
 #ifdef WINDOWS
 MoaError setFileAttributeHiddenWide(bool hidden, LPCWSTR pathWideStringPointer);

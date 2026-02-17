@@ -225,7 +225,7 @@ LRESULT Mixer::Window::onMixerSaved(WORD wParam, DWORD lParam) {
 
 LRESULT CALLBACK Mixer::Window::proc(HWND windowHandle, UINT message, WPARAM wParam, LPARAM lParam) {
 	if (message == WM_MIXER_SAVED) {
-		return onMixerSaved(wParam, lParam);
+		return onMixerSaved((WORD)wParam, (DWORD)lParam);
 	}
 	return DefWindowProc(windowHandle, message, wParam, lParam);
 }

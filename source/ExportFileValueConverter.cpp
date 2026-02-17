@@ -31,7 +31,12 @@ MoaError ExportFileValueConverter::getSymbols() {
 	return kMoaErr_NoErr;
 }
 
-ExportFileValueConverter::ExportFileValueConverter(PIMoaDrPlayer drPlayerInterfacePointer, PIMoaMmValue mmValueInterfacePointer, PIMoaMmList mmListInterfacePointer, PIMoaCalloc callocInterfacePointer)
+ExportFileValueConverter::ExportFileValueConverter(
+	PIMoaDrPlayer drPlayerInterfacePointer,
+	PIMoaMmValue mmValueInterfacePointer,
+	PIMoaMmList mmListInterfacePointer,
+	PIMoaCalloc callocInterfacePointer
+)
 	: ValueConverter(
 		drPlayerInterfacePointer,
 		mmValueInterfacePointer,
@@ -219,7 +224,11 @@ MoaError ExportFileValueConverter::toValue(const Label::MAPPED_VECTOR &labelMapp
 
 	RETURN_ERR(mmListInterfacePointer->NewListValue(&value));
 
-	for (Label::MAPPED_VECTOR::CONST_ITERATOR labelMappedVectorIterator = labelMappedVector.cbegin(); labelMappedVectorIterator != labelMappedVector.cend(); labelMappedVectorIterator++) {
+	for (
+		Label::MAPPED_VECTOR::CONST_ITERATOR labelMappedVectorIterator = labelMappedVector.cbegin();
+		labelMappedVectorIterator != labelMappedVector.cend();
+		labelMappedVectorIterator++
+	) {
 		RETURN_ERR(appendToList(*labelMappedVectorIterator, value));
 	}
 
@@ -236,7 +245,11 @@ MoaError ExportFileValueConverter::toValue(const Agent::Info::MAP &agentInfoMap,
 
 	RETURN_ERR(mmListInterfacePointer->NewPropListValue(&value));
 
-	for (Agent::Info::MAP::const_iterator agentInfoMapIterator = agentInfoMap.begin(); agentInfoMapIterator != agentInfoMap.end(); agentInfoMapIterator++) {
+	for (
+		Agent::Info::MAP::const_iterator agentInfoMapIterator = agentInfoMap.begin();
+		agentInfoMapIterator != agentInfoMap.end();
+		agentInfoMapIterator++
+	) {
 		RETURN_ERR(appendToPropList(agentInfoMapIterator->first.c_str(), agentInfoMapIterator->second, value));
 	}
 
@@ -287,7 +300,7 @@ MoaError ExportFileValueConverter::toValue(const Options &options, MoaMmValue &v
 	};
 
 	// no != FALSE here, this is not an on/off value
-	RETURN_ERR(mmValueInterfacePointer->IntegerToValue(options.alternatePathExtension, &alternatePathExtensionValue));
+	RETURN_ERR(mmValueInterfacePointer->IntegerToValue((MoaLong)options.alternatePathExtension, &alternatePathExtensionValue));
 	RETURN_ERR(appendToPropList(symbols.AlternatePathExtension, alternatePathExtensionValue, value));
 
 	MoaMmValue locationValue = kVoidMoaMmValueInitializer;
@@ -338,7 +351,7 @@ MoaError ExportFileValueConverter::toValue(const IconValues::ICON_VALUE_MAP &ico
 	IconValues::ICON_VALUE_MAP::const_iterator foundIconValue = {};
 
 	#define FIND_ICON_VALUE(propertySymbol, resourceID, resourceIDLinked) do {\
-		foundIconValue = iconValueMap.find(linked ? (resourceIDLinked) : (resourceID));\
+		foundIconValue = iconValueMap.find((RESOURCE_ID)(linked ? (resourceIDLinked) : (resourceID)));\
 		\
 		if (foundIconValue != iconValueMap.cend()) {\
 			RETURN_ERR(appendToPropList((propertySymbol), foundIconValue->second, value));\
@@ -430,7 +443,11 @@ MoaError ExportFileValueConverter::appendToPropList(ConstPMoaChar propertyString
 
 	RETURN_ERR(mmListInterfacePointer->NewListValue(&pathExtensionsValue));
 
-	for (Path::EXTENSION_MAPPED_VECTOR::CONST_ITERATOR pathExtensionsIterator = agentInfo.pathExtensions.cbegin(); pathExtensionsIterator != agentInfo.pathExtensions.cend(); pathExtensionsIterator++) {
+	for (
+		Path::EXTENSION_MAPPED_VECTOR::CONST_ITERATOR pathExtensionsIterator = agentInfo.pathExtensions.cbegin();
+		pathExtensionsIterator != agentInfo.pathExtensions.cend();
+		pathExtensionsIterator++
+	) {
 		RETURN_ERR(appendToList(pathExtensionsIterator->c_str(), pathExtensionsValue));
 	}
 
@@ -455,7 +472,11 @@ MoaError ExportFileValueConverter::appendToPropList(ConstPMoaChar propertyString
 
 	MoaMmValue writerClassIDValue = kVoidMoaMmValueInitializer;
 
-	for (Agent::Info::WRITER_VECTOR::const_iterator writerVectorIterator = agentInfo.writerVector.begin(); writerVectorIterator != agentInfo.writerVector.end(); writerVectorIterator++) {
+	for (
+		Agent::Info::WRITER_VECTOR::const_iterator writerVectorIterator = agentInfo.writerVector.begin();
+		writerVectorIterator != agentInfo.writerVector.end();
+		writerVectorIterator++
+	) {
 		SCOPE_EXIT {
 			releaseValue(writerClassIDValue, mmValueInterfacePointer);
 		};

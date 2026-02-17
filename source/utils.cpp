@@ -63,7 +63,10 @@ MoaError writeStreamSafe(PMoaVoid buffer, MoaStreamCount numberOfBytesToWrite, P
 	return kMoaErr_NoErr;
 }
 
-MoaError readStreamPartial(PMoaVoid buffer, MoaStreamCount numberOfBytesToRead, MoaStreamCount &numberOfBytesRead, PIMoaStream readStreamInterfacePointer) {
+MoaError readStreamPartial(
+	PMoaVoid buffer, MoaStreamCount numberOfBytesToRead,
+	MoaStreamCount &numberOfBytesRead, PIMoaStream readStreamInterfacePointer
+) {
 	RETURN_NULL(buffer);
 	RETURN_NULL(readStreamInterfacePointer);
 
@@ -77,7 +80,10 @@ MoaError readStreamPartial(PMoaVoid buffer, MoaStreamCount numberOfBytesToRead, 
 	return err;
 }
 
-MoaError writeStreamPartial(PMoaVoid buffer, MoaStreamCount numberOfBytesToWrite, MoaStreamCount &numberOfBytesWritten, PIMoaStream writeStreamInterfacePointer) {
+MoaError writeStreamPartial(
+	PMoaVoid buffer, MoaStreamCount numberOfBytesToWrite,
+	MoaStreamCount &numberOfBytesWritten, PIMoaStream writeStreamInterfacePointer
+) {
 	RETURN_NULL(buffer);
 	RETURN_NULL(writeStreamInterfacePointer);
 

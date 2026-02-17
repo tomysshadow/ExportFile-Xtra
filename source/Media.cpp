@@ -90,18 +90,19 @@ namespace Media {
 	}
 
 	MixerMedia::MixerMedia(const ExportFileValueConverter &exportFileValueConverter, PIMoaDrMovie drMovieInterfacePointer, PIMoaMmValue mmValueInterfacePointer)
-		: exportFileValueConverter(
+		: mmValueInterfacePointer(
+			mmValueInterfacePointer
+		),
+
+		exportFileValueConverter(
 			exportFileValueConverter
 		),
 
 		lingo(
 			drMovieInterfacePointer,
 			mmValueInterfacePointer
-		),
-
-		mmValueInterfacePointer(
-			mmValueInterfacePointer
-		) {
+		)
+	{
 		if (!drMovieInterfacePointer) {
 			throw std::invalid_argument("drMovieInterfacePointer must not be NULL");
 		}
@@ -127,18 +128,19 @@ namespace Media {
 	}
 
 	MixerMedia::MixerMedia(const ExportFileValueConverter &exportFileValueConverter, PIMoaDrPlayer drPlayerInterfacePointer, PIMoaMmValue mmValueInterfacePointer)
-		: exportFileValueConverter(
+		: mmValueInterfacePointer(
+			mmValueInterfacePointer
+		),
+
+		exportFileValueConverter(
 			exportFileValueConverter
 		),
 
 		lingo(
 			drPlayerInterfacePointer,
 			mmValueInterfacePointer
-		),
-
-		mmValueInterfacePointer(
-			mmValueInterfacePointer
-		) {
+		)
+	{
 		if (!mmValueInterfacePointer) {
 			throw std::invalid_argument("mmValueInterfacePointer must not be NULL");
 		}
@@ -491,11 +493,11 @@ namespace Media {
 		return true;
 	}
 
-	DWORD WinBMPMedia::getStride(ULONG absWidth, WORD bitCount) {
-		return (((absWidth * bitCount) + 31) & ~31) >> 3;
+	DWORD WinBMPMedia::getStride(LONG absWidth, WORD bitCount) {
+		return ((((DWORD)absWidth * bitCount) + 31) & ~31) >> 3;
 	}
 
-	bool WinBMPMedia::getImageSize(MoaLong colorSpace, ULONG absWidth, ULONG absHeight, MoaLong &rowBytes, DWORD &imageSize) {
+	bool WinBMPMedia::getImageSize(MoaLong colorSpace, LONG absWidth, LONG absHeight, MoaLong &rowBytes, DWORD &imageSize) {
 		rowBytes = 0;
 		imageSize = 0;
 
@@ -517,14 +519,14 @@ namespace Media {
 
 		WORD bitCount = foundBitCount->second;
 		#else
-		WORD bitCount = colorSpace == RPCS_RGBA ? 32 : 24;
+		WORD bitCount = (WORD)(colorSpace == RPCS_RGBA ? 32 : 24);
 		#endif
 
 		DWORD stride = getStride(absWidth, bitCount);
 
 		// (do not directly reuse rowBytes in calculations, it is a signed integer)
-		rowBytes = stride;
-		imageSize = absHeight * stride;
+		rowBytes = (MoaLong)stride;
+		imageSize = (DWORD)absHeight * stride;
 		return true;
 	}
 
@@ -580,7 +582,7 @@ namespace Media {
 		static const MoaLong ENTRIES_SIZE = sizeof(pixelFormat.cs.colorTable.Entry);
 		static const MoaLong NUM_ENTRIES_ALLOC = ENTRIES_SIZE / ENTRY_SIZE;
 
-		pixelFormat.cs.colorTable.Header.iNumEntries = colorsUsed;
+		pixelFormat.cs.colorTable.Header.iNumEntries = (MoaLong)colorsUsed;
 		pixelFormat.cs.colorTable.Header.iNumEntriesAlloc = NUM_ENTRIES_ALLOC;
 
 		// the math works out such that there should be enough space allocated for every entry
@@ -599,7 +601,7 @@ namespace Media {
 			// I'm guessing the upper byte is otherwise used for paletted RGBA
 			// which we don't provide anyway
 			#define SET_COLOR_COMPONENT(colorComponent, color) do {\
-				colorComponent = ((MoaUshort)(color) << 8) | (color);\
+				colorComponent = (TMoaColorComponent)(((MoaUshort)(color) << 8) | (color));\
 			} while(0)
 
 			SET_COLOR_COMPONENT(cTableEntry.Red, colors.rgbRed);
@@ -625,7 +627,7 @@ namespace Media {
 			colorsUsed = bitmapInfoHeader.biClrUsed;
 
 			if (!colorsUsed) {
-				colorsUsed = 1 << bitmapInfoHeader.biBitCount;
+				colorsUsed = (DWORD)(1 << bitmapInfoHeader.biBitCount);
 			}
 		}
 		return true;
@@ -734,10 +736,10 @@ namespace Media {
 		// no thumbnail size, only the canonical size available
 		static const MoaLong DIMENSION_COUNT = 1;
 
-		ULONG absSourceWidth = abs(sourceBitmapInfoHeader.biWidth);
+		LONG absSourceWidth = abs(sourceBitmapInfoHeader.biWidth);
 		pixelFormat.dim.pixels.x = absSourceWidth;
 
-		ULONG absSourceHeight = abs(sourceBitmapInfoHeader.biHeight);
+		LONG absSourceHeight = abs(sourceBitmapInfoHeader.biHeight);
 		pixelFormat.dim.pixels.y = absSourceHeight;
 
 		// both should ideally be provided
@@ -791,13 +793,13 @@ namespace Media {
 				// the bit count used for the implicit calculation may be changing
 				// correct it if necessary
 				if (colorsBitmapInfoHeader.biBitCount != sourceBitmapInfoHeader.biBitCount && !colorsBitmapInfoHeader.biClrUsed) {
-					colorsBitmapInfoHeader.biClrUsed = 1 << sourceBitmapInfoHeader.biBitCount;
+					colorsBitmapInfoHeader.biClrUsed = (DWORD)(1 << sourceBitmapInfoHeader.biBitCount);
 				}
 			} else {
 			#endif
 			colorsBitmapInfoHeader.biClrUsed = 0;
 			colorsBitmapInfoHeader.biClrImportant = 0;
-			colorsBitmapInfoHeader.biBitCount = pixelFormat.cs.colorSpace == RPCS_RGBA ? 32 : 24;
+			colorsBitmapInfoHeader.biBitCount = (WORD)(pixelFormat.cs.colorSpace == RPCS_RGBA ? 32 : 24);
 			#ifdef READ_RPCS_INDEXED_RGB
 			}
 			#endif
@@ -947,7 +949,7 @@ namespace Media {
 
 		MoaPixelFormat &pixelFormat = pixelFormatOptional.value();
 
-		DWORD stride = pixelFormat.dim.rowBytes;
+		DWORD stride = (DWORD)pixelFormat.dim.rowBytes;
 
 		// this value should've been set explicitly by getPixelFormat
 		if (!imageSize) {

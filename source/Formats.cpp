@@ -210,9 +210,9 @@ namespace Formats {
 	}
 
 	Format::Format(unsigned long productVersionMajor, const std::string &tempFileExtension, bool pathRelative)
-		: productVersionMajor(productVersionMajor),
-		TEMP_FILE_EXTENSION(tempFileExtension),
-		PATH_RELATIVE(pathRelative) {
+		: TEMP_FILE_EXTENSION(tempFileExtension),
+		PATH_RELATIVE(pathRelative),
+		productVersionMajor(productVersionMajor) {
 	}
 
 	Format::~Format() {
@@ -355,23 +355,29 @@ namespace Formats {
 		MediaData* lock = NULL;
 
 		public:
-		HandleLockFormat(MoaHandle handle, unsigned long productVersionMajor, PIMoaHandle handleInterfacePointer, PIMoaCalloc callocInterfacePointer)
-			: handle(
-				handle
-			),
-
-			Format(
+		HandleLockFormat(
+			MoaHandle handle,
+			unsigned long productVersionMajor,
+			PIMoaHandle handleInterfacePointer,
+			PIMoaCalloc callocInterfacePointer
+		)
+			: Format(
 				productVersionMajor
-			),
-
-			handleInterfacePointer(
-				handleInterfacePointer
 			),
 
 			MemoryFormat(
 				productVersionMajor,
 				callocInterfacePointer
-			) {
+			),
+
+			handleInterfacePointer(
+				handleInterfacePointer
+			),
+			
+			handle(
+				handle
+			)
+		{
 			if (!handle) {
 				throw std::invalid_argument("handle must not be NULL");
 			}
@@ -389,7 +395,7 @@ namespace Formats {
 
 		MoaError get(PMoaVoid &data, MoaUlong &size) const {
 			data = lock;
-			size = handleInterfacePointer->GetSize(handle);
+			size = (MoaUlong)handleInterfacePointer->GetSize(handle);
 
 			RETURN_NULL(data);
 			return duplicateMemory(data, size, callocInterfacePointer);
@@ -402,7 +408,10 @@ namespace Formats {
 
 		std::unique_ptr<MEDIA_DATA_GLOBAL_HANDLE_LOCK> globalHandleLockPointer = 0;
 		public:
-		GlobalHandleLockFormat(GlobalHandleLock<>::GlobalHandle mediaData, unsigned long productVersionMajor, PIMoaCalloc callocInterfacePointer)
+		GlobalHandleLockFormat(
+			GlobalHandleLock<>::GlobalHandle mediaData, unsigned long productVersionMajor,
+			PIMoaCalloc callocInterfacePointer
+		)
 			: Format(
 				productVersionMajor
 			),
@@ -410,7 +419,8 @@ namespace Formats {
 			MemoryFormat(
 				productVersionMajor,
 				callocInterfacePointer
-			) {
+			)
+		{
 			globalHandleLockPointer = std::make_unique<MEDIA_DATA_GLOBAL_HANDLE_LOCK>(mediaData);
 
 			if (!globalHandleLockPointer) {
@@ -419,7 +429,11 @@ namespace Formats {
 		}
 
 		#ifdef MACINTOSH
-		GlobalHandleLockFormat(bool resource, MEDIA_DATA_GLOBAL_HANDLE_LOCK::GlobalHandle mediaData, unsigned long productVersionMajor, PIMoaCalloc callocInterfacePointer)
+		GlobalHandleLockFormat(
+			bool resource,
+			MEDIA_DATA_GLOBAL_HANDLE_LOCK::GlobalHandle mediaData, unsigned long productVersionMajor,
+			PIMoaCalloc callocInterfacePointer
+		)
 			: Format(
 				productVersionMajor
 			),
@@ -436,7 +450,10 @@ namespace Formats {
 		}
 		#endif
 		#ifdef WINDOWS
-		GlobalHandleLockFormat(HMODULE moduleHandle, HRSRC resourceHandle, unsigned long productVersionMajor, PIMoaCalloc callocInterfacePointer)
+		GlobalHandleLockFormat(
+			HMODULE moduleHandle, HRSRC resourceHandle, unsigned long productVersionMajor,
+			PIMoaCalloc callocInterfacePointer
+		)
 			: Format(
 				productVersionMajor
 			),
@@ -444,7 +461,8 @@ namespace Formats {
 			MemoryFormat(
 				productVersionMajor,
 				callocInterfacePointer
-			) {
+			)
+		{
 			globalHandleLockPointer = std::make_unique<MEDIA_DATA_GLOBAL_HANDLE_LOCK>(moduleHandle, resourceHandle);
 
 			if (!globalHandleLockPointer) {
@@ -463,7 +481,7 @@ namespace Formats {
 			return duplicateMemory(data, size, callocInterfacePointer);
 		}
 
-		MoaError get(PIMoaStream writeStreamInterfacePointer, MoaUlong &size) const {
+		MoaError get(MoaUlong &size, PIMoaStream writeStreamInterfacePointer) const {
 			RETURN_NULL(writeStreamInterfacePointer);
 
 			PMoaVoid data = globalHandleLockPointer->get();
@@ -481,8 +499,16 @@ namespace Formats {
 		private:
 		MoaError getBitmapFileHeader(BITMAPFILEHEADER &bitmapFileHeader) const;
 		public:
-		WinDIBFormat(GlobalHandleLock<BITMAPINFO>::GlobalHandle mediaData, unsigned long productVersionMajor, PIMoaCalloc callocInterfacePointer);
-		WinDIBFormat(HMODULE moduleHandle, HRSRC resourceHandle, unsigned long productVersionMajor, PIMoaCalloc callocInterfacePointer);
+		WinDIBFormat(
+			GlobalHandleLock<BITMAPINFO>::GlobalHandle mediaData, unsigned long productVersionMajor,
+			PIMoaCalloc callocInterfacePointer
+		);
+
+		WinDIBFormat(
+			HMODULE moduleHandle, HRSRC resourceHandle, unsigned long productVersionMajor,
+			PIMoaCalloc callocInterfacePointer
+		);
+
 		virtual ~WinDIBFormat();
 		MoaError get(PMoaVoid &data, MoaUlong &size) const;
 		MoaError get(MoaUlong &size, PIMoaStream writeStreamInterfacePointer) const;
@@ -502,13 +528,17 @@ namespace Formats {
 		virtual ~WinPALETTEFormat();
 		MoaError writeFile(bool agent, PIMoaFile writeFileInterfacePointer);
 		MoaError get(PMoaVoid &data, MoaUlong &size) const;
-		MoaError get(PIMoaStream writeStreamInterfacePointer, MoaUlong &size) const;
+		MoaError get(MoaUlong &size, PIMoaStream writeStreamInterfacePointer) const;
 	};
 	#endif
 
 	class CompositeFormat : public HandleLockFormat<> {
 		public:
-		CompositeFormat(MoaHandle handle, unsigned long productVersionMajor, PIMoaHandle handleInterfacePointer, PIMoaCalloc callocInterfacePointer);
+		CompositeFormat(
+			MoaHandle handle, unsigned long productVersionMajor,
+			PIMoaHandle handleInterfacePointer, PIMoaCalloc callocInterfacePointer
+		);
+
 		virtual ~CompositeFormat();
 		MoaError get(PMoaVoid &data, MoaUlong &size) const;
 	};
@@ -523,7 +553,11 @@ namespace Formats {
 		MoaMmValue memberPropertyValue = kVoidMoaMmValueInitializer;
 
 		public:
-		MemberPropertyFormat(ConstPMoaMmValue memberPropertyValuePointer, unsigned long productVersionMajor, PIMoaMmValue mmValueInterfacePointer, PIMoaCalloc callocInterfacePointer);
+		MemberPropertyFormat(
+			ConstPMoaMmValue memberPropertyValuePointer, unsigned long productVersionMajor,
+			PIMoaMmValue mmValueInterfacePointer, PIMoaCalloc callocInterfacePointer
+		);
+
 		virtual ~MemberPropertyFormat();
 		MoaError get(PMoaVoid &data, MoaUlong &size) const;
 	};
@@ -541,7 +575,14 @@ namespace Formats {
 		static const MoaUlong PICT_HEADER_SIZE = 512;
 
 		public:
-		MemberPropertyPictureFormat(PMoaMmValue memberPropertyValuePointer, unsigned long productVersionMajor, PIMoaHandle handleInterfacePointer, PIMoaDrMediaValue drMediaValueInterfacePointer, PIMoaMmValue mmValueInterfacePointer, PIMoaCalloc callocInterfacePointer);
+		MemberPropertyPictureFormat(
+			PMoaMmValue memberPropertyValuePointer, unsigned long productVersionMajor,
+			PIMoaHandle handleInterfacePointer,
+			PIMoaDrMediaValue drMediaValueInterfacePointer,
+			PIMoaMmValue mmValueInterfacePointer,
+			PIMoaCalloc callocInterfacePointer
+		);
+
 		virtual ~MemberPropertyPictureFormat();
 		MoaError get(PMoaVoid &data, MoaUlong &size) const;
 	};
@@ -564,7 +605,13 @@ namespace Formats {
 
 		public:
 		XtraMediaFormat(PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor);
-		XtraMediaFormat(PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor, const std::string &tempFileExtension, bool pathRelative);
+
+		XtraMediaFormat(
+			PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor,
+			const std::string &tempFileExtension,
+			bool pathRelative
+		);
+		
 		virtual ~XtraMediaFormat();
 		MoaError writeFile(bool agent, PIMoaFile writeFileInterfacePointer);
 	};
@@ -582,7 +629,11 @@ namespace Formats {
 		MoaError determineSize(Stream &stream, MoaUlong &size) const;
 		virtual MoaError seekStream(Stream &stream, MoaUlong &size) const;
 		public:
-		XtraMediaMemoryFormat(PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor, PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer);
+		XtraMediaMemoryFormat(
+			PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor,
+			PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer
+		);
+
 		virtual ~XtraMediaMemoryFormat();
 		MoaError writeFile(bool agent, PIMoaFile writeFileInterfacePointer);
 		MoaError get(PMoaVoid &data, MoaUlong &size) const;
@@ -593,7 +644,11 @@ namespace Formats {
 		protected:
 		MoaError seekStream(Stream &stream, MoaUlong &size) const;
 		public:
-		XtraMediaSWFFormat(PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor, PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer);
+		XtraMediaSWFFormat(
+			PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor,
+			PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer
+		);
+
 		virtual ~XtraMediaSWFFormat();
 	};
 
@@ -601,7 +656,11 @@ namespace Formats {
 		protected:
 		MoaError seekStream(Stream &stream, MoaUlong &size) const;
 		public:
-		XtraMediaW3DFormat(PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor, PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer);
+		XtraMediaW3DFormat(
+			PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor,
+			PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer
+		);
+
 		virtual ~XtraMediaW3DFormat();
 	};
 
@@ -631,7 +690,15 @@ namespace Formats {
 		MoaError deleteSwapFile();
 		MoaError getSymbols();
 		public:
-		XtraMediaMixerAsyncFormat(PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor, const std::string &tempFileExtension, PIMoaDrCastMem drCastMemInterfacePointer, PIMoaMmValue mmValueInterfacePointer, PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer);
+		XtraMediaMixerAsyncFormat(
+			PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor,
+			const std::string &tempFileExtension,
+			PIMoaDrCastMem drCastMemInterfacePointer,
+			PIMoaMmValue mmValueInterfacePointer,
+			PIMoaCallback callbackInterfacePointer,
+			PIMoaCalloc callocInterfacePointer
+		);
+
 		virtual ~XtraMediaMixerAsyncFormat();
 		MoaError writeFile(bool agent, PIMoaFile writeFileInterfacePointer);
 		MoaError cancelFile();
@@ -641,12 +708,24 @@ namespace Formats {
 
 	class XtraMediaMixerWAVAsyncFormat : public XtraMediaMixerAsyncFormat {
 		public:
-		XtraMediaMixerWAVAsyncFormat(PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor, PIMoaDrCastMem drCastMemInterfacePointer, PIMoaMmValue mmValueInterfacePointer, PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer);
+		XtraMediaMixerWAVAsyncFormat(
+			PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor,
+			PIMoaDrCastMem drCastMemInterfacePointer,
+			PIMoaMmValue mmValueInterfacePointer,
+			PIMoaCallback callbackInterfacePointer,
+			PIMoaCalloc callocInterfacePointer
+		);
 	};
 
 	class XtraMediaMixerMP4AsyncFormat : public XtraMediaMixerAsyncFormat {
 		public:
-		XtraMediaMixerMP4AsyncFormat(PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor, PIMoaDrCastMem drCastMemInterfacePointer, PIMoaMmValue mmValueInterfacePointer, PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer);
+		XtraMediaMixerMP4AsyncFormat(
+			PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor,
+			PIMoaDrCastMem drCastMemInterfacePointer,
+			PIMoaMmValue mmValueInterfacePointer,
+			PIMoaCallback callbackInterfacePointer,
+			PIMoaCalloc callocInterfacePointer
+		);
 	};
 
 	MemoryFormat::MemoryFormat(unsigned long productVersionMajor, PIMoaCalloc callocInterfacePointer)
@@ -685,29 +764,37 @@ namespace Formats {
 		return kMoaErr_NoErr;
 	}
 
-	WinDIBFormat::WinDIBFormat(GlobalHandleLock<BITMAPINFO>::GlobalHandle mediaData, unsigned long productVersionMajor, PIMoaCalloc callocInterfacePointer)
-		: GlobalHandleLockFormat(
+	WinDIBFormat::WinDIBFormat(
+		GlobalHandleLock<BITMAPINFO>::GlobalHandle mediaData, unsigned long productVersionMajor,
+		PIMoaCalloc callocInterfacePointer
+	)
+		: Format(
+			productVersionMajor
+		),
+		
+		GlobalHandleLockFormat(
 			mediaData,
 			productVersionMajor,
 			callocInterfacePointer
-		),
-
-		Format(
-			productVersionMajor
-		) {
+		)
+	{
 	}
 
-	WinDIBFormat::WinDIBFormat(HMODULE moduleHandle, HRSRC resourceHandle, unsigned long productVersionMajor, PIMoaCalloc callocInterfacePointer)
-		: GlobalHandleLockFormat(
+	WinDIBFormat::WinDIBFormat(
+		HMODULE moduleHandle, HRSRC resourceHandle, unsigned long productVersionMajor,
+		PIMoaCalloc callocInterfacePointer
+	)
+		: Format(
+			productVersionMajor
+		),
+		
+		GlobalHandleLockFormat(
 			moduleHandle,
 			resourceHandle,
 			productVersionMajor,
 			callocInterfacePointer
-		),
-
-		Format(
-			productVersionMajor
-		) {
+		)
+	{
 	}
 
 	WinDIBFormat::~WinDIBFormat() = default;
@@ -734,7 +821,11 @@ namespace Formats {
 			return kMoaErr_OutOfMem;
 		}
 
-		if (memcpy_s((BITMAPFILEHEADER*)data + 1, size - Media::WinBMPMedia::BITMAPFILEHEADER_SIZE, globalHandleLockData, globalHandleLockSize)) {
+		if (memcpy_s(
+			(BITMAPFILEHEADER*)data + 1, size - Media::WinBMPMedia::BITMAPFILEHEADER_SIZE,
+			globalHandleLockData,
+			globalHandleLockSize
+		)) {
 			return kMoaErr_OutOfMem;
 		}
 
@@ -800,7 +891,7 @@ namespace Formats {
 			err = errOrDefaultErr(osErr(mmioAscend(mmioHandle, &mmckinfoSubchunk, 0) == MMSYSERR_NOERROR), err);
 		};
 
-		RETURN_ERR(osErr(mmioWrite(mmioHandle, logicalPalettePointer.get(), logicalPaletteSize) != -1));
+		RETURN_ERR(osErr(mmioWrite(mmioHandle, logicalPalettePointer.get(), (LONG)logicalPaletteSize) != -1));
 		return err;
 	}
 
@@ -814,7 +905,7 @@ namespace Formats {
 		LOGPALETTE &logicalPalette = *(LPLOGPALETTE)logicalPalettePointer.get();
 		logicalPalette.palVersion = 0x300;
 
-		logicalPalette.palNumEntries = GetPaletteEntries(paletteHandle, 0, numEntries, logicalPalette.palPalEntry);
+		logicalPalette.palNumEntries = (WORD)GetPaletteEntries(paletteHandle, 0, numEntries, logicalPalette.palPalEntry);
 		RETURN_ERR(osErr(logicalPalette.palNumEntries));
 
 		if (logicalPalette.palNumEntries != numEntries) {
@@ -847,25 +938,26 @@ namespace Formats {
 
 		MMIOINFO mmioinfo = {};
 		mmioinfo.pchBuffer = paletteGlobalHandleLockPointer->get();
-		mmioinfo.cchBuffer = logicalPaletteSize;
+		mmioinfo.cchBuffer = (LONG)logicalPaletteSize;
 		mmioinfo.fccIOProc = FOURCC_MEM;
 		*mmioinfo.adwInfo = WORD_SIZE;
 		return makeMMIO(logicalPalettePointer, logicalPaletteSize, mmioinfo);
 	}
 
 	WinPALETTEFormat::WinPALETTEFormat(HPALETTE paletteHandle, unsigned long productVersionMajor, PIMoaCalloc callocInterfacePointer)
-		: paletteHandle(
-			paletteHandle
-		),
-
-		Format(
+		: Format(
 			productVersionMajor
 		),
 
 		MemoryFormat(
 			productVersionMajor,
 			callocInterfacePointer
-		) {
+		),
+		
+		paletteHandle(
+			paletteHandle
+		)
+	{
 		if (!paletteHandle) {
 			throw std::invalid_argument("paletteHandle must not be NULL");
 		}
@@ -942,7 +1034,7 @@ namespace Formats {
 		return duplicateMemory(data, size, callocInterfacePointer);
 	}
 
-	MoaError WinPALETTEFormat::get(PIMoaStream writeStreamInterfacePointer, MoaUlong &size) const {
+	MoaError WinPALETTEFormat::get(MoaUlong &size, PIMoaStream writeStreamInterfacePointer) const {
 		RETURN_NULL(writeStreamInterfacePointer);
 
 		std::unique_ptr<GlobalHandleLock<char>> paletteGlobalHandleLockPointer = 0;
@@ -960,17 +1052,21 @@ namespace Formats {
 	}
 	#endif
 
-	CompositeFormat::CompositeFormat(MoaHandle handle, unsigned long productVersionMajor, PIMoaHandle handleInterfacePointer, PIMoaCalloc callocInterfacePointer)
-		: HandleLockFormat(
+	CompositeFormat::CompositeFormat(
+		MoaHandle handle, unsigned long productVersionMajor,
+		PIMoaHandle handleInterfacePointer, PIMoaCalloc callocInterfacePointer
+	)
+		: Format(
+			productVersionMajor
+		),
+		
+		HandleLockFormat(
 			handle,
 			productVersionMajor,
 			handleInterfacePointer,
 			callocInterfacePointer
-		),
-	
-		Format(
-			productVersionMajor
-		) {
+		)
+	{
 	}
 
 	CompositeFormat::~CompositeFormat() = default;
@@ -991,19 +1087,23 @@ namespace Formats {
 		releaseInterface((PPMoaVoid)&mmValueInterfacePointer);
 	}
 
-	MemberPropertyFormat::MemberPropertyFormat(ConstPMoaMmValue memberPropertyValuePointer, unsigned long productVersionMajor, PIMoaMmValue mmValueInterfacePointer, PIMoaCalloc callocInterfacePointer)
+	MemberPropertyFormat::MemberPropertyFormat(
+		ConstPMoaMmValue memberPropertyValuePointer, unsigned long productVersionMajor,
+		PIMoaMmValue mmValueInterfacePointer, PIMoaCalloc callocInterfacePointer
+	)
 		: Format(
 			productVersionMajor
-		),
-	
-		mmValueInterfacePointer(
-			mmValueInterfacePointer
 		),
 
 		MemoryFormat(
 			productVersionMajor,
 			callocInterfacePointer
-		) {
+		),
+
+		mmValueInterfacePointer(
+		mmValueInterfacePointer
+		)
+	{
 		if (!memberPropertyValuePointer) {
 			throw std::invalid_argument("memberPropertyValuePointer must not be NULL");
 		}
@@ -1029,7 +1129,7 @@ namespace Formats {
 
 		// we don't want the output file to include the null terminator either
 		// but the buffer must be long enough to recieve the string with it
-		size = stringLength;
+		size = (MoaUlong)stringLength;
 		MoaUlong bufferLength = size + 1;
 		data = callocInterfacePointer->NRAlloc(bufferLength);
 
@@ -1038,7 +1138,7 @@ namespace Formats {
 		};
 
 		RETURN_NULL(data);
-		RETURN_ERR(mmValueInterfacePointer->ValueToString(&memberPropertyValue, (PMoaChar)data, bufferLength));
+		RETURN_ERR(mmValueInterfacePointer->ValueToString(&memberPropertyValue, (PMoaChar)data, (MoaLong)bufferLength));
 		freeMemoryDataScopeExit.dismiss();
 		return kMoaErr_NoErr;
 	}
@@ -1048,25 +1148,32 @@ namespace Formats {
 		releaseInterface((PPMoaVoid)&drMediaValueInterfacePointer);
 	}
 
-	MemberPropertyPictureFormat::MemberPropertyPictureFormat(PMoaMmValue memberPropertyValuePointer, unsigned long productVersionMajor, PIMoaHandle handleInterfacePointer, PIMoaDrMediaValue drMediaValueInterfacePointer, PIMoaMmValue mmValueInterfacePointer, PIMoaCalloc callocInterfacePointer)
-		: MemberPropertyFormat(
+	MemberPropertyPictureFormat::MemberPropertyPictureFormat(
+		PMoaMmValue memberPropertyValuePointer, unsigned long productVersionMajor,
+		PIMoaHandle handleInterfacePointer,
+		PIMoaDrMediaValue drMediaValueInterfacePointer,
+		PIMoaMmValue mmValueInterfacePointer,
+		PIMoaCalloc callocInterfacePointer
+	)
+		: Format(
+			productVersionMajor
+		),
+
+		MemberPropertyFormat(
 			memberPropertyValuePointer,
 			productVersionMajor,
 			mmValueInterfacePointer,
 			callocInterfacePointer
 		),
 	
-		Format(
-			productVersionMajor
-		),
-
 		handleInterfacePointer(
 			handleInterfacePointer
 		),
 
 		drMediaValueInterfacePointer(
 			drMediaValueInterfacePointer
-		) {
+		)
+	{
 		if (!handleInterfacePointer) {
 			throw std::invalid_argument("handleInterfacePointer must not be NULL");
 		}
@@ -1109,7 +1216,7 @@ namespace Formats {
 
 		memset(data, 0, PICT_HEADER_SIZE);
 
-		if (memcpy_s((void*)((const char*)data + PICT_HEADER_SIZE), size - PICT_HEADER_SIZE, memberPropertyHandleLock, memberPropertyHandleSize)) {
+		if (memcpy_s((void*)((const char*)data + PICT_HEADER_SIZE), size - PICT_HEADER_SIZE, memberPropertyHandleLock, (rsize_t)memberPropertyHandleSize)) {
 			return kMoaErr_OutOfMem;
 		}
 
@@ -1122,8 +1229,8 @@ namespace Formats {
 	}
 
 	XtraMediaFormat::XtraMediaFormat(PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor)
-		: mmXAssetInterfacePointer(mmXAssetInterfacePointer),
-		Format(productVersionMajor) {
+		: Format(productVersionMajor),
+		mmXAssetInterfacePointer(mmXAssetInterfacePointer) {
 		if (!mmXAssetInterfacePointer) {
 			throw std::invalid_argument("mmXAssetInterfacePointer must not be NULL");
 		}
@@ -1131,16 +1238,21 @@ namespace Formats {
 		mmXAssetInterfacePointer->AddRef();
 	}
 
-	XtraMediaFormat::XtraMediaFormat(PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor, const std::string &tempFileExtension, bool pathRelative)
-		: mmXAssetInterfacePointer(
-			mmXAssetInterfacePointer
-		),
-
-		Format(
+	XtraMediaFormat::XtraMediaFormat(
+		PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor,
+		const std::string &tempFileExtension,
+		bool pathRelative
+	)
+		: Format(
 			productVersionMajor,
 			tempFileExtension,
 			pathRelative
-		) {
+		),
+		
+		mmXAssetInterfacePointer(
+			mmXAssetInterfacePointer
+		)
+	{
 		if (!mmXAssetInterfacePointer) {
 			throw std::invalid_argument("mmXAssetInterfacePointer must not be NULL");
 		}
@@ -1219,24 +1331,28 @@ namespace Formats {
 		return determineSize(stream, size);
 	}
 
-	XtraMediaMemoryFormat::XtraMediaMemoryFormat(PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor, PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer)
-		: XtraMediaFormat(
+	XtraMediaMemoryFormat::XtraMediaMemoryFormat(
+		PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor,
+		PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer
+	)
+		: Format(
+			productVersionMajor
+		),
+
+		XtraMediaFormat(
 			mmXAssetInterfacePointer,
 			productVersionMajor
-		),
-
-		Format(
-			productVersionMajor
-		),
-
-		callbackInterfacePointer(
-			callbackInterfacePointer
 		),
 
 		MemoryFormat(
 			productVersionMajor,
 			callocInterfacePointer
-		) {
+		),
+
+		callbackInterfacePointer(
+			callbackInterfacePointer
+		)
+	{
 		if (!callbackInterfacePointer) {
 			throw std::invalid_argument("callbackInterfacePointer must not be NULL");
 		}
@@ -1324,7 +1440,7 @@ namespace Formats {
 
 		// little endian, so we need to byteswap it on Mac
 		#ifdef MACINTOSH
-		chunkID = mem_XLong(chunkID);
+		chunkID = (CHUNK_ID)mem_XLong((long)chunkID);
 		#endif
 
 		// mask it to get just three bytes
@@ -1354,22 +1470,26 @@ namespace Formats {
 
 		// big endian, so we need to byteswap it on Windows
 		#ifdef WINDOWS
-		size = mem_XLong(size);
+		size = (MoaUlong)mem_XLong((long)size);
 		#endif
 		return kMoaErr_NoErr;
 	}
 
-	XtraMediaSWFFormat::XtraMediaSWFFormat(PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor, PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer)
-		: XtraMediaMemoryFormat(
+	XtraMediaSWFFormat::XtraMediaSWFFormat(
+		PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor,
+		PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer
+	)
+		: Format(
+			productVersionMajor
+		),
+		
+		XtraMediaMemoryFormat(
 			mmXAssetInterfacePointer,
 			productVersionMajor,
 			callbackInterfacePointer,
 			callocInterfacePointer
-		),
-
-		Format(
-			productVersionMajor
-		) {
+		)
+	{
 	}
 
 	XtraMediaSWFFormat::~XtraMediaSWFFormat() = default;
@@ -1385,7 +1505,7 @@ namespace Formats {
 
 		// big endian, so we need to byteswap it on Windows
 		#ifdef WINDOWS
-		chunkID = mem_XLong(chunkID);
+		chunkID = (CHUNK_ID)mem_XLong((long)chunkID);
 		#endif
 
 		// check if the ChunkID is 3DEM
@@ -1415,7 +1535,7 @@ namespace Formats {
 			RETURN_ERR(stream.readSafe(&size, SIZE_SIZE));
 
 			#ifdef WINDOWS
-			size = mem_XLong(size);
+			size = (MoaUlong)mem_XLong((long)size);
 			#endif
 			return size < MIN_W3D_SIZE ? kMoaMmErr_StreamOutFailed : kMoaErr_NoErr;
 		}
@@ -1426,17 +1546,21 @@ namespace Formats {
 		return size < MIN_W3D_SIZE ? kMoaMmErr_StreamOutFailed : kMoaErr_NoErr;
 	}
 
-	XtraMediaW3DFormat::XtraMediaW3DFormat(PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor, PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer)
-		: XtraMediaMemoryFormat(
+	XtraMediaW3DFormat::XtraMediaW3DFormat(
+		PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor,
+		PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer
+	)
+		: Format(
+			productVersionMajor
+		),
+		
+		XtraMediaMemoryFormat(
 			mmXAssetInterfacePointer,
 			productVersionMajor,
 			callbackInterfacePointer,
 			callocInterfacePointer
-		),
-
-		Format(
-			productVersionMajor
-		) {
+		)
+	{
 	}
 
 	XtraMediaW3DFormat::~XtraMediaW3DFormat() = default;
@@ -1505,15 +1629,22 @@ namespace Formats {
 	}
 
 	// for mixers an absolute path is required
-	XtraMediaMixerAsyncFormat::XtraMediaMixerAsyncFormat(PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor, const std::string &tempFileExtension, PIMoaDrCastMem drCastMemInterfacePointer, PIMoaMmValue mmValueInterfacePointer, PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer)
-		: XtraMediaFormat(
-			mmXAssetInterfacePointer,
+	XtraMediaMixerAsyncFormat::XtraMediaMixerAsyncFormat(
+		PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor,
+		const std::string &tempFileExtension,
+		PIMoaDrCastMem drCastMemInterfacePointer,
+		PIMoaMmValue mmValueInterfacePointer,
+		PIMoaCallback callbackInterfacePointer,
+		PIMoaCalloc callocInterfacePointer
+	)
+		: Format(
 			productVersionMajor,
 			tempFileExtension,
 			false
 		),
 
-		Format(
+		XtraMediaFormat(
+			mmXAssetInterfacePointer,
 			productVersionMajor,
 			tempFileExtension,
 			false
@@ -1533,7 +1664,8 @@ namespace Formats {
 
 		callocInterfacePointer(
 			callocInterfacePointer
-		) {
+		)
+	{
 		if (!drCastMemInterfacePointer) {
 			throw std::invalid_argument("drCastMemInterfacePointer must not be NULL");
 		}
@@ -1684,7 +1816,7 @@ namespace Formats {
 			err = errOrDefaultErr(deleteSwapFile(), err);
 		};
 
-		RETURN_ERR(Format::swapFile(swapFileInterfacePointer));
+		RETURN_ERR(Format::swapFile(status));
 		deleteSwapFileInterfacePointerScopeExit.dismiss();
 		return err;
 	}
@@ -1700,8 +1832,20 @@ namespace Formats {
 		return kMoaErr_NoErr;
 	}
 
-	XtraMediaMixerWAVAsyncFormat::XtraMediaMixerWAVAsyncFormat(PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor, PIMoaDrCastMem drCastMemInterfacePointer, PIMoaMmValue mmValueInterfacePointer, PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer)
-		: XtraMediaMixerAsyncFormat(
+	XtraMediaMixerWAVAsyncFormat::XtraMediaMixerWAVAsyncFormat(
+		PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor,
+		PIMoaDrCastMem drCastMemInterfacePointer,
+		PIMoaMmValue mmValueInterfacePointer,
+		PIMoaCallback callbackInterfacePointer,
+		PIMoaCalloc callocInterfacePointer
+	)
+		: Format(
+			productVersionMajor,
+			"wav",
+			false
+		),
+		
+		XtraMediaMixerAsyncFormat(
 			mmXAssetInterfacePointer,
 			productVersionMajor,
 			"wav",
@@ -1709,17 +1853,24 @@ namespace Formats {
 			mmValueInterfacePointer,
 			callbackInterfacePointer,
 			callocInterfacePointer
-		),
-
-		Format(
-			productVersionMajor,
-			"wav",
-			false
-		) {
+		)
+	{
 	}
 
-	XtraMediaMixerMP4AsyncFormat::XtraMediaMixerMP4AsyncFormat(PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor, PIMoaDrCastMem drCastMemInterfacePointer, PIMoaMmValue mmValueInterfacePointer, PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer)
-		: XtraMediaMixerAsyncFormat(
+	XtraMediaMixerMP4AsyncFormat::XtraMediaMixerMP4AsyncFormat(
+		PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor,
+		PIMoaDrCastMem drCastMemInterfacePointer,
+		PIMoaMmValue mmValueInterfacePointer,
+		PIMoaCallback callbackInterfacePointer,
+		PIMoaCalloc callocInterfacePointer
+	)
+		: Format(
+			productVersionMajor,
+			"mp4",
+			false
+		),
+		
+		XtraMediaMixerAsyncFormat(
 			mmXAssetInterfacePointer,
 			productVersionMajor,
 			"mp4",
@@ -1727,16 +1878,14 @@ namespace Formats {
 			mmValueInterfacePointer,
 			callbackInterfacePointer,
 			callocInterfacePointer
-		),
-
-		Format(
-			productVersionMajor,
-			"mp4",
-			false
-		) {
+		)
+	{
 	}
 
-	Format::POINTER FormatFactory::createMediaInfoFormat(Label::TYPE labelType, PMoaVoid mediaData, unsigned long productVersionMajor, PIMoaHandle handleInterfacePointer, PIMoaCalloc callocInterfacePointer) {
+	Format::POINTER FormatFactory::createMediaInfoFormat(
+		Label::TYPE labelType, PMoaVoid mediaData, unsigned long productVersionMajor,
+		PIMoaHandle handleInterfacePointer, PIMoaCalloc callocInterfacePointer
+	) {
 		if (!(labelType & Label::TYPE_MEDIA_INFO)) {
 			return 0;
 		}
@@ -1762,7 +1911,10 @@ namespace Formats {
 	}
 
 	#ifdef MACINTOSH
-	Format::POINTER FormatFactory::createMediaInfoFormat(Label::TYPE labelType, bool resource, GlobalHandleLock<>::GlobalHandle mediaData, unsigned long productVersionMajor, PIMoaCalloc callocInterfacePointer) {
+	Format::POINTER FormatFactory::createMediaInfoFormat(
+		Label::TYPE labelType, bool resource, GlobalHandleLock<>::GlobalHandle mediaData, unsigned long productVersionMajor,
+		PIMoaCalloc callocInterfacePointer
+	) {
 		if (!(labelType & Label::TYPE_MEDIA_INFO)) {
 			return 0;
 		}
@@ -1775,7 +1927,10 @@ namespace Formats {
 	#endif
 
 	#ifdef WINDOWS
-	Format::POINTER FormatFactory::createMediaInfoFormat(Label::TYPE labelType, HMODULE moduleHandle, HRSRC resourceHandle, unsigned long productVersionMajor, PIMoaCalloc callocInterfacePointer) {
+	Format::POINTER FormatFactory::createMediaInfoFormat(
+		Label::TYPE labelType, HMODULE moduleHandle, HRSRC resourceHandle, unsigned long productVersionMajor,
+		PIMoaCalloc callocInterfacePointer
+	) {
 		if (!(labelType & Label::TYPE_MEDIA_INFO)) {
 			return 0;
 		}
@@ -1791,14 +1946,23 @@ namespace Formats {
 	}
 	#endif
 
-	Format::POINTER FormatFactory::createMemberPropertyFormat(Label::TYPE labelType, PMoaVoid mediaData, unsigned long productVersionMajor, PIMoaMmValue mmValueInterfacePointer, PIMoaCalloc callocInterfacePointer) {
+	Format::POINTER FormatFactory::createMemberPropertyFormat(
+		Label::TYPE labelType, PMoaVoid mediaData, unsigned long productVersionMajor,
+		PIMoaMmValue mmValueInterfacePointer, PIMoaCalloc callocInterfacePointer
+	) {
 		if (!(labelType & Label::TYPE_MEMBER_PROPERTY)) {
 			return 0;
 		}
 		return std::make_shared<MemberPropertyFormat>((PMoaMmValue)mediaData, productVersionMajor, mmValueInterfacePointer, callocInterfacePointer);
 	}
 
-	Format::POINTER FormatFactory::createMemberPropertyFormat(Label::TYPE labelType, PMoaVoid mediaData, unsigned long productVersionMajor, PIMoaHandle handleInterfacePointer, PIMoaDrMediaValue drMediaValueInterfacePointer, PIMoaMmValue mmValueInterfacePointer, PIMoaCalloc callocInterfacePointer) {
+	Format::POINTER FormatFactory::createMemberPropertyFormat(
+		Label::TYPE labelType, PMoaVoid mediaData, unsigned long productVersionMajor,
+		PIMoaHandle handleInterfacePointer,
+		PIMoaDrMediaValue drMediaValueInterfacePointer,
+		PIMoaMmValue mmValueInterfacePointer,
+		PIMoaCalloc callocInterfacePointer
+	) {
 		if (!(labelType & Label::TYPE_MEMBER_PROPERTY)) {
 			return 0;
 		}
@@ -1809,7 +1973,10 @@ namespace Formats {
 		return 0;
 	}
 
-	Format::POINTER FormatFactory::createXtraMediaFormat(Label::TYPE labelType, PMoaVoid mediaData, unsigned long productVersionMajor, PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer) {
+	Format::POINTER FormatFactory::createXtraMediaFormat(
+		Label::TYPE labelType, PMoaVoid mediaData, unsigned long productVersionMajor,
+		PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer
+	) {
 		if (!(labelType & Label::TYPE_XTRA_MEDIA)) {
 			return 0;
 		}
@@ -1824,7 +1991,13 @@ namespace Formats {
 		return std::make_shared<XtraMediaFormat>((PIMoaMmXAsset)mediaData, productVersionMajor);
 	}
 
-	Format::POINTER FormatFactory::createXtraMediaFormat(Label::TYPE labelType, PMoaVoid mediaData, unsigned long productVersionMajor, PIMoaDrCastMem drCastMemInterfacePointer, PIMoaMmValue mmValueInterfacePointer, PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer) {
+	Format::POINTER FormatFactory::createXtraMediaFormat(
+		Label::TYPE labelType, PMoaVoid mediaData, unsigned long productVersionMajor,
+		PIMoaDrCastMem drCastMemInterfacePointer,
+		PIMoaMmValue mmValueInterfacePointer,
+		PIMoaCallback callbackInterfacePointer,
+		PIMoaCalloc callocInterfacePointer
+	) {
 		if (!(labelType & Label::TYPE_XTRA_MEDIA)) {
 			return 0;
 		}

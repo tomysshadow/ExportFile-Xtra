@@ -126,7 +126,11 @@ static char msgTable[] = {
 	"+ callGet object me, symbol propertyName, * -- alternate syntax for Get Export File Properties"
 };
 
-STDMETHODIMP_(MoaError) GetType_TStdXtra(PMoaMmSymbol typeSymbolPointer, PIMoaMmValue mmValueInterfacePointer, PIMoaRegistryEntryDict registryEntryDictInterfacePointer) {
+STDMETHODIMP_(MoaError) GetType_TStdXtra(
+	PMoaMmSymbol typeSymbolPointer,
+	PIMoaMmValue mmValueInterfacePointer,
+	PIMoaRegistryEntryDict registryEntryDictInterfacePointer
+) {
 	moa_try
 
 	ThrowNull(typeSymbolPointer);
@@ -143,7 +147,11 @@ STDMETHODIMP_(MoaError) GetType_TStdXtra(PMoaMmSymbol typeSymbolPointer, PIMoaMm
 	moa_try_end
 }
 
-STDMETHODIMP_(MoaError) GetAssetInfoExtensions_TStdXtra(Asset::Info* assetInfoPointer, Registry::AssetInfoMap* registryEntriesAssetInfoMapPointer, PIMoaRegistryEntryDict registryEntryDictInterfacePointer) {
+STDMETHODIMP_(MoaError) GetAssetInfoExtensions_TStdXtra(
+	Asset::Info* assetInfoPointer,
+	Registry::AssetInfoMap* registryEntriesAssetInfoMapPointer,
+	PIMoaRegistryEntryDict registryEntryDictInterfacePointer
+) {
 	PMoaVoid fileExtListPointer = NULL;
 	
 	moa_try
@@ -161,7 +169,7 @@ STDMETHODIMP_(MoaError) GetAssetInfoExtensions_TStdXtra(Asset::Info* assetInfoPo
 	MoaError err = registryEntryDictInterfacePointer->GetInfo(NULL, &fileExtListSize, kAgentRegKey_FileExts);
 
 	if (err == kMoaErr_NoErr) {
-		fileExtListPointer = registryEntriesAssetInfoMap.callocInterfacePointer->NRAlloc(fileExtListSize);
+		fileExtListPointer = registryEntriesAssetInfoMap.callocInterfacePointer->NRAlloc((MoaUlong)fileExtListSize);
 		ThrowNull(fileExtListPointer);
 
 		err = registryEntryDictInterfacePointer->Get(kMoaDictType_CString, fileExtListPointer, fileExtListSize, kAgentRegKey_FileExts);
@@ -185,7 +193,14 @@ STDMETHODIMP_(MoaError) GetAssetInfoExtensions_TStdXtra(Asset::Info* assetInfoPo
 	moa_try_end
 }
 
-STDMETHODIMP_(MoaError) GetAssetInfoIcon_TStdXtra(MoaDictTypeID dictTypeID, ConstPMoaChar keyStringPointer, IconValues::POINTER iconValuesPointer, RESOURCE_ID resourceID, Registry::AssetInfoMap* registryEntriesAssetInfoMapPointer, PIMoaRegistryEntryDict registryEntryDictInterfacePointer) {
+STDMETHODIMP_(MoaError) GetAssetInfoIcon_TStdXtra(
+	MoaDictTypeID dictTypeID,
+	ConstPMoaChar keyStringPointer,
+	IconValues::POINTER iconValuesPointer,
+	RESOURCE_ID resourceID,
+	Registry::AssetInfoMap* registryEntriesAssetInfoMapPointer,
+	PIMoaRegistryEntryDict registryEntryDictInterfacePointer
+) {
 	moa_try
 
 	ThrowNull(keyStringPointer);
@@ -204,7 +219,7 @@ STDMETHODIMP_(MoaError) GetAssetInfoIcon_TStdXtra(MoaDictTypeID dictTypeID, Cons
 	// no idea
 	#endif
 	#ifdef WINDOWS
-	GlobalHandleLock<>::GlobalHandle iconGlobalHandle = GlobalAlloc(GMEM_MOVEABLE | GMEM_SHARE, iconSize);
+	GlobalHandleLock<>::GlobalHandle iconGlobalHandle = GlobalAlloc(GMEM_MOVEABLE | GMEM_SHARE, (SIZE_T)iconSize);
 	#endif
 
 	ThrowNull(iconGlobalHandle);
@@ -214,7 +229,12 @@ STDMETHODIMP_(MoaError) GetAssetInfoIcon_TStdXtra(MoaDictTypeID dictTypeID, Cons
 
 		// NewImageFromStream doesn't allow setting the color depth, so this is done with BitmapImporter instead
 		ThrowErr(registryEntryDictInterfacePointer->Get(dictTypeID, iconGlobalHandleLock.get(), iconSize, keyStringPointer));
-		ThrowErr(registryEntriesAssetInfoMap.bitmapImporterPointer->insertIntoIconValues(iconGlobalHandleLock.getGlobalHandle(), *iconValuesPointer, resourceID));
+		
+		ThrowErr(registryEntriesAssetInfoMap.bitmapImporterPointer->insertIntoIconValues(
+			iconGlobalHandleLock.getGlobalHandle(),
+			*iconValuesPointer,
+			resourceID)
+		);
 	}
 
 	moa_catch
@@ -222,7 +242,11 @@ STDMETHODIMP_(MoaError) GetAssetInfoIcon_TStdXtra(MoaDictTypeID dictTypeID, Cons
 	moa_try_end
 }
 
-STDMETHODIMP_(MoaError) GetAssetInfoIcons_TStdXtra(Asset::Info* assetInfoPointer, Registry::AssetInfoMap* registryEntriesAssetInfoMapPointer, PIMoaRegistryEntryDict registryEntryDictInterfacePointer) {
+STDMETHODIMP_(MoaError) GetAssetInfoIcons_TStdXtra(
+	Asset::Info* assetInfoPointer,
+	Registry::AssetInfoMap* registryEntriesAssetInfoMapPointer,
+	PIMoaRegistryEntryDict registryEntryDictInterfacePointer
+) {
 	moa_try
 
 	ThrowNull(assetInfoPointer);
@@ -233,7 +257,10 @@ STDMETHODIMP_(MoaError) GetAssetInfoIcons_TStdXtra(Asset::Info* assetInfoPointer
 	ThrowNull(registryEntriesAssetInfoMap.mmValueInterfacePointer);
 
 	if (registryEntriesAssetInfoMap.mmImageInterfacePointer) {
-		IconValues::POINTER iconValuesPointer = std::make_shared<IconValues>(registryEntriesAssetInfoMap.mmValueInterfacePointer, registryEntriesAssetInfoMap.mmImageInterfacePointer);
+		IconValues::POINTER iconValuesPointer = std::make_shared<IconValues>(
+			registryEntriesAssetInfoMap.mmValueInterfacePointer,
+			registryEntriesAssetInfoMap.mmImageInterfacePointer
+		);
 
 		#define SET_ICON_VALUE(dictTypeID, keyStringPointer, resourceID) (GetAssetInfoIcon_TStdXtra(\
 			(dictTypeID),\
@@ -260,7 +287,11 @@ STDMETHODIMP_(MoaError) GetAssetInfoIcons_TStdXtra(Asset::Info* assetInfoPointer
 	moa_try_end
 }
 
-STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_RegistryEntryDict_TStdXtra(PIMoaRegistryEntryDict registryEntryDictInterfacePointer, ConstPMoaClassID classIDPointer, ConstPMoaInterfaceID interfaceIDPointer, PMoaVoid refCon) {
+STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_RegistryEntryDict_TStdXtra(
+	PIMoaRegistryEntryDict registryEntryDictInterfacePointer,
+	ConstPMoaClassID classIDPointer, ConstPMoaInterfaceID interfaceIDPointer,
+	PMoaVoid refCon
+) {
 	bool result = false;
 	
 	moa_try
@@ -313,7 +344,11 @@ STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_RegistryEntryDict_TStdXtra
 	moa_try_end
 }
 
-STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_ExcludedTypeSymbolSet_TStdXtra(PIMoaRegistryEntryDict registryEntryDictInterfacePointer, ConstPMoaClassID classIDPointer, ConstPMoaInterfaceID interfaceIDPointer, PMoaVoid refCon) {
+STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_ExcludedTypeSymbolSet_TStdXtra(
+	PIMoaRegistryEntryDict registryEntryDictInterfacePointer,
+	ConstPMoaClassID classIDPointer, ConstPMoaInterfaceID interfaceIDPointer,
+	PMoaVoid refCon
+) {
 	moa_try
 
 	ThrowNull(registryEntryDictInterfacePointer);
@@ -325,12 +360,16 @@ STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_ExcludedTypeSymbolSet_TStd
 	ThrowNull(registryEntriesExcludedTypeSymbolSet.mmValueInterfacePointer);
 	ThrowNull(registryEntriesExcludedTypeSymbolSet.excludedTypeSymbolSetPointer);
 
-	bool equalID = MoaEqualID(interfaceIDPointer, &IID_IMoaMmXAsset);
+	MoaLong equalID = MoaEqualID(interfaceIDPointer, &IID_IMoaMmXAsset);
 
 	if (!equalID) {
 		MoaMmSymbol typeSymbol = 0;
 
-		MoaError err = GetType_TStdXtra(&typeSymbol, registryEntriesExcludedTypeSymbolSet.mmValueInterfacePointer, registryEntryDictInterfacePointer);
+		MoaError err = GetType_TStdXtra(
+			&typeSymbol,
+			registryEntriesExcludedTypeSymbolSet.mmValueInterfacePointer,
+			registryEntryDictInterfacePointer
+		);
 
 		if (err == kMoaErr_NoErr) {
 			registryEntriesExcludedTypeSymbolSet.excludedTypeSymbolSetPointer->insert(typeSymbol);
@@ -342,7 +381,11 @@ STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_ExcludedTypeSymbolSet_TStd
 	moa_try_end
 }
 
-STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_AssetMoaIDsHash_TStdXtra(PIMoaRegistryEntryDict registryEntryDictInterfacePointer, ConstPMoaClassID classIDPointer, ConstPMoaInterfaceID interfaceIDPointer, PMoaVoid refCon) {
+STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_AssetMoaIDsHash_TStdXtra(
+	PIMoaRegistryEntryDict registryEntryDictInterfacePointer,
+	ConstPMoaClassID classIDPointer, ConstPMoaInterfaceID interfaceIDPointer,
+	PMoaVoid refCon
+) {
 	std::hash<MoaClassID> moaClassIDHash;
 	std::hash<MoaInterfaceID> moaInterfaceIDHash;
 	
@@ -355,7 +398,7 @@ STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_AssetMoaIDsHash_TStdXtra(P
 
 	size_t &assetMoaIDsHash = *(size_t*)refCon;
 
-	bool equalID = MoaEqualID(interfaceIDPointer, &IID_IMoaMmXAsset);
+	MoaLong equalID = MoaEqualID(interfaceIDPointer, &IID_IMoaMmXAsset);
 
 	if (equalID) {
 		assetMoaIDsHash += moaClassIDHash(*classIDPointer) ^ moaInterfaceIDHash(*interfaceIDPointer);
@@ -366,7 +409,11 @@ STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_AssetMoaIDsHash_TStdXtra(P
 	moa_try_end
 }
 
-STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_AssetInfoMap_TStdXtra(PIMoaRegistryEntryDict registryEntryDictInterfacePointer, ConstPMoaClassID classIDPointer, ConstPMoaInterfaceID interfaceIDPointer, PMoaVoid refCon) {
+STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_AssetInfoMap_TStdXtra(
+	PIMoaRegistryEntryDict registryEntryDictInterfacePointer,
+	ConstPMoaClassID classIDPointer, ConstPMoaInterfaceID interfaceIDPointer,
+	PMoaVoid refCon
+) {
 	Asset::Info assetInfo;
 
 	moa_try
@@ -381,7 +428,7 @@ STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_AssetInfoMap_TStdXtra(PIMo
 	ThrowNull(registryEntriesAssetInfoMap.assetInfoMapPointer);
 	ThrowNull(registryEntriesAssetInfoMap.bitmapImporterPointer);
 
-	bool equalID = MoaEqualID(interfaceIDPointer, &IID_IMoaMmXAsset);
+	MoaLong equalID = MoaEqualID(interfaceIDPointer, &IID_IMoaMmXAsset);
 
 	if (equalID) {
 		MoaMmSymbol typeSymbol = 0;
@@ -404,7 +451,11 @@ STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_AssetInfoMap_TStdXtra(PIMo
 	moa_try_end
 }
 
-STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_AgentHiddenReaderSet_TStdXtra(PIMoaRegistryEntryDict registryEntryDictInterfacePointer, ConstPMoaClassID classIDPointer, ConstPMoaInterfaceID interfaceIDPointer, PMoaVoid refCon) {
+STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_AgentHiddenReaderSet_TStdXtra(
+	PIMoaRegistryEntryDict registryEntryDictInterfacePointer,
+	ConstPMoaClassID classIDPointer, ConstPMoaInterfaceID interfaceIDPointer,
+	PMoaVoid refCon
+) {
 	std::hash<MoaClassID> moaClassIDHash;
 	std::hash<MoaInterfaceID> moaInterfaceIDHash;
 
@@ -422,7 +473,7 @@ STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_AgentHiddenReaderSet_TStdX
 	MoaError err = kMoaErr_NoErr;
 
 	// if the type is a reader
-	bool equalID = MoaEqualID(interfaceIDPointer, &IID_IMoaReader);
+	MoaLong equalID = MoaEqualID(interfaceIDPointer, &IID_IMoaReader);
 
 	if (equalID) {
 		MoaBool hidden = FALSE;
@@ -445,7 +496,8 @@ STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_AgentHiddenReaderSet_TStdX
 	// so the same Xtra's ClassID can appear here twice
 	// we don't want them to cancel to zero
 	if (equalID) {
-		*registryEntriesAgentHiddenReaderSet.agentMoaIDsHashPointer += moaClassIDHash(*classIDPointer) ^ moaInterfaceIDHash(*interfaceIDPointer);
+		*registryEntriesAgentHiddenReaderSet.agentMoaIDsHashPointer += moaClassIDHash(*classIDPointer)
+			^ moaInterfaceIDHash(*interfaceIDPointer);
 	}
 
 	moa_catch
@@ -478,7 +530,11 @@ STDMETHODIMP_(MoaError) GetProductVersionMajor_TStdXtra(TStdXtra* This) {
 			productVersionStringPointer = This->pCalloc->NRAlloc(productVersionStringSize);
 			ThrowNull(productVersionStringPointer);
 
-			err = appInfoInterfacePointer->GetInfo(kMoaAppInfo_ProductVersion, (PMoaChar)productVersionStringPointer, productVersionStringSize);
+			err = appInfoInterfacePointer->GetInfo(
+				kMoaAppInfo_ProductVersion,
+				(PMoaChar)productVersionStringPointer,
+				(MoaLong)productVersionStringSize
+			);
 		} while (err == kMoaErr_BadParam);
 
 		ThrowErr(err);
@@ -724,7 +780,11 @@ STDMETHODIMP_(void) MoaDestroy_TStdXtra(TStdXtra* This) {
 		{
 			MODULE_HANDLE_VECTOR &moduleHandleVector = *This->moduleHandleVectorPointer;
 
-			for (moduleHandleVectorIterator = moduleHandleVector.begin(); moduleHandleVectorIterator != moduleHandleVector.end(); moduleHandleVectorIterator++) {
+			for (
+				moduleHandleVectorIterator = moduleHandleVector.begin();
+				moduleHandleVectorIterator != moduleHandleVector.end();
+				moduleHandleVectorIterator++
+			) {
 				err = errOrDefaultErr(osErr(freeLibrary(*moduleHandleVectorIterator)), err);
 			}
 		}
@@ -757,7 +817,14 @@ STDMETHODIMP TStdXtra_IMoaRegister::Register(PIMoaCache cacheInterfacePointer, P
 	{
 		// this interface should NOT be released
 		PIMoaRegistryEntryDict registryEntryDictInterfacePointer = NULL;
-		ThrowErr(cacheInterfacePointer->AddRegistryEntry(xtraEntryDictInterfacePointer, &CLSID_TStdXtra, &IID_IMoaMmXScript, &registryEntryDictInterfacePointer));
+
+		ThrowErr(cacheInterfacePointer->AddRegistryEntry(
+			xtraEntryDictInterfacePointer,
+			&CLSID_TStdXtra,
+			&IID_IMoaMmXScript,
+			&registryEntryDictInterfacePointer
+		));
+
 		ThrowNull(registryEntryDictInterfacePointer);
 
 		const char* VER_MAJORVERSION_STRING = "0";
@@ -767,7 +834,8 @@ STDMETHODIMP TStdXtra_IMoaRegister::Register(PIMoaCache cacheInterfacePointer, P
 		const size_t VERSION_STRING_SIZE = min(256, kMoaMmMaxXtraMessageTable);
 		char versionString[VERSION_STRING_SIZE] = "";
 
-		if (sprintf_s(versionString, VERSION_STRING_SIZE, versionInfo, VER_MAJORVERSION_STRING, VER_MINORVERSION_STRING, VER_BUGFIXVERSION_STRING) == -1) {
+		if (sprintf_s(versionString, VERSION_STRING_SIZE, versionInfo,
+			VER_MAJORVERSION_STRING, VER_MINORVERSION_STRING, VER_BUGFIXVERSION_STRING) == -1) {
 			Throw(kMoaErr_OutOfMem);
 		}
 
@@ -785,7 +853,12 @@ STDMETHODIMP TStdXtra_IMoaRegister::Register(PIMoaCache cacheInterfacePointer, P
 			Throw(kMoaErr_OutOfMem);
 		}
 
-		ThrowErr(registryEntryDictInterfacePointer->Put(kMoaDrDictType_MessageTable, memoryStringPointer, memoryStringSize, kMoaDrDictKey_MessageTable));
+		ThrowErr(registryEntryDictInterfacePointer->Put(
+			kMoaDrDictType_MessageTable,
+			memoryStringPointer,
+			(MoaLong)memoryStringSize,
+			kMoaDrDictKey_MessageTable
+		));
 
 		Registry::Entry::VARIANT &registryEntryVariant = *pObj->registryEntryVariantPointer;
 		registryEntryVariant = (PIMoaRegistryEntryDict)NULL;
@@ -1002,7 +1075,12 @@ MoaError TStdXtra_IMoaMmXScript::TellExportFileMixerSaved(PMoaDrCallInfo callPtr
 		// do NOT release this interface
 		PIMoaRegistryEntryDict registryEntryDictInterfacePointer = NULL;
 		ThrowErr(GetRegistryEntryDict(&registryEntryDictInterfacePointer));
-		ThrowErr(Registry::Entry::setValueLong(kExportFileRegKey_MixerSavedCallHandler, mixerSavedCallHandler, registryEntryDictInterfacePointer));
+
+		ThrowErr(Registry::Entry::setValueLong(
+			kExportFileRegKey_MixerSavedCallHandler,
+			mixerSavedCallHandler,
+			registryEntryDictInterfacePointer
+		));
 	}
 
 	ThrowErr(pObj->mmValueInterfacePointer->IntegerToValue(mixerSavedCallHandler != FALSE, &callPtr->resultValue));
@@ -1331,7 +1409,6 @@ MoaError TStdXtra_IMoaMmXScript::GetExportFileIconPropList(PMoaDrCallInfo callPt
 
 		pObj->assetsInfoPointer = new Asset::Assets::Info(
 			*directorMedia.bitmapImporterPointer,
-			*pObj->labelsInfoPointer,
 			pObj->productVersionMajor,
 			pObj->mmValueInterfacePointer,
 			pObj->pCallback
@@ -2078,7 +2155,11 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentReader(Args* argsPointer, Media::D
 		// but enumerating them with GetReaderInfo does not allow access to hidden readers
 		// it's also stated that CreateReader uses CreateNewInstanceFromRegistry under the hood
 		// so this method should be allowed
-		err = pObj->cacheInterfacePointer->CreateNewInstanceFromRegistry(readerRegistryEntryDictInterfacePointer, &IID_IMoaReader, (PPMoaVoid)&readerInterfacePointer);
+		err = pObj->cacheInterfacePointer->CreateNewInstanceFromRegistry(
+			readerRegistryEntryDictInterfacePointer,
+			&IID_IMoaReader,
+			(PPMoaVoid)&readerInterfacePointer
+		);
 
 		if (err != kMoaErr_NoErr
 			|| !readerInterfacePointer) {
@@ -2184,7 +2265,10 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentDataObject(Args* argsPointer, Medi
 		// it also errors on empty data
 		// we use AddMoaStreamToDataObject (which also AddRef's the stream) instead
 		ThrowErr(stream.resetPosition());
-		ThrowErr(pObj->dataObjectServicesInterfacePointer->AddMoaStreamToDataObject(dataObjectInterfacePointer, &formatEtc, streamInterfacePointer));
+		
+		ThrowErr(pObj->dataObjectServicesInterfacePointer->AddMoaStreamToDataObject(
+			dataObjectInterfacePointer, &formatEtc, streamInterfacePointer
+		));
 
 		content.setDataObjectInterfacePointer(dataObjectInterfacePointer);
 	}
@@ -2198,7 +2282,11 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentDataObject(Args* argsPointer, Medi
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::EnumWriter(Agent::Info::MAP* agentInfoMapPointer, Agent::HIDDEN_READER_SET* agentHiddenReaderSetPointer, PIMoaEnumMixAgentInfo enumMixWriterInfoInterfacePointer) {
+MoaError TStdXtra_IMoaMmXScript::EnumWriter(
+	Agent::Info::MAP* agentInfoMapPointer,
+	Agent::HIDDEN_READER_SET* agentHiddenReaderSetPointer,
+	PIMoaEnumMixAgentInfo enumMixWriterInfoInterfacePointer
+) {
 	PIMoaMixAgentInfo mixWriterInfoInterfacePointer = NULL;
 	PIMoaMixFormatInfo mixFormatInfoInterfacePointer = NULL;
 	PIMoaWriter writerInterfacePointer = NULL;
@@ -2283,7 +2371,12 @@ MoaError TStdXtra_IMoaMmXScript::EnumWriter(Agent::Info::MAP* agentInfoMapPointe
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::HandleCreateFileError(Args* argsPointer, Media::DirectorMedia* directorMediaPointer, MoaError err, PIMoaFile fileInterfacePointer) {
+MoaError TStdXtra_IMoaMmXScript::HandleCreateFileError(
+	Args* argsPointer,
+	Media::DirectorMedia* directorMediaPointer,
+	MoaError err,
+	PIMoaFile fileInterfacePointer
+) {
 	moa_try
 
 	ThrowNull(argsPointer);
@@ -2375,7 +2468,11 @@ MoaError TStdXtra_IMoaMmXScript::HandleCreateFileError(Args* argsPointer, Media:
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::HandleFileNotFound(Args* argsPointer, Media::DirectorMedia* directorMediaPointer, PIMoaFile fileInterfacePointer) {
+MoaError TStdXtra_IMoaMmXScript::HandleFileNotFound(
+	Args* argsPointer,
+	Media::DirectorMedia* directorMediaPointer,
+	PIMoaFile fileInterfacePointer
+) {
 	moa_try
 
 	ThrowNull(argsPointer);
@@ -2405,7 +2502,11 @@ MoaError TStdXtra_IMoaMmXScript::HandleFileNotFound(Args* argsPointer, Media::Di
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::HandleDuplicateSpec(Args* argsPointer, Media::DirectorMedia* directorMediaPointer, PIMoaFile fileInterfacePointer) {
+MoaError TStdXtra_IMoaMmXScript::HandleDuplicateSpec(
+	Args* argsPointer,
+	Media::DirectorMedia* directorMediaPointer,
+	PIMoaFile fileInterfacePointer
+) {
 	moa_try
 
 	ThrowNull(argsPointer);
@@ -2482,7 +2583,12 @@ MoaError TStdXtra_IMoaMmXScript::HandleDuplicateSpec(Args* argsPointer, Media::D
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::HandleDefaultCreateFileError(Args* argsPointer, Media::DirectorMedia* directorMediaPointer, MoaError err, PIMoaFile fileInterfacePointer) {
+MoaError TStdXtra_IMoaMmXScript::HandleDefaultCreateFileError(
+	Args* argsPointer,
+	Media::DirectorMedia* directorMediaPointer,
+	MoaError err,
+	PIMoaFile fileInterfacePointer
+) {
 	std::string path = "";
 
 	moa_try
@@ -2531,7 +2637,12 @@ MoaError TStdXtra_IMoaMmXScript::HandleDefaultCreateFileError(Args* argsPointer,
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::HandleWriteFileError(Args* argsPointer, Media::DirectorMedia* directorMediaPointer, MoaError err, PIMoaFile fileInterfacePointer) {
+MoaError TStdXtra_IMoaMmXScript::HandleWriteFileError(
+	Args* argsPointer,
+	Media::DirectorMedia* directorMediaPointer,
+	MoaError err,
+	PIMoaFile fileInterfacePointer
+) {
 	moa_try
 
 	ThrowNull(argsPointer);
@@ -2637,8 +2748,6 @@ MoaError TStdXtra_IMoaMmXScript::WriteFile(Args* argsPointer, Media::DirectorMed
 			Throw(kMoaErr_InternalError);
 		}
 
-		Media::DirectorMedia::Content &content = *directorMediaPointer->contentPointer;
-
 		readerInterfacePointer = content.getReaderInterfacePointer();
 	
 		if (!readerInterfacePointer) {
@@ -2710,7 +2819,12 @@ MoaError TStdXtra_IMoaMmXScript::WriteFile(Args* argsPointer, Media::DirectorMed
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::WriteFileAgent(const Agent::Info::Writer* writerPointer, PMoaMmValue agentOptionsValuePointer, PIMoaFile fileInterfacePointer, PIMoaReader readerInterfacePointer) {
+MoaError TStdXtra_IMoaMmXScript::WriteFileAgent(
+	const Agent::Info::Writer* writerPointer,
+	PMoaMmValue agentOptionsValuePointer,
+	PIMoaFile fileInterfacePointer,
+	PIMoaReader readerInterfacePointer
+) {
 	PIMoaWriter writerInterfacePointer = NULL;
 	PIMoaDict dictInterfacePointer = NULL;
 
@@ -2772,7 +2886,11 @@ MoaError TStdXtra_IMoaMmXScript::WriteFileAgent(const Agent::Info::Writer* write
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::AddAgentInfoExtensions(ConstPMoaChar agentInfoNameStringPointer, Path::EXTENSION_MAPPED_VECTOR* agentInfoPathExtensionsPointer, PIMoaMixFormatInfo mixFormatInfoInterfacePointer) {
+MoaError TStdXtra_IMoaMmXScript::AddAgentInfoExtensions(
+	ConstPMoaChar agentInfoNameStringPointer,
+	Path::EXTENSION_MAPPED_VECTOR* agentInfoPathExtensionsPointer,
+	PIMoaMixFormatInfo mixFormatInfoInterfacePointer
+) {
 	PMoaVoid fileExtListPointer = NULL;
 
 	Path::EXTENSION_MAPPED_VECTOR pathExtensions = {};
@@ -2799,7 +2917,7 @@ MoaError TStdXtra_IMoaMmXScript::AddAgentInfoExtensions(ConstPMoaChar agentInfoN
 		fileExtListPointer = pObj->pCalloc->NRAlloc(fileExtListSize);
 		ThrowNull(fileExtListPointer);
 
-		err = mixFormatInfoInterfacePointer->GetFileExtList(fileExtListSize, (PMoaChar)fileExtListPointer);
+		err = mixFormatInfoInterfacePointer->GetFileExtList((MoaLong)fileExtListSize, (PMoaChar)fileExtListPointer);
 	} while (err == kMoaMixErr_BufferTooSmall
 		/*|| (err == kMoaErr_NoErr
 		&& stringTruncated(fileExtList.get(), fileExtListSize))*/);
@@ -3145,7 +3263,7 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultDirname(Args* argsPointer) {
 		ThrowNull(pathNameInterfacePointer);
 
 		ThrowErr(pathNameInterfacePointer->InitFromString(dirnameOptional.value().c_str(), kMoaPathDialect_LOCAL, FALSE, FALSE));
-		hasValue = pathNameInterfacePointer->IsAbsolute();
+		hasValue = (bool)pathNameInterfacePointer->IsAbsolute();
 	}
 
 	if (!hasValue) {
@@ -3588,7 +3706,11 @@ MoaError TStdXtra_IMoaMmXScript::GetArgLabelDefault(Args* argsPointer, Media::Di
 			// if the extension is not empty, loop through the labels for this member type
 			MoaError err = kMoaErr_NoErr;
 
-			for (labelMappedVectorIterator = labelMappedVector.cbegin(); labelMappedVectorIterator != labelMappedVector.cend(); labelMappedVectorIterator++) {
+			for (
+				labelMappedVectorIterator = labelMappedVector.cbegin();
+				labelMappedVectorIterator != labelMappedVector.cend();
+				labelMappedVectorIterator++
+			) {
 				argsPointer->labelSymbolVariant = *labelMappedVectorIterator;
 				directorMediaPointer->labelInfoMapIterator = LABEL_INFO_NOT_FOUND;
 
@@ -3658,7 +3780,11 @@ MoaError TStdXtra_IMoaMmXScript::GetArgLabelDefault(Args* argsPointer, Media::Di
 
 				// this is seperated into a second loop
 				// because finding the agents is quite slow
-				for (labelMappedVectorIterator = labelMappedVector.cbegin(); labelMappedVectorIterator != labelMappedVector.cend(); labelMappedVectorIterator++) {
+				for (
+					labelMappedVectorIterator = labelMappedVector.cbegin();
+					labelMappedVectorIterator != labelMappedVector.cend();
+					labelMappedVectorIterator++
+				) {
 					argsPointer->labelSymbolVariant = *labelMappedVectorIterator;
 					directorMediaPointer->labelInfoMapIterator = LABEL_INFO_NOT_FOUND;
 
@@ -3844,7 +3970,12 @@ MoaError TStdXtra_IMoaMmXScript::GetArgAgentDefault(Args* argsPointer, Media::Di
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::GetArgOptions(PMoaDrCallInfo callPtr, Args* argsPointer, Media::DirectorMedia* directorMediaPointer, MoaLong argIndex) {
+MoaError TStdXtra_IMoaMmXScript::GetArgOptions(
+	PMoaDrCallInfo callPtr,
+	Args* argsPointer,
+	Media::DirectorMedia* directorMediaPointer,
+	MoaLong argIndex
+) {
 	MoaMmValue incrementFilenameValue = kVoidMoaMmValueInitializer;
 	MoaMmValue replaceExistingFileValue = kVoidMoaMmValueInitializer;
 	MoaMmValue newFolderValue = kVoidMoaMmValueInitializer;
@@ -3877,49 +4008,70 @@ MoaError TStdXtra_IMoaMmXScript::GetArgOptions(PMoaDrCallInfo callPtr, Args* arg
 		Options &options = argsPointer->optionsOptional.value();
 
 		if (!voidP) {
-			ThrowErr(pObj->exportFileValueConverterPointer->getAProp(argumentValue, pObj->symbols.IncrementFilename, incrementFilenameValue));
+			ThrowErr(pObj->exportFileValueConverterPointer->getAProp(
+				argumentValue, pObj->symbols.IncrementFilename, incrementFilenameValue
+			));
+
 			ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(incrementFilenameValue, voidP));
 
 			if (!voidP) {
 				ThrowErr(pObj->mmValueInterfacePointer->ValueToInteger(&incrementFilenameValue, &options.incrementFilename));
 			}
 
-			ThrowErr(pObj->exportFileValueConverterPointer->getAProp(argumentValue, pObj->symbols.ReplaceExistingFile, replaceExistingFileValue));
+			ThrowErr(pObj->exportFileValueConverterPointer->getAProp(
+				argumentValue, pObj->symbols.ReplaceExistingFile, replaceExistingFileValue
+			));
+
 			ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(replaceExistingFileValue, voidP));
 
 			if (!voidP) {
 				ThrowErr(pObj->mmValueInterfacePointer->ValueToInteger(&replaceExistingFileValue, &options.replaceExistingFile));
 			}
 
-			ThrowErr(pObj->exportFileValueConverterPointer->getAProp(argumentValue, pObj->symbols.NewFolder, newFolderValue));
+			ThrowErr(pObj->exportFileValueConverterPointer->getAProp(
+				argumentValue, pObj->symbols.NewFolder, newFolderValue
+			));
+
 			ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(newFolderValue, voidP));
 
 			if (!voidP) {
 				ThrowErr(pObj->mmValueInterfacePointer->ValueToInteger(&newFolderValue, &options.newFolder));
 			}
 
-			ThrowErr(pObj->exportFileValueConverterPointer->getAProp(argumentValue, pObj->symbols.AlternatePathExtension, alternatePathExtensionValue));
+			ThrowErr(pObj->exportFileValueConverterPointer->getAProp(
+				argumentValue, pObj->symbols.AlternatePathExtension, alternatePathExtensionValue
+			));
+
 			ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(alternatePathExtensionValue, voidP));
 
 			if (!voidP) {
 				ThrowErr(pObj->mmValueInterfacePointer->ValueToInteger(&alternatePathExtensionValue, (PMoaLong)&options.alternatePathExtension));
 			}
 
-			ThrowErr(pObj->exportFileValueConverterPointer->getAProp(argumentValue, pObj->symbols.Location, locationValue));
+			ThrowErr(pObj->exportFileValueConverterPointer->getAProp(
+				argumentValue, pObj->symbols.Location, locationValue
+			));
+
 			ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(locationValue, voidP));
 
 			if (!voidP) {
 				ThrowErr(pObj->mmValueInterfacePointer->ValueToSymbol(&locationValue, &options.locationSymbol));
 			}
 
-			ThrowErr(pObj->exportFileValueConverterPointer->getAProp(argumentValue, pObj->symbols.WriterClassID, writerClassIDValue));
+			ThrowErr(pObj->exportFileValueConverterPointer->getAProp(
+				argumentValue, pObj->symbols.WriterClassID, writerClassIDValue
+			));
+
 			ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(writerClassIDValue, voidP));
 
 			if (!voidP) {
 				ThrowErr(pObj->exportFileValueConverterPointer->toID(writerClassIDValue, options.writerClassID));
 			}
 
-			ThrowErr(pObj->exportFileValueConverterPointer->getAProp(argumentValue, pObj->symbols.AgentOptions, agentOptionsValue));
+			ThrowErr(pObj->exportFileValueConverterPointer->getAProp(
+				argumentValue, pObj->symbols.AgentOptions, agentOptionsValue
+			));
+
 			ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(agentOptionsValue, voidP));
 
 			if (!voidP) {
@@ -4122,7 +4274,12 @@ MoaError TStdXtra_IMoaMmXScript::GetArgOptionsDefaultAgentOptions(Args* argsPoin
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::GetArgOptionsDefaultAgentOptions(PMoaMmValue propListValuePointer, Agent::Info::Writer* writerPointer, PIMoaReader readerInterfacePointer, bool x) {
+MoaError TStdXtra_IMoaMmXScript::GetArgOptionsDefaultAgentOptions(
+	PMoaMmValue propListValuePointer,
+	Agent::Info::Writer* writerPointer,
+	PIMoaReader readerInterfacePointer,
+	bool x
+) {
 	PIMoaWriter writerInterfacePointer = NULL;
 	PIMoaDict dictInterfacePointer = NULL;
 
@@ -4204,7 +4361,11 @@ MoaError TStdXtra_IMoaMmXScript::GetTypeDisplayName(MoaMmSymbol typeSymbol, std:
 
 	// this is a regular while loop instead of a do while like I normally use for this pattern
 	// (because otherwise, displayNameStringSize will be incorrectly incremented for every outer loop)
-	ThrowErr(pObj->drPlayerInterfacePointer->GetCastMemTypeDisplayName(typeSymbol, (PMoaChar)typeDisplayNameStringPointer, typeDisplayNameStringSize));
+	ThrowErr(pObj->drPlayerInterfacePointer->GetCastMemTypeDisplayName(
+		typeSymbol,
+		(PMoaChar)typeDisplayNameStringPointer,
+		(MoaLong)typeDisplayNameStringSize)
+	);
 
 	while (/*err == kMoaMixErr_BufferTooSmall
 		|| */stringTruncated((PMoaChar)typeDisplayNameStringPointer, typeDisplayNameStringSize)) {
@@ -4215,7 +4376,11 @@ MoaError TStdXtra_IMoaMmXScript::GetTypeDisplayName(MoaMmSymbol typeSymbol, std:
 		typeDisplayNameStringPointer = pObj->pCalloc->NRAlloc(typeDisplayNameStringSize);
 		ThrowNull(typeDisplayNameStringPointer);
 
-		ThrowErr(pObj->drPlayerInterfacePointer->GetCastMemTypeDisplayName(typeSymbol, (PMoaChar)typeDisplayNameStringPointer, typeDisplayNameStringSize));
+		ThrowErr(pObj->drPlayerInterfacePointer->GetCastMemTypeDisplayName(
+			typeSymbol,
+			(PMoaChar)typeDisplayNameStringPointer,
+			(MoaLong)typeDisplayNameStringSize)
+		);
 	}
 
 	std::string &typeDisplayName = *typeDisplayNamePointer;
@@ -4353,7 +4518,11 @@ MoaError TStdXtra_IMoaMmXScript::GetLabelMappedVector(Args* argsPointer, Media::
 
 			// now erase any irrelevant labels for this member
 			if (!mmXAssetInterfacePointer) {
-				for (labelMappedVectorIterator = labelMappedVector.cbegin(); labelMappedVectorIterator != labelMappedVector.cend(); labelMappedVectorIterator++) {
+				for (
+					labelMappedVectorIterator = labelMappedVector.cbegin();
+					labelMappedVectorIterator != labelMappedVector.cend();
+					labelMappedVectorIterator++
+				) {
 					getLabelMappedVectorArgs.labelSymbolVariant = *labelMappedVectorIterator;
 					getLabelMappedVectorDirectorMedia.labelInfoMapIterator = LABEL_INFO_NOT_FOUND;
 
@@ -4496,7 +4665,12 @@ MoaError TStdXtra_IMoaMmXScript::GetContentReaderRegistryEntryDict(Args* argsPoi
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::GetReceptorIDs(Args* argsPointer, Media::DirectorMedia* directorMediaPointer, PMoaLong receptorCountPointer, PPMoaVoid receptorIDsPointerPointer) {
+MoaError TStdXtra_IMoaMmXScript::GetReceptorIDs(
+	Args* argsPointer,
+	Media::DirectorMedia* directorMediaPointer,
+	PMoaLong receptorCountPointer,
+	PPMoaVoid receptorIDsPointerPointer
+) {
 	PIMoaReader readerInterfacePointer = NULL;
 
 	moa_try
@@ -4590,11 +4764,19 @@ MoaError TStdXtra_IMoaMmXScript::GetAgentInfoMapSLOW(Args* argsPointer, Media::D
 		}
 
 		// we don't consider no writers to be an error
-		MoaError err = pObj->agentServicesInterfacePointer->GetWriterInfo(receptorCount, (MoaInterfaceID*)receptorIDsPointer, &enumMixWriterInfoInterfacePointer);
+		MoaError err = pObj->agentServicesInterfacePointer->GetWriterInfo(
+			receptorCount,
+			(MoaInterfaceID*)receptorIDsPointer,
+			&enumMixWriterInfoInterfacePointer
+		);
 
 		if (err != kMoaMixErr_NoSuchWriter) {
 			do {
-				err = EnumWriter(&directorMediaPointer->agentInfoMapOptional.value(), directorMediaPointer->agentHiddenReaderSetPointer.get(), enumMixWriterInfoInterfacePointer);
+				err = EnumWriter(
+					&directorMediaPointer->agentInfoMapOptional.value(),
+					directorMediaPointer->agentHiddenReaderSetPointer.get(),
+					enumMixWriterInfoInterfacePointer
+				);
 				
 				ThrowFailed(err);
 			} while (err == kMoaStatus_OK);
@@ -4676,7 +4858,7 @@ MoaError TStdXtra_IMoaMmXScript::GetFormatName(MixFormat mixFormat, std::string*
 		formatNameStringPointer = pObj->pCalloc->NRAlloc(formatNameStringSize);
 		ThrowNull(formatNameStringPointer);
 
-		err = pObj->formatServicesInterfacePointer->GetFormatName(mixFormat, formatNameStringSize, (PMoaChar)formatNameStringPointer);
+		err = pObj->formatServicesInterfacePointer->GetFormatName(mixFormat, (MoaLong)formatNameStringSize, (PMoaChar)formatNameStringPointer);
 	} while (err == kMoaMixErr_BufferTooSmall
 		|| (err == kMoaErr_NoErr
 		&& stringTruncated((PMoaChar)formatNameStringPointer, formatNameStringSize)));
@@ -4693,7 +4875,12 @@ MoaError TStdXtra_IMoaMmXScript::GetFormatName(MixFormat mixFormat, std::string*
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::GetAgentInfoHidden(Agent::HIDDEN_READER_SET* agentHiddenReaderSetPointer, MoaClassID* classIDPointer, MoaBool* agentInfoHiddenPointer, PIMoaMixAgentInfo mixWriterInfoInterfacePointer) {
+MoaError TStdXtra_IMoaMmXScript::GetAgentInfoHidden(
+	Agent::HIDDEN_READER_SET* agentHiddenReaderSetPointer,
+	MoaClassID* classIDPointer,
+	MoaBool* agentInfoHiddenPointer,
+	PIMoaMixAgentInfo mixWriterInfoInterfacePointer
+) {
 	moa_try
 
 	ThrowNull(agentHiddenReaderSetPointer);
@@ -4705,7 +4892,7 @@ MoaError TStdXtra_IMoaMmXScript::GetAgentInfoHidden(Agent::HIDDEN_READER_SET* ag
 	ThrowErr(mixWriterInfoInterfacePointer->GetAgentFlags(&flags));
 
 	MoaBool &agentInfoHidden = *agentInfoHiddenPointer;
-	agentInfoHidden = flags & kMoaAgentInfoFlags_Hidden;
+	agentInfoHidden = (MoaBool)(flags & kMoaAgentInfoFlags_Hidden);
 
 	if (!agentInfoHidden) {
 		Agent::HIDDEN_READER_SET &agentHiddenReaderSet = *agentHiddenReaderSetPointer;
@@ -4760,7 +4947,7 @@ MoaError TStdXtra_IMoaMmXScript::GetAgentInfoName(std::string* agentInfoNamePoin
 		agentNameStringPointer = pObj->pCalloc->NRAlloc(agentNameStringSize);
 		ThrowNull(agentNameStringPointer);
 
-		err = mixWriterInfoInterfacePointer->GetAgentName(agentNameStringSize, (PMoaChar)agentNameStringPointer);
+		err = mixWriterInfoInterfacePointer->GetAgentName((MoaLong)agentNameStringSize, (PMoaChar)agentNameStringPointer);
 	} while (err == kMoaMixErr_BufferTooSmall
 		|| (err == kMoaErr_NoErr
 		&& stringTruncated((PMoaChar)agentNameStringPointer, agentNameStringSize)));

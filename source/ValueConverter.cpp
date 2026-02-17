@@ -61,7 +61,7 @@ MoaError ValueConverter::appendToDictInterfacePointer(const MoaMmValue &propList
 	if (dictTypeIDValueSizeMapIterator != DICT_TYPE_ID_VALUE_SIZE_MAP.end()) {
 		valueSize = dictTypeIDValueSizeMapIterator->second;
 
-		valueBuffer = callocInterfacePointer->NRAlloc(valueSize);
+		valueBuffer = callocInterfacePointer->NRAlloc((MoaUlong)valueSize);
 		RETURN_NULL(valueBuffer);
 	}
 
@@ -133,7 +133,7 @@ MoaError ValueConverter::appendToDictInterfacePointer(const MoaMmValue &propList
 		RETURN_ERR(mmValueInterfacePointer->ValueStringLength(&value, &valueSize));
 		valueSize++;
 
-		valueBuffer = callocInterfacePointer->NRAlloc(valueSize);
+		valueBuffer = callocInterfacePointer->NRAlloc((MoaUlong)valueSize);
 		RETURN_NULL(valueBuffer);
 
 		RETURN_ERR(mmValueInterfacePointer->ValueToString(&value, (PMoaChar)valueBuffer, valueSize));
@@ -161,7 +161,7 @@ MoaError ValueConverter::appendToPropList(MoaMmValue &propListValue, bool append
 		return kMoaDictErr_BufferTooSmall;
 	}
 
-	PMoaVoid valueBuffer = callocInterfacePointer->NRAlloc(valueSize);
+	PMoaVoid valueBuffer = callocInterfacePointer->NRAlloc((MoaUlong)valueSize);
 
 	SCOPE_EXIT {
 		freeMemory(valueBuffer, callocInterfacePointer);
@@ -396,7 +396,7 @@ MoaError ValueConverter::toWide(const MoaMmValue &value, MoaWide &wide) {
 
 	MoaLong lo = 0;
 	RETURN_ERR(mmValueInterfacePointer->ValueToInteger(&loValue, &lo));
-	wide.lo = lo;
+	wide.lo = (MoaUlong)lo;
 
 	MoaMmValue hiValue = kVoidMoaMmValueInitializer;
 
@@ -437,7 +437,7 @@ MoaError ValueConverter::toBytes(const MoaMmValue &value, MoaByte* &bytesPointer
 		return kMoaDrErr_HandlerNotDefined;
 	}
 
-	bytesPointer = (MoaByte*)callocInterfacePointer->NRAlloc(valueSize);
+	bytesPointer = (MoaByte*)callocInterfacePointer->NRAlloc((MoaUlong)valueSize);
 	RETURN_NULL(bytesPointer);
 
 	// copy so we don't add to the main pointer we want to free later
@@ -477,7 +477,7 @@ MoaError ValueConverter::toValue(const MoaWide &wide, MoaMmValue &value) {
 		releaseValue(loValue, mmValueInterfacePointer);
 	};
 
-	RETURN_ERR(mmValueInterfacePointer->IntegerToValue(wide.lo, &loValue));
+	RETURN_ERR(mmValueInterfacePointer->IntegerToValue((MoaLong)wide.lo, &loValue));
 	RETURN_ERR(appendToPropList(symbols.Lo, loValue, value));
 
 	MoaMmValue hiValue = kVoidMoaMmValueInitializer;

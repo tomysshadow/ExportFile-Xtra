@@ -71,8 +71,18 @@ namespace Media {
 		MoaMmSymbol isSavingSymbol = 0;
 
 		public:
-		MixerMedia(const ExportFileValueConverter &exportFileValueConverter, PIMoaDrMovie drMovieInterfacePointer, PIMoaMmValue mmValueInterfacePointer);
-		MixerMedia(const ExportFileValueConverter &exportFileValueConverter, PIMoaDrPlayer drPlayerInterfacePointer, PIMoaMmValue mmValueInterfacePointer);
+		MixerMedia(
+			const ExportFileValueConverter &exportFileValueConverter,
+			PIMoaDrMovie drMovieInterfacePointer,
+			PIMoaMmValue mmValueInterfacePointer
+		);
+
+		MixerMedia(
+			const ExportFileValueConverter &exportFileValueConverter,
+			PIMoaDrPlayer drPlayerInterfacePointer,
+			PIMoaMmValue mmValueInterfacePointer
+		);
+
 		~MixerMedia();
 		MixerMedia(const MixerMedia &mixerMedia);
 		MixerMedia &operator=(const MixerMedia &mixerMedia);
@@ -153,8 +163,8 @@ namespace Media {
 
 		static bool rgbX(RGBTRIPLE* rgbTriplePointer, DWORD stride, DWORD imageSize);
 		static bool rgbaX(RGBQUAD* rgbQuadPointer, DWORD stride, DWORD imageSize);
-		static DWORD getStride(ULONG absWidth, WORD bitCount);
-		static bool getImageSize(MoaLong colorSpace, ULONG absWidth, ULONG absHeight, MoaLong &rowBytes, DWORD &imageSize);
+		static DWORD getStride(LONG absWidth, WORD bitCount);
+		static bool getImageSize(MoaLong colorSpace, LONG absWidth, LONG absHeight, MoaLong &rowBytes, DWORD &imageSize);
 		static bool getSamplesPerPixel(MoaLong colorSpace, MoaShort &samplesPerPixel);
 		static int getCoordinate(int dimension);
 		static bool getColorTableIndexedRGB(BITMAPINFO &bitmapInfo, MoaPixelFormat &pixelFormat);

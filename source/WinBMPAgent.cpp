@@ -359,7 +359,7 @@ MoaError CWinBMPAgent_IMoaReader::Read(PIMoaReceptor pReceptor, ConstPMoaInterfa
 	ThrowNull(pReceptor);
 	ThrowNull(pReceptorID);
 
-	bool equalID = MoaEqualID(pReceptorID, &pObj->RECEPTORS[pObj->RECEPTOR_IID_I_MOA_RECEPTOR_PIXELS_INDEX]);
+	MoaLong equalID = MoaEqualID(pReceptorID, &pObj->RECEPTORS[pObj->RECEPTOR_IID_I_MOA_RECEPTOR_PIXELS_INDEX]);
 
 	if (equalID) {
 		// this interface should NOT be released

@@ -71,14 +71,38 @@ namespace Path {
 		MoaError newFolder();
 		MoaError incrementFilename();
 		bool getPath(std::string &path, bool relative = false);
-		bool getElementsOrEmpty(std::string &dirname, std::string &basename, std::string &extension, std::string &filename, std::string &path, bool relative = false);
-		bool getElementsOrEmpty(std::string &dirname, std::string &basename, std::string &extension, std::string &filename);
+
+		bool getElementsOrEmpty(
+			std::string &dirname, std::string &basename, std::string &extension, std::string &filename,
+			std::string &path,
+			bool relative = false
+		);
+
+		bool getElementsOrEmpty(
+			std::string &dirname, std::string &basename, std::string &extension, std::string &filename
+		);
+
 		bool getDirnameOrEmpty(std::string &dirname);
 		bool getBasenameOrEmpty(std::string &basename);
 		bool getExtensionOrEmpty(std::string &extension, bool fromBasename = true);
 		bool getFilenameOrEmpty(std::string &filename);
-		bool getElementOptionals(std::optional<std::string> &dirnameOptional, std::optional<std::string> &basenameOptional, std::optional<std::string> &extensionOptional, std::optional<std::string> &filenameOptional, std::string &path, bool relative = false);
-		bool getElementOptionals(std::optional<std::string> &dirnameOptional, std::optional<std::string> &basenameOptional, std::optional<std::string> &extensionOptional, std::optional<std::string> &filenameOptional);
+
+		bool getElementOptionals(
+			std::optional<std::string> &dirnameOptional,
+			std::optional<std::string> &basenameOptional,
+			std::optional<std::string> &extensionOptional,
+			std::optional<std::string> &filenameOptional,
+			std::string &path,
+			bool relative = false
+		);
+
+		bool getElementOptionals(
+			std::optional<std::string> &dirnameOptional,
+			std::optional<std::string> &basenameOptional,
+			std::optional<std::string> &extensionOptional,
+			std::optional<std::string> &filenameOptional
+		);
+
 		bool getDirnameOptional(std::optional<std::string> &dirnameOptional);
 		bool getBasenameOptional(std::optional<std::string> &basenameOptional);
 		bool getExtensionOptional(std::optional<std::string> &extensionOptional, bool fromBasename = true);

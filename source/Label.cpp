@@ -7,7 +7,11 @@ namespace Label {
 		Label::Info::MAP symbolsLabelInfoMap = {};
 		SYMBOL_VARIANT symbolVariant = 0;
 
-		for (Label::Info::MAP::iterator labelInfoMapIterator = labelInfoMap.begin(); labelInfoMapIterator != labelInfoMap.end(); labelInfoMapIterator++) {
+		for (
+			Label::Info::MAP::iterator labelInfoMapIterator = labelInfoMap.begin();
+			labelInfoMapIterator != labelInfoMap.end();
+			labelInfoMapIterator++
+		) {
 			RETURN_ERR(getSymbol(labelInfoMapIterator->second.labelFormat, mmValueInterfacePointer));
 
 			symbolVariant = labelInfoMapIterator->first;

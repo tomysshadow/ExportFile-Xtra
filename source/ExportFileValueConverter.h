@@ -47,7 +47,13 @@ class ExportFileValueConverter : public ValueConverter {
 	MoaError getSymbols();
 
 	public:
-	ExportFileValueConverter(PIMoaDrPlayer drPlayerInterfacePointer, PIMoaMmValue mmValueInterfacePointer, PIMoaMmList mmListInterfacePointer, PIMoaCalloc callocInterfacePointer);
+	ExportFileValueConverter(
+		PIMoaDrPlayer drPlayerInterfacePointer,
+		PIMoaMmValue mmValueInterfacePointer,
+		PIMoaMmList mmListInterfacePointer,
+		PIMoaCalloc callocInterfacePointer
+	);
+
 	MoaError toAsset(PIMoaDrCastMem drCastMemInterfacePointer, PIMoaMmXAsset &mmXAssetInterfacePointer);
 	
 	using ValueConverter::toValue;

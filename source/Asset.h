@@ -10,7 +10,14 @@
 
 namespace Asset {
 	std::string& trimEllipsis(std::string &displayName);
-	//MoaError createIconAssetStream(std::optional<AssetStream>* streamOptionalPointer, PMoaVoid data, MoaUlong size, PIMoaCallback callbackInterfacePointer);
+
+	/*
+	MoaError createIconAssetStream(
+		std::optional<AssetStream>* streamOptionalPointer,
+		PMoaVoid data, MoaUlong size,
+		PIMoaCallback callbackInterfacePointer
+	);
+	*/
 
 	struct Info {
 		typedef std::map<SYMBOL_VARIANT, Info> MAP;
@@ -58,11 +65,23 @@ namespace Asset {
 			MoaError findIconValue(IconValues::VARIANT &iconValuesVariant);
 			RESOURCE_ID getBaseResourceID(unsigned long productVersionMajor);
 			MoaError getAssetInfoMapSymbols();
-			MoaError getAssetInfoMapIcon(BitmapImporter &bitmapImporter, Label::Labels::Info &labelsInfo, IconValues &iconValues, RESOURCE_ID resourceID, RESOURCE_ID baseResourceID, XtraResourceCookie myCookie);
-			MoaError getAssetInfoMapIcons(BitmapImporter &bitmapImporter, Label::Labels::Info &labelsInfo, unsigned long productVersionMajor, PIMoaCallback callbackInterfacePointer);
+
+			MoaError getAssetInfoMapIcon(
+				BitmapImporter &bitmapImporter, IconValues &iconValues,
+				RESOURCE_ID resourceID, RESOURCE_ID baseResourceID, XtraResourceCookie myCookie
+			);
+
+			MoaError getAssetInfoMapIcons(
+				BitmapImporter &bitmapImporter, unsigned long productVersionMajor,
+				PIMoaCallback callbackInterfacePointer
+			);
 
 			public:
-			Info(BitmapImporter &bitmapImporter, Label::Labels::Info &labelsInfo, unsigned long productVersionMajor, PIMoaMmValue mmValueInterfacePointer, PIMoaCallback callbackInterfacePointer);
+			Info(
+				BitmapImporter &bitmapImporter, unsigned long productVersionMajor,
+				PIMoaMmValue mmValueInterfacePointer, PIMoaCallback callbackInterfacePointer
+			);
+
 			~Info();
 			Info(const Info &info);
 			Info &operator=(const Info &info);
