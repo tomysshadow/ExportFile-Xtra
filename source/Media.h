@@ -32,7 +32,7 @@ namespace Media {
 		std::shared_ptr<BitmapImporter> bitmapImporterPointer = 0;
 		std::optional<Asset::Info> assetInfoOptional = std::nullopt;
 
-		class Content {
+		class Content : NonCopyable {
 			private:
 			void destroy();
 			//void duplicate(const Content &content);
@@ -42,10 +42,8 @@ namespace Media {
 			PIMoaDataObject dataObjectInterfacePointer = NULL;
 
 			public:
-			Content();
+			Content() = default;
 			~Content();
-			Content(const Content &content) = delete;
-			Content &operator=(const Content &content) = delete;
 			PIMoaReader getReaderInterfacePointer() const;
 			PIMoaRegistryEntryDict getReaderRegistryEntryDictInterfacePointer() const;
 			PIMoaDataObject getDataObjectInterfacePointer() const;
@@ -133,7 +131,7 @@ namespace Media {
 	#endif
 
 	#ifdef WINDOWS
-	class WinBMPMedia {
+	class WinBMPMedia : NonCopyable {
 		private:
 		void destroy();
 
@@ -172,10 +170,8 @@ namespace Media {
 		static bool validateBitmapInfoHeader(const BITMAPINFOHEADER &bitmapInfoHeader);
 		static bool getBitmapInfoColorsSize(const BITMAPINFOHEADER &bitmapInfoHeader, bool allocation, DWORD &colorsSize);
 
-		WinBMPMedia();
+		WinBMPMedia() = default;
 		~WinBMPMedia();
-		WinBMPMedia(const WinBMPMedia &winBMPMedia) = delete;
-		WinBMPMedia &operator=(const WinBMPMedia &winBMPMedia) = delete;
 		MoaError getPixelFormat(PIMoaReceptorPixels receptorPixelsInterfacePointer);
 		MoaError getMappedView(PIMoaReceptorPixels receptorPixelsInterfacePointer, PIMoaStream readStreamInterfacePointer);
 

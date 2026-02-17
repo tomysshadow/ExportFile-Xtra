@@ -1,6 +1,7 @@
 #pragma once
 #include "scope_guard.hpp"
 #include "MoaIDHash.h"
+#include "NonCopyable.h"
 #include "MappedVector.h"
 #include "IgnoreCaseComparer.h"
 #include <memory>
@@ -119,6 +120,16 @@ inline bool stringEqualsCaseInsensitiveWide(const wchar_t* str, const wchar_t* s
 
 inline bool memoryEquals(const void* mem, const void* mem2, size_t size) {
 	return !memcmp(mem, mem2, size);
+}
+
+template <typename T>
+inline std::unique_ptr<T[]> makeUniqueArray(size_t size) {
+	return std::unique_ptr<T[]>(new T[size]);
+}
+
+template <typename T>
+inline std::shared_ptr<T[]> makeSharedArray(size_t size) {
+	return std::shared_ptr<T[]>(new T[size]);
 }
 
 #define DIRECTOR_UTF8(productVersionMajor) ((productVersionMajor) >= 11)

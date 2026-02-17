@@ -16,7 +16,7 @@ class Args {
 	PIMoaDrCastMem drCastMemInterfacePointer = NULL;
 
 	public:
-	Args();
+	Args() = default;
 	~Args();
 	Args(const Args &args);
 	Args &operator=(const Args &args);

@@ -234,7 +234,6 @@ STDMETHODIMP_(MoaError) GetAssetInfoIcons_TStdXtra(Asset::Info* assetInfoPointer
 
 	if (registryEntriesAssetInfoMap.mmImageInterfacePointer) {
 		IconValues::POINTER iconValuesPointer = std::make_shared<IconValues>(registryEntriesAssetInfoMap.mmValueInterfacePointer, registryEntriesAssetInfoMap.mmImageInterfacePointer);
-		ThrowNull(iconValuesPointer);
 
 		#define SET_ICON_VALUE(dictTypeID, keyStringPointer, resourceID) (GetAssetInfoIcon_TStdXtra(\
 			(dictTypeID),\
@@ -763,7 +762,7 @@ STDMETHODIMP TStdXtra_IMoaRegister::Register(PIMoaCache cacheInterfacePointer, P
 
 		const char* VER_MAJORVERSION_STRING = "0";
 		const char* VER_MINORVERSION_STRING = "5";
-		const char* VER_BUGFIXVERSION_STRING = "2";
+		const char* VER_BUGFIXVERSION_STRING = "3";
 
 		const size_t VERSION_STRING_SIZE = min(256, kMoaMmMaxXtraMessageTable);
 		char versionString[VERSION_STRING_SIZE] = "";
@@ -1328,8 +1327,6 @@ MoaError TStdXtra_IMoaMmXScript::GetExportFileIconPropList(PMoaDrCallInfo callPt
 			pObj->drUtilsInterfacePointer,
 			pObj->mmImageInterfacePointer
 		);
-
-		ThrowNull(directorMedia.bitmapImporterPointer);
 		//}
 
 		pObj->assetsInfoPointer = new Asset::Assets::Info(
@@ -1656,8 +1653,6 @@ MoaError TStdXtra_IMoaMmXScript::FindXtraAssetInfo(Args* argsPointer, Media::Dir
 					pObj->drUtilsInterfacePointer,
 					pObj->mmImageInterfacePointer
 				);
-
-				ThrowNull(directorMediaPointer->bitmapImporterPointer);
 			}
 
 			registryEntriesAssetInfoMap.bitmapImporterPointer = directorMediaPointer->bitmapImporterPointer.get();
@@ -1823,7 +1818,6 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentFormat(Args* argsPointer, Media::D
 
 	if (!directorMediaPointer->contentPointer) {
 		directorMediaPointer->contentPointer = std::make_shared<Media::DirectorMedia::Content>();
-		ThrowNull(directorMediaPointer->contentPointer);
 	}
 
 	Media::DirectorMedia::Content &content = *directorMediaPointer->contentPointer;
@@ -2058,7 +2052,6 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentReader(Args* argsPointer, Media::D
 
 	if (!directorMediaPointer->contentPointer) {
 		directorMediaPointer->contentPointer = std::make_shared<Media::DirectorMedia::Content>();
-		ThrowNull(directorMediaPointer->contentPointer);
 	}
 
 	Media::DirectorMedia::Content &content = *directorMediaPointer->contentPointer;
@@ -2117,7 +2110,6 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentDataObject(Args* argsPointer, Medi
 
 	if (!directorMediaPointer->contentPointer) {
 		directorMediaPointer->contentPointer = std::make_shared<Media::DirectorMedia::Content>();
-		ThrowNull(directorMediaPointer->contentPointer);
 	}
 
 	Media::DirectorMedia::Content &content = *directorMediaPointer->contentPointer;
@@ -2166,7 +2158,6 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentDataObject(Args* argsPointer, Medi
 		// stream
 		// (this lives on directorMedia because the reader interface needs it kept alive)
 		content.streamPointer = std::make_unique<Stream>(pObj->pCallback);
-		ThrowNull(content.streamPointer);
 
 		Stream &stream = *content.streamPointer;
 		ThrowErr(stream.open());
@@ -4466,7 +4457,6 @@ MoaError TStdXtra_IMoaMmXScript::GetContentReaderRegistryEntryDict(Args* argsPoi
 
 	if (!directorMediaPointer->contentPointer) {
 		directorMediaPointer->contentPointer = std::make_shared<Media::DirectorMedia::Content>();
-		ThrowNull(directorMediaPointer->contentPointer);
 	}
 
 	Media::DirectorMedia::Content &content = *directorMediaPointer->contentPointer;
@@ -4637,7 +4627,6 @@ MoaError TStdXtra_IMoaMmXScript::GetAgentHiddenReaderSet(Media::DirectorMedia* d
 		registryEntriesAgentHiddenReaderSet.agentMoaIDsHashPointer = &directorMediaPointer->agentMoaIDsHash;
 
 		directorMediaPointer->agentHiddenReaderSetPointer = std::make_shared<Agent::HIDDEN_READER_SET>();
-		ThrowNull(directorMediaPointer->agentHiddenReaderSetPointer);
 
 		registryEntriesAgentHiddenReaderSet.agentHiddenReaderSetPointer = directorMediaPointer->agentHiddenReaderSetPointer.get();
 

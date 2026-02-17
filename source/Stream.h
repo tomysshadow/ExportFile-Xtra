@@ -1,7 +1,7 @@
 #pragma once
 #include "utils.h"
 
-class Stream {
+class Stream : NonCopyable {
 	private:
 	void destroy();
 	//void duplicate(const Stream &stream);
@@ -21,8 +21,6 @@ class Stream {
 	Stream(PIMoaCallback callbackInterfacePointer);
 	Stream(ConstPMoaChar pathStringPointer, bool replace, PIMoaCallback callbackInterfacePointer);
 	~Stream();
-	Stream(const Stream &stream) = delete;
-	Stream &operator=(const Stream &stream) = delete;
 	MoaError open();
 	MoaError close();
 	MoaError flush();

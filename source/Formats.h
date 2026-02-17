@@ -7,7 +7,7 @@
 #include "mmixasst.h"
 
 namespace Formats {
-	class Format {
+	class Format : NonCopyable {
 		public:
 		typedef std::shared_ptr<Format> POINTER;
 
@@ -42,8 +42,6 @@ namespace Formats {
 		Format(unsigned long productVersionMajor);
 		Format(unsigned long productVersionMajor, const std::string &tempFileExtension, bool pathRelative);
 		virtual ~Format();
-		Format(const Format &format) = delete;
-		Format &operator=(const Format &format) = delete;
 		virtual MoaError writeFile(bool agent, PIMoaFile writeFileInterfacePointer);
 		virtual MoaError cancelFile();
 		virtual MoaError swapFile(bool status);

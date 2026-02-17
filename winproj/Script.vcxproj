@@ -196,6 +196,7 @@ rmdir "$(SolutionDir)..\ExportFile Test\Exported Files" /s /q
     <ClInclude Include="..\source\MappedVector.h" />
     <ClInclude Include="..\source\Mixer.h" />
     <ClInclude Include="..\source\MoaIDHash.h" />
+    <ClInclude Include="..\source\NonCopyable.h" />
     <ClInclude Include="..\source\Options.h" />
     <ClInclude Include="..\source\Path.h" />
     <ClInclude Include="..\source\Registry.h" />

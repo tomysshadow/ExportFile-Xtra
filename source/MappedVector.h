@@ -298,8 +298,7 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 		return difference(differenceMappedVector._vector);
 	}
 
-	MappedVector() {
-	}
+	MappedVector() = default;
 
 	// we don't need a copy constructor that takes in this class
 	// (this class only uses RAII types so can be safely copied with the default behaviour)

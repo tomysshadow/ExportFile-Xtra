@@ -96,7 +96,6 @@ namespace Asset {
 
 			MoaMmValue foundIconValue = kVoidMoaMmValueInitializer;
 			IconValues::POINTER foundIconValues = std::make_shared<IconValues>(mmValueInterfacePointer, mmImageInterfacePointer);
-			RETURN_NULL(foundIconValues);
 
 			for (IconValues::ICON_VALUE_MAP::iterator iconValueMapIterator = iconValueMap.begin(); iconValueMapIterator != iconValueMap.end(); iconValueMapIterator++) {
 				// if succeeded, release the value after setting the icon value

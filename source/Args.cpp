@@ -17,9 +17,6 @@ void Args::duplicate(const Args &args) {
 	optionsOptional = args.optionsOptional;
 }
 
-Args::Args() {
-}
-
 Args::~Args() {
 	destroy();
 }

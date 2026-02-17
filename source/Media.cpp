@@ -18,9 +18,6 @@ namespace Media {
 	}
 	*/
 
-	DirectorMedia::Content::Content() {
-	}
-
 	DirectorMedia::Content::~Content() {
 		destroy();
 	}
@@ -406,8 +403,7 @@ namespace Media {
 		// I don't like writing the word color without a u by the way
 		// I'm just doing so for consistency's sake
 		sourceBitmapInfoSize = BITMAPINFO_SIZE;
-		sourceBitmapInfoPointer = std::shared_ptr<char[]>(new char[sourceBitmapInfoSize]);
-		RETURN_NULL(sourceBitmapInfoPointer);
+		sourceBitmapInfoPointer = makeSharedArray<char>(sourceBitmapInfoSize);
 
 		{
 			// in its own scope because this might become invalid later
@@ -430,8 +426,7 @@ namespace Media {
 			RETURN_ERR(readStreamInterfacePointer->SetPosition(sourceBitmapInfoPosition));
 
 			sourceBitmapInfoSize += sourceBitmapInfoColorsSize;
-			sourceBitmapInfoPointer = std::shared_ptr<char[]>(new char[sourceBitmapInfoSize]);
-			RETURN_NULL(sourceBitmapInfoPointer);
+			sourceBitmapInfoPointer = makeSharedArray<char>(sourceBitmapInfoSize);
 
 			// read in the color table also
 			RETURN_ERR(readStreamSafe((PMoaVoid)sourceBitmapInfoPointer.get(), sourceBitmapInfoSize, readStreamInterfacePointer));
@@ -683,9 +678,6 @@ namespace Media {
 		return true;
 	}
 
-	WinBMPMedia::WinBMPMedia() {
-	}
-
 	WinBMPMedia::~WinBMPMedia() {
 		destroy();
 	}
@@ -767,8 +759,7 @@ namespace Media {
 
 		// the colors duke, the colors!!!
 		size_t colorsBitmapInfoSize = sourceBitmapInfoSize;
-		std::shared_ptr<char[]> colorsBitmapInfoPointer(new char[colorsBitmapInfoSize]);
-		RETURN_NULL(colorsBitmapInfoPointer);
+		std::shared_ptr<char[]> colorsBitmapInfoPointer = makeSharedArray<char>(colorsBitmapInfoSize);
 
 		DWORD colorsSize = sourceBitmapInfoColorsSize;
 
@@ -821,12 +812,10 @@ namespace Media {
 				bitmapInfoPointer = colorsBitmapInfoPointer;
 			} else {
 				bitmapInfoSize = BITMAPINFO_SIZE + colorsSize;
-				bitmapInfoPointer = std::shared_ptr<char[]>(new char[bitmapInfoSize]);
+				bitmapInfoPointer = makeSharedArray<char>(bitmapInfoSize);
 
 				((PBITMAPINFO)bitmapInfoPointer.get())->bmiHeader = colorsBitmapInfoHeader;
 			}
-
-			RETURN_NULL(bitmapInfoPointer);
 
 			colorsBitmapInfoPointer = 0;
 		}

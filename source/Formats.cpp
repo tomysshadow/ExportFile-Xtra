@@ -327,9 +327,6 @@ namespace Formats {
 		virtual ~MemoryFormat() {
 			destroy();
 		}
-
-		MemoryFormat(const MemoryFormat &memoryFormat) = delete;
-		MemoryFormat &operator=(const MemoryFormat &memoryFormat) = delete;
 	};
 
 	template <typename MediaData = void*> class HandleLockFormat : public MemoryFormat {
@@ -389,9 +386,6 @@ namespace Formats {
 		virtual ~HandleLockFormat() {
 			destroy();
 		}
-
-		HandleLockFormat(const HandleLockFormat &handleLockFormat) = delete;
-		HandleLockFormat &operator=(const HandleLockFormat &handleLockFormat) = delete;
 
 		MoaError get(PMoaVoid &data, MoaUlong &size) const {
 			data = lock;
@@ -459,8 +453,7 @@ namespace Formats {
 		}
 		#endif
 
-		virtual ~GlobalHandleLockFormat() {
-		}
+		virtual ~GlobalHandleLockFormat() = default;
 
 		MoaError get(PMoaVoid &data, MoaUlong &size) const {
 			data = globalHandleLockPointer->get();
@@ -507,10 +500,6 @@ namespace Formats {
 		public:
 		WinPALETTEFormat(HPALETTE paletteHandle, unsigned long productVersionMajor, PIMoaCalloc callocInterfacePointer);
 		virtual ~WinPALETTEFormat();
-		WinPALETTEFormat(const WinPALETTEFormat &winPALETTEFormat) = delete;
-		//WinPALETTEFormat(WinPALETTEFormat &&winPALETTEFormat);
-		WinPALETTEFormat &operator=(const WinPALETTEFormat &winPALETTEFormat) = delete;
-		//WinPALETTEFormat &operator=(WinPALETTEFormat &&winPALETTEFormat);
 		MoaError writeFile(bool agent, PIMoaFile writeFileInterfacePointer);
 		MoaError get(PMoaVoid &data, MoaUlong &size) const;
 		MoaError get(PIMoaStream writeStreamInterfacePointer, MoaUlong &size) const;
@@ -536,8 +525,6 @@ namespace Formats {
 		public:
 		MemberPropertyFormat(ConstPMoaMmValue memberPropertyValuePointer, unsigned long productVersionMajor, PIMoaMmValue mmValueInterfacePointer, PIMoaCalloc callocInterfacePointer);
 		virtual ~MemberPropertyFormat();
-		MemberPropertyFormat(const MemberPropertyFormat &memberPropertyFormat) = delete;
-		MemberPropertyFormat &operator=(const MemberPropertyFormat &memberPropertyFormat) = delete;
 		MoaError get(PMoaVoid &data, MoaUlong &size) const;
 	};
 
@@ -556,8 +543,6 @@ namespace Formats {
 		public:
 		MemberPropertyPictureFormat(PMoaMmValue memberPropertyValuePointer, unsigned long productVersionMajor, PIMoaHandle handleInterfacePointer, PIMoaDrMediaValue drMediaValueInterfacePointer, PIMoaMmValue mmValueInterfacePointer, PIMoaCalloc callocInterfacePointer);
 		virtual ~MemberPropertyPictureFormat();
-		MemberPropertyPictureFormat(const MemberPropertyPictureFormat &memberPropertyPictureFormat) = delete;
-		MemberPropertyPictureFormat &operator=(const MemberPropertyPictureFormat &memberPropertyPictureFormat) = delete;
 		MoaError get(PMoaVoid &data, MoaUlong &size) const;
 	};
 
@@ -581,8 +566,6 @@ namespace Formats {
 		XtraMediaFormat(PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor);
 		XtraMediaFormat(PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor, const std::string &tempFileExtension, bool pathRelative);
 		virtual ~XtraMediaFormat();
-		XtraMediaFormat(const XtraMediaFormat &xtraMediaFormat) = delete;
-		XtraMediaFormat &operator=(const XtraMediaFormat &xtraMediaFormat) = delete;
 		MoaError writeFile(bool agent, PIMoaFile writeFileInterfacePointer);
 	};
 
@@ -601,8 +584,6 @@ namespace Formats {
 		public:
 		XtraMediaMemoryFormat(PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor, PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer);
 		virtual ~XtraMediaMemoryFormat();
-		XtraMediaMemoryFormat(const XtraMediaMemoryFormat &xtraMediaMemoryFormat) = delete;
-		XtraMediaMemoryFormat &operator=(const XtraMediaMemoryFormat &xtraMediaMemoryFormat) = delete;
 		MoaError writeFile(bool agent, PIMoaFile writeFileInterfacePointer);
 		MoaError get(PMoaVoid &data, MoaUlong &size) const;
 		MoaError get(MoaUlong &size, PIMoaStream writeStreamInterfacePointer) const;
@@ -652,8 +633,6 @@ namespace Formats {
 		public:
 		XtraMediaMixerAsyncFormat(PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor, const std::string &tempFileExtension, PIMoaDrCastMem drCastMemInterfacePointer, PIMoaMmValue mmValueInterfacePointer, PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer);
 		virtual ~XtraMediaMixerAsyncFormat();
-		XtraMediaMixerAsyncFormat(const XtraMediaMixerAsyncFormat &xtraMediaMixerAsyncFormat) = delete;
-		XtraMediaMixerAsyncFormat &operator=(const XtraMediaMixerAsyncFormat &xtraMediaMixerAsyncFormat) = delete;
 		MoaError writeFile(bool agent, PIMoaFile writeFileInterfacePointer);
 		MoaError cancelFile();
 		MoaError swapFile(bool status);
@@ -731,8 +710,7 @@ namespace Formats {
 		) {
 	}
 
-	WinDIBFormat::~WinDIBFormat() {
-	}
+	WinDIBFormat::~WinDIBFormat() = default;
 
 	MoaError WinDIBFormat::get(PMoaVoid &data, MoaUlong &size) const {
 		PBITMAPINFO globalHandleLockData = globalHandleLockPointer->get();
@@ -831,8 +809,7 @@ namespace Formats {
 		RETURN_ERR(osErr((DWORD)numEntries));
 
 		logicalPaletteSize = offsetof(LOGPALETTE, palPalEntry[numEntries]);
-		logicalPalettePointer = std::unique_ptr<char[]>(new char[logicalPaletteSize]);
-		RETURN_NULL(logicalPalettePointer);
+		logicalPalettePointer = makeUniqueArray<char>(logicalPaletteSize);
 
 		LOGPALETTE &logicalPalette = *(LPLOGPALETTE)logicalPalettePointer.get();
 		logicalPalette.palVersion = 0x300;
@@ -864,7 +841,6 @@ namespace Formats {
 		RETURN_ERR(osErr(paletteGlobalHandle));
 
 		paletteGlobalHandleLockPointer = std::make_unique<GlobalHandleLock<char>>(paletteGlobalHandle);
-		RETURN_NULL(paletteGlobalHandleLockPointer);
 
 		// RIFF is word-aligned
 		static const DWORD WORD_SIZE = sizeof(WORD);
@@ -997,8 +973,7 @@ namespace Formats {
 		) {
 	}
 
-	CompositeFormat::~CompositeFormat() {
-	}
+	CompositeFormat::~CompositeFormat() = default;
 
 	MoaError CompositeFormat::get(PMoaVoid &data, MoaUlong &size) const {
 		RETURN_ERR(HandleLockFormat::get(data, size));
@@ -1397,8 +1372,7 @@ namespace Formats {
 		) {
 	}
 
-	XtraMediaSWFFormat::~XtraMediaSWFFormat() {
-	}
+	XtraMediaSWFFormat::~XtraMediaSWFFormat() = default;
 
 	MoaError XtraMediaW3DFormat::seekStream(Stream &stream, MoaUlong &size) const {
 		// this is (as close as possible) a recreation of the behaviour
@@ -1465,8 +1439,7 @@ namespace Formats {
 		) {
 	}
 
-	XtraMediaW3DFormat::~XtraMediaW3DFormat() {
-	}
+	XtraMediaW3DFormat::~XtraMediaW3DFormat() = default;
 
 	void XtraMediaMixerAsyncFormat::destroy() {
 		releaseInterface((PPMoaVoid)&drCastMemInterfacePointer);
