@@ -678,14 +678,6 @@ STDMETHODIMP_(MoaError) MoaCreate_TStdXtra(TStdXtra* This) {
 	This->assetInfoMapPointer = new Asset::Info::MAP;
 	ThrowNull(This->assetInfoMapPointer);
 
-	#ifdef WINDOWS
-	This->threadVectorPointer = new HANDLE_VECTOR;
-	ThrowNull(This->threadVectorPointer);
-
-	This->moduleHandleVectorPointer = new MODULE_HANDLE_VECTOR;
-	ThrowNull(This->moduleHandleVectorPointer);
-	#endif
-
 	ThrowErr(GetProductVersionMajor_TStdXtra(This));
 	ThrowErr(GetSymbols_TStdXtra(This));
 
@@ -695,11 +687,6 @@ STDMETHODIMP_(MoaError) MoaCreate_TStdXtra(TStdXtra* This) {
 }
 
 STDMETHODIMP_(void) MoaDestroy_TStdXtra(TStdXtra* This) {
-	#ifdef WINDOWS
-	HANDLE_VECTOR::iterator threadVectorIterator = {};
-	MODULE_HANDLE_VECTOR::iterator moduleHandleVectorIterator = {};
-	#endif
-
 	moa_try
 
 	ThrowNull(This);
@@ -759,42 +746,6 @@ STDMETHODIMP_(void) MoaDestroy_TStdXtra(TStdXtra* This) {
 		delete This->assetInfoMapPointer;
 		This->assetInfoMapPointer = 0;
 	}
-
-	#ifdef WINDOWS
-	MoaError err = kMoaErr_NoErr;
-
-	if (This->threadVectorPointer) {
-		{
-			HANDLE_VECTOR &threadVector = *This->threadVectorPointer;
-
-			for (threadVectorIterator = threadVector.begin(); threadVectorIterator != threadVector.end(); threadVectorIterator++) {
-				err = errOrDefaultErr(osErr(closeThread(*threadVectorIterator)), err);
-			}
-		}
-
-		delete This->threadVectorPointer;
-		This->threadVectorPointer = 0;
-	}
-
-	if (This->moduleHandleVectorPointer) {
-		{
-			MODULE_HANDLE_VECTOR &moduleHandleVector = *This->moduleHandleVectorPointer;
-
-			for (
-				moduleHandleVectorIterator = moduleHandleVector.begin();
-				moduleHandleVectorIterator != moduleHandleVector.end();
-				moduleHandleVectorIterator++
-			) {
-				err = errOrDefaultErr(osErr(freeLibrary(*moduleHandleVectorIterator)), err);
-			}
-		}
-
-		delete This->moduleHandleVectorPointer;
-		This->moduleHandleVectorPointer = 0;
-	}
-
-	ThrowErr(err);
-	#endif
 
 	moa_catch
 	moa_catch_end

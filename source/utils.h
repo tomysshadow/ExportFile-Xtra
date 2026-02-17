@@ -51,7 +51,6 @@ typedef std::variant<std::string, MoaMmSymbol> SYMBOL_VARIANT;
 
 #ifdef WINDOWS
 typedef std::vector<HANDLE> HANDLE_VECTOR;
-typedef std::vector<HMODULE> MODULE_HANDLE_VECTOR;
 #endif
 
 //#define kWriterRegKey_AgentRegDict MOADICT_RUNTIME_KEY_PREFIX "%%AgentRegDict%%"

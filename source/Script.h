@@ -84,11 +84,6 @@ EXTERN_BEGIN_DEFINE_CLASS_INSTANCE_VARS(TStdXtra)
 	size_t assetMoaIDsHash = 0;
 	Asset::Info::MAP* assetInfoMapPointer = 0;
 
-	#ifdef WINDOWS
-	HANDLE_VECTOR* threadVectorPointer = 0;
-	MODULE_HANDLE_VECTOR* moduleHandleVectorPointer = 0;
-	#endif
-
 	unsigned long productVersionMajor = 0;
 
 	struct Symbols {
