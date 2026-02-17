@@ -1,5 +1,5 @@
 #pragma once
-#include "shared.h"
+#include "utils.h"
 #include "Path.h"
 #include <vector>
 #include <map>
@@ -74,7 +74,7 @@ namespace Agent {
 			PIMoaWriter writerInterfacePointer = NULL;
 
 			public:
-			Writer();
+			Writer() = default;
 			~Writer();
 			Writer(const Writer &writer);
 			Writer &operator=(const Writer &writer);

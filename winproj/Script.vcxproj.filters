@@ -33,7 +33,7 @@
     <ClCompile Include="..\source\Formats.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\shared.cpp">
+    <ClCompile Include="..\source\utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\source\IconValues.cpp">
@@ -86,7 +86,7 @@
     <ClInclude Include="..\source\Script.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\shared.h">
+    <ClInclude Include="..\source\utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\resource.h">

@@ -1,4 +1,4 @@
-#include "shared.h"
+#include "utils.h"
 
 MoaError getSymbol(SYMBOL_VARIANT &symbolVariant, PIMoaMmValue mmValueInterfacePointer) {
 	RETURN_NULL(mmValueInterfacePointer);

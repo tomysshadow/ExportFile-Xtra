@@ -24,6 +24,8 @@ written permission of Adobe.
 #include "moastdif.h"
 #include "mmixscrp.h"
 #include "mmixasst.h"
+#include "mmivalue.h"
+#include "mmiservc.h"
 #include "mmiimage.h"
 #include "driservc.h"
 
@@ -41,7 +43,6 @@ written permission of Adobe.
 
 #ifdef WINDOWS
 #include <Shlobj.h>
-#include <process.h>
 #endif
 
 /* Begin Xtra */
@@ -1714,7 +1715,6 @@ MoaError TStdXtra_IMoaMmXScript::FindXtraAssetInfo(Args* argsPointer, Media::Dir
 MoaError TStdXtra_IMoaMmXScript::CreateMixerThread(Args* argsPointer, Media::DirectorMedia* directorMediaPointer) {
 	PIMoaDrCastMem drCastMemInterfacePointer = NULL;
 
-	bool createdThread = false;
 	Media::MixerMedia* mixerMediaPointer = 0;
 
 	moa_try
@@ -1765,12 +1765,9 @@ MoaError TStdXtra_IMoaMmXScript::CreateMixerThread(Args* argsPointer, Media::Dir
 
 	mixerMediaPointer->formatPointer = content.formatPointer;
 
-	#ifdef MACINTOSH
-	// create a thread here
-	#endif
 	#ifdef WINDOWS
 	// this is a Windows trick to keep the DLL loaded for at least the duration this thread is running
-	// no idea the way to do this on Mac
+	// I have no idea the way to do this on Mac
 	// http://devblogs.microsoft.com/oldnewthing/20131105-00/?p=2733
 	ThrowErr(
 		osErr(
@@ -1784,38 +1781,22 @@ MoaError TStdXtra_IMoaMmXScript::CreateMixerThread(Args* argsPointer, Media::Dir
 
 	ThrowErr(osErr(mixerMediaPointer->moduleHandle));
 
-	// attempt to create the thread
-	HANDLE thread = (HANDLE)_beginthreadex(NULL, 0, Mixer::thread, mixerMediaPointer, 0, NULL);
-	createdThread = thread && thread != INVALID_HANDLE_VALUE;
+	try {
+	#endif
 
-	// ensure we close the thread, erroring if we failed to create it
-	MoaError err = osErr(createdThread, true);
-
-	// if closing the thread fails, delay the error until the Xtra is destroyed
-	// this way we at least get the file out and the thread runs, but
-	// we still free resources at a later time
-	MoaError err2 = osErr(closeThread(thread));
-
-	if (err2 != kMoaErr_NoErr) {
-		pObj->threadVectorPointer->push_back(thread);
+	(std::thread(Mixer::thread, mixerMediaPointer)).detach();
+	
+	#ifdef WINDOWS
+	} catch (...) {
+		ThrowErr(osErr(freeLibrary(mixerMediaPointer->moduleHandle)));
+		Throw(kMoaErr_OutOfMem);
 	}
-
-	// same deal for freeing the library
-	if (!createdThread) {
-		err2 = osErr(freeLibrary(mixerMediaPointer->moduleHandle));
-
-		if (err2 != kMoaErr_NoErr) {
-			pObj->moduleHandleVectorPointer->push_back(mixerMediaPointer->moduleHandle);
-		}
-	}
-
-	ThrowErr(err);
 	#endif
 
 	moa_catch
 
 	// clean up MixerMedia if the thread can't do it for us
-	if (!createdThread && mixerMediaPointer) {
+	if (mixerMediaPointer) {
 		delete mixerMediaPointer;
 	}
 

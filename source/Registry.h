@@ -1,5 +1,5 @@
 #pragma once
-#include "shared.h"
+#include "utils.h"
 #include "BitmapImporter.h"
 #include "Asset.h"
 #include <unordered_set>

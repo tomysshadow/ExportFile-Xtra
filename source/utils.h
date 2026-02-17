@@ -1,5 +1,4 @@
 #pragma once
-#define _WIN32_WINNT 0x0501
 #include "scope_guard.hpp"
 #include "MoaIDHash.h"
 #include "MappedVector.h"
@@ -10,6 +9,7 @@
 #include <string>
 #include <variant>
 #include <filesystem>
+#include <thread>
 #include <stdint.h>
 #include <ctype.h>
 #include <string.h>
@@ -18,6 +18,8 @@
 #include "moaxtra.h"
 #include "moastdif.h"
 #include "mmixscrp.h"
+#include "mmivalue.h"
+#include "mmiservc.h"
 
 #pragma warning(push)
 #pragma warning(disable : 5040)

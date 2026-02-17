@@ -1,5 +1,5 @@
 #pragma once
-#include "shared.h"
+#include "utils.h"
 
 #define kExportFileRegKey_MixerSavedCallHandler MOADICT_RUNTIME_KEY_PREFIX "MixerSavedCallHandler"
 

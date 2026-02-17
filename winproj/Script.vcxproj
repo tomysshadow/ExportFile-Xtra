@@ -60,7 +60,7 @@
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <AdditionalIncludeDirectories>..\..\..\..\Include;..\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_CRT_NO_VA_START_VALIDATION;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WIN32_WINNT=0x0501;_CRT_NO_VA_START_VALIDATION;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -106,7 +106,7 @@ rmdir "$(SolutionDir)..\ExportFile Test\Exported Files" /s /q
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\..\..\..\Include;..\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_CRT_NO_VA_START_VALIDATION;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WIN32_WINNT=0x0501;_CRT_NO_VA_START_VALIDATION;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeaderOutputFile>.\Debug/Script.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>.\Debug/</AssemblerListingLocation>
@@ -169,7 +169,7 @@ rmdir "$(SolutionDir)..\ExportFile Test\Exported Files" /s /q
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">WIN32;NDEBUG;_WINDOWS</PreprocessorDefinitions>
     </ClCompile>
-    <ClCompile Include="..\source\shared.cpp" />
+    <ClCompile Include="..\source\utils.cpp" />
     <ClCompile Include="..\source\Stream.cpp" />
     <ClCompile Include="..\source\TypeLabels.cpp" />
     <ClCompile Include="..\source\ValueConverter.cpp" />
@@ -202,7 +202,7 @@ rmdir "$(SolutionDir)..\ExportFile Test\Exported Files" /s /q
     <ClInclude Include="..\source\resource.h" />
     <ClInclude Include="..\source\scope_guard.hpp" />
     <ClInclude Include="..\source\Script.h" />
-    <ClInclude Include="..\source\shared.h" />
+    <ClInclude Include="..\source\utils.h" />
     <ClInclude Include="..\source\Stream.h" />
     <ClInclude Include="..\source\TypeLabels.h" />
     <ClInclude Include="..\source\ValueConverter.h" />

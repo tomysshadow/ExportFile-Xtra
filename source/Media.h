@@ -1,5 +1,5 @@
 #pragma once
-#include "shared.h"
+#include "utils.h"
 #include "Mixer.h"
 #include "BitmapImporter.h"
 #include "ExportFileValueConverter.h"

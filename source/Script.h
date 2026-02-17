@@ -14,7 +14,7 @@ written permission of Adobe.
 #ifndef _H_Script
 #define _H_Script
 
-#include "shared.h"
+#include "utils.h"
 #include "Registry.h"
 #include "ExportFileValueConverter.h"
 #include "Label.h"
@@ -30,6 +30,7 @@ extern "C" {
 }
 
 #include "mmixasst.h"
+#include "mmiimage.h"
 #include "driservc.h"
 #include "drivalue.h"
 #include "mixsvc.h"

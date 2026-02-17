@@ -12,7 +12,7 @@ written permission of Adobe.
 #ifndef _H_WinBMPAgent
 #define _H_WinBMPAgent
 
-#include "shared.h"
+#include "utils.h"
 #include "Agent.h"
 #include "Media.h"
 

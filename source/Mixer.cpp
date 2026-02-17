@@ -3,11 +3,6 @@
 #include "ValueConverter.h"
 #include "Registry.h"
 #include <chrono>
-#include <thread>
-
-#ifdef WINDOWS
-#include <process.h>
-#endif
 
 // errors returned from this function go off into the void
 // so we should only return the error when it is impossible to continue
@@ -137,65 +132,6 @@ MoaError mixerSaved(Media::MixerMedia* mixerMediaPointer) {
 
 	deleteMixerMediaPointerScopeExit.dismiss();
 	return err;
-}
-
-unsigned int __declspec(noinline) threadNoInline(void* argList) {
-	if (!argList) {
-		throw std::invalid_argument("argList must not be NULL");
-	}
-
-	Media::MixerMedia* mixerMediaPointer = (Media::MixerMedia*)argList;
-
-	if (!mixerMediaPointer) {
-		throw std::logic_error("mixerMediaPointer must not be zero");
-	}
-
-	#ifdef WINDOWS
-	HMODULE moduleHandle = mixerMediaPointer->moduleHandle;
-
-	if (!moduleHandle) {
-		throw std::logic_error("moduleHandle must not be NULL");
-	}
-
-	HWND windowHandle = mixerMediaPointer->window.getHandle();
-
-	if (!windowHandle) {
-		throw std::logic_error("windowHandle must not be NULL");
-	}
-	#endif
-
-	// this doesn't really need to be precise, just needs to be some kinda small amount of time
-	static const std::chrono::milliseconds MILLISECONDS(25);
-
-	unsigned int result = 0;
-	MoaError err = kMoaErr_NoErr;
-
-	for (;;) {
-		#ifdef MACINTOSH
-		err = mixerSaved(mixerMediaPointer);
-		#endif
-		#ifdef WINDOWS
-		err = SendMessage(windowHandle, Mixer::Window::WM_MIXER_SAVED, 0, (LPARAM)mixerMediaPointer);
-		#endif
-
-		if (FAILED(err)) {
-			result = 1;
-		}
-
-		if (err != kMoaStatus_OK) {
-			break;
-		}
-
-		std::this_thread::sleep_for(MILLISECONDS);
-	}
-
-	#ifdef MACINTOSH
-	// ???
-	#endif
-	#ifdef WINDOWS
-	FreeLibraryAndExitThread(moduleHandle, result);
-	#endif
-	return result;
 }
 
 #ifdef WINDOWS
@@ -335,12 +271,60 @@ HWND Mixer::Window::getHandle() {
 #endif
 
 unsigned int __stdcall Mixer::thread(void* argList) {
-	// do not create any C++ objects here
-	// (unwinding interferes with _endthreadex)
-	unsigned int result = threadNoInline(argList);
+	if (!argList) {
+		throw std::invalid_argument("argList must not be NULL");
+	}
+
+	Media::MixerMedia* mixerMediaPointer = (Media::MixerMedia*)argList;
+
+	if (!mixerMediaPointer) {
+		throw std::logic_error("mixerMediaPointer must not be zero");
+	}
 
 	#ifdef WINDOWS
-	_endthreadex(result);
+	HMODULE moduleHandle = mixerMediaPointer->moduleHandle;
+
+	if (!moduleHandle) {
+		throw std::logic_error("moduleHandle must not be NULL");
+	}
+
+	HWND windowHandle = mixerMediaPointer->window.getHandle();
+
+	if (!windowHandle) {
+		throw std::logic_error("windowHandle must not be NULL");
+	}
+	#endif
+
+	// this doesn't really need to be precise, just needs to be some kinda small amount of time
+	static const std::chrono::milliseconds MILLISECONDS(25);
+
+	unsigned int result = 0;
+	MoaError err = kMoaErr_NoErr;
+
+	for (;;) {
+		#ifdef MACINTOSH
+		err = mixerSaved(mixerMediaPointer);
+		#endif
+		#ifdef WINDOWS
+		err = SendMessage(windowHandle, Mixer::Window::WM_MIXER_SAVED, 0, (LPARAM)mixerMediaPointer);
+		#endif
+
+		if (FAILED(err)) {
+			result = 1;
+		}
+
+		if (err != kMoaStatus_OK) {
+			break;
+		}
+
+		std::this_thread::sleep_for(MILLISECONDS);
+	}
+
+	#ifdef MACINTOSH
+	// ???
+	#endif
+	#ifdef WINDOWS
+	FreeLibraryAndExitThread(moduleHandle, result);
 	#endif
 	return result;
 }
