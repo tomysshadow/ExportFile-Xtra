@@ -17,13 +17,7 @@ void IconValues::destroy() {
 }
 
 void IconValues::duplicate(const IconValues &iconValues) {
-	for (
-		ICON_VALUE_MAP::iterator iconValueMapIterator = iconValueMap.begin();
-		iconValueMapIterator != iconValueMap.end();
-		iconValueMapIterator++
-	) {
-		releaseValue(iconValueMapIterator->second, mmValueInterfacePointer);
-	}
+	destroy();
 
 	setInterface((PPMoaVoid)&mmValueInterfacePointer, iconValues.mmValueInterfacePointer);
 	setInterface((PPMoaVoid)&mmImageInterfacePointer, iconValues.mmImageInterfacePointer);
