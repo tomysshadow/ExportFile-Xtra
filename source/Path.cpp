@@ -60,7 +60,6 @@ namespace Path {
 
 		while (*filterPointer) {
 			filterPointer += stringSize(filterPointer);
-			RETURN_NULL_BOOL(filterPointer);
 
 			// if this fails it is not a serious error
 			// we just clear out the extensions and return
@@ -71,7 +70,6 @@ namespace Path {
 			extensions += patternExtensions;
 
 			filterPointer += stringSize(filterPointer);
-			RETURN_NULL_BOOL(filterPointer);
 		}
 
 		clearExtensionsScopeExit.dismiss();
@@ -347,6 +345,7 @@ namespace Path {
 		// even if its corresponding absolute path would be longer than MAX_PATH
 		// note: we can't use GetRelativePath, Director doesn't implement it
 		// so we can use the filesystem functionality here instead
+		// TODO: this can throw supposedly?
 		std::string relativePath = FILESYSTEM_DIRECTOR_STRING(
 			FILESYSTEM_DIRECTOR_PATH(
 				path,

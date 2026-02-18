@@ -9,11 +9,7 @@ namespace std {
             std::hash<uint64_t> uint64Hash;
 
             uint64_t* key = (uint64_t*)&moaID;
-
-            if (key) {
-                return uint64Hash(key[0]) ^ uint64Hash(key[1]);
-            }
-            return uint64Hash(0);
+            return uint64Hash(key[0]) ^ uint64Hash(key[1]);
         }
     };
 }

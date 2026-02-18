@@ -860,7 +860,7 @@ namespace Media {
 		}
 
 		#if defined READ_RPCS_RGB16
-		pixelFormat.cs.colorSpace == RPCS_RGB16 ? 5 : 8
+		pixelFormat.cs.bitsPerSample = pixelFormat.cs.colorSpace == RPCS_RGB16 ? 5 : 8;
 		#else
 		pixelFormat.cs.bitsPerSample = 8;
 		#endif

@@ -388,7 +388,7 @@ MoaError ValueConverter::toWide(const MoaMmValue &value, MoaWide &wide) {
 
 	MoaMmValue loValue = kVoidMoaMmValueInitializer;
 
-	SCOPE_EXIT{
+	SCOPE_EXIT {
 		releaseValue(loValue, mmValueInterfacePointer);
 	};
 
@@ -413,7 +413,6 @@ MoaError ValueConverter::toID(const MoaMmValue &value, MoaID &id) {
 	static const MoaLong ID_SIZE = sizeof(id);
 
 	unsigned char* dataPointer = (unsigned char*)&id;
-	RETURN_NULL(dataPointer);
 
 	MoaLong integer = 0;
 
@@ -482,7 +481,7 @@ MoaError ValueConverter::toValue(const MoaWide &wide, MoaMmValue &value) {
 
 	MoaMmValue hiValue = kVoidMoaMmValueInitializer;
 
-	SCOPE_EXIT{
+	SCOPE_EXIT {
 		releaseValue(hiValue, mmValueInterfacePointer);
 	};
 
@@ -508,7 +507,6 @@ MoaError ValueConverter::toValue(const MoaID &id, MoaMmValue &value) {
 	static const MoaLong ID_SIZE = sizeof(id);
 
 	unsigned char* dataPointer = (unsigned char*)&id;
-	RETURN_NULL(dataPointer);
 
 	value = kVoidMoaMmValueInitializer;
 
@@ -612,6 +610,7 @@ MoaError ValueConverter::appendToList(const MoaMmValue &value, MoaMmValue &listV
 	// method to handle for a const input value
 	MoaMmValue modifiableValue = value;
 
+	/*
 	SCOPE_EXIT {
 		static const size_t MOA_MM_VALUE_SIZE = sizeof(MoaMmValue);
 
@@ -619,6 +618,7 @@ MoaError ValueConverter::appendToList(const MoaMmValue &value, MoaMmValue &listV
 			releaseValue(modifiableValue, mmValueInterfacePointer);
 		}
 	};
+	*/
 	return mmListInterfacePointer->AppendValueToList(&listValue, &modifiableValue);
 }
 
@@ -668,19 +668,23 @@ MoaError ValueConverter::appendToPropList(const MoaMmValue &propertyValue, const
 	// (even though I don't think it ever does)
 	MoaMmValue modifiablePropertyValue = propertyValue;
 
+	/*
 	SCOPE_EXIT {
 		if (!memoryEquals(&modifiablePropertyValue, &propertyValue, MOA_MM_VALUE_SIZE)) {
 			releaseValue(modifiablePropertyValue, mmValueInterfacePointer);
 		}
 	};
+	*/
 
 	MoaMmValue modifiableValue = value;
 
+	/*
 	SCOPE_EXIT {
 		if (!memoryEquals(&modifiableValue, &value, MOA_MM_VALUE_SIZE)) {
 			releaseValue(modifiableValue, mmValueInterfacePointer);
 		}
 	};
+	*/
 	return mmListInterfacePointer->AppendValueToPropList(&propListValue, &modifiablePropertyValue, &modifiableValue);
 }
 

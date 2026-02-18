@@ -41,7 +41,9 @@ void BitmapImporter::duplicate(const BitmapImporter &bitmapImporter) {
 
 	// it isn't enough to copy castIndex and memberIndex
 	// (the old member gets deleted in the event of a copy)
-	if (!createMember()) {
+	MoaError err = createMember();
+
+	if (err != kMoaErr_NoErr) {
 		throw std::runtime_error("Failed to Create Member");
 	}
 }

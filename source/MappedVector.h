@@ -128,6 +128,7 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 			_vector.push_back(value);
 		} catch (...) {
 			_map.erase(emplaced.first);
+			throw;
 		}
 
 		index = emplaced.first->second;

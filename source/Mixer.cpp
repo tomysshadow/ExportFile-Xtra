@@ -270,54 +270,62 @@ HWND Mixer::Window::getHandle() {
 }
 #endif
 
-unsigned int __stdcall Mixer::thread(void* argList) {
-	if (!argList) {
-		throw std::invalid_argument("argList must not be NULL");
-	}
-
-	Media::MixerMedia* mixerMediaPointer = (Media::MixerMedia*)argList;
-
-	if (!mixerMediaPointer) {
-		throw std::logic_error("mixerMediaPointer must not be zero");
-	}
-
+unsigned int Mixer::thread(void* argList) {
+	unsigned int result = 0;
+	
 	#ifdef WINDOWS
-	HMODULE moduleHandle = mixerMediaPointer->moduleHandle;
-
-	if (!moduleHandle) {
-		throw std::logic_error("moduleHandle must not be NULL");
-	}
-
-	HWND windowHandle = mixerMediaPointer->window.getHandle();
-
-	if (!windowHandle) {
-		throw std::logic_error("windowHandle must not be NULL");
-	}
+	HMODULE moduleHandle = NULL;
 	#endif
 
-	// this doesn't really need to be precise, just needs to be some kinda small amount of time
-	static const std::chrono::milliseconds MILLISECONDS(25);
+	// scope to ensure C++ destructors run before FreeLibraryAndExitThread
+	{
+		if (!argList) {
+			throw std::invalid_argument("argList must not be NULL");
+		}
 
-	unsigned int result = 0;
-	MoaError err = kMoaErr_NoErr;
+		Media::MixerMedia* mixerMediaPointer = (Media::MixerMedia*)argList;
 
-	for (;;) {
-		#ifdef MACINTOSH
-		err = mixerSaved(mixerMediaPointer);
-		#endif
+		if (!mixerMediaPointer) {
+			throw std::logic_error("mixerMediaPointer must not be zero");
+		}
+
 		#ifdef WINDOWS
-		err = SendMessage(windowHandle, Mixer::Window::WM_MIXER_SAVED, 0, (LPARAM)mixerMediaPointer);
+		moduleHandle = mixerMediaPointer->moduleHandle;
+
+		if (!moduleHandle) {
+			throw std::logic_error("moduleHandle must not be NULL");
+		}
+
+		HWND windowHandle = mixerMediaPointer->window.getHandle();
+
+		if (!windowHandle) {
+			throw std::logic_error("windowHandle must not be NULL");
+		}
 		#endif
 
-		if (FAILED(err)) {
-			result = 1;
-		}
+		// this doesn't really need to be precise, just needs to be some kinda small amount of time
+		static const std::chrono::milliseconds MILLISECONDS(25);
 
-		if (err != kMoaStatus_OK) {
-			break;
-		}
+		MoaError err = kMoaErr_NoErr;
 
-		std::this_thread::sleep_for(MILLISECONDS);
+		for (;;) {
+			#ifdef MACINTOSH
+			err = mixerSaved(mixerMediaPointer);
+			#endif
+			#ifdef WINDOWS
+			err = SendMessage(windowHandle, Mixer::Window::WM_MIXER_SAVED, 0, (LPARAM)mixerMediaPointer);
+			#endif
+
+			if (FAILED(err)) {
+				result = 1;
+			}
+
+			if (err != kMoaStatus_OK) {
+				break;
+			}
+
+			std::this_thread::sleep_for(MILLISECONDS);
+		}
 	}
 
 	#ifdef MACINTOSH

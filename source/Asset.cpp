@@ -92,7 +92,7 @@ namespace Asset {
 			MoaMmValue rectValue = kVoidMoaMmValueInitializer;
 			RETURN_ERR(mmValueInterfacePointer->RectToValue(&rect, &rectValue));
 
-			SCOPE_EXIT{
+			SCOPE_EXIT {
 				releaseValue(rectValue, mmValueInterfacePointer);
 			};
 
@@ -108,7 +108,7 @@ namespace Asset {
 			) {
 				// if succeeded, release the value after setting the icon value
 				// so it will be set to the found icon value
-				SCOPE_EXIT{
+				SCOPE_EXIT {
 					if (err == kMoaErr_NoErr) {
 						releaseValue(foundIconValue, mmValueInterfacePointer);
 					}
@@ -117,7 +117,7 @@ namespace Asset {
 				{
 					// if failed, release the value before setting the icon value
 					// so it will be set to void
-					SCOPE_EXIT{
+					SCOPE_EXIT {
 						if (err != kMoaErr_NoErr) {
 							releaseValue(foundIconValue, mmValueInterfacePointer);
 						}
@@ -305,7 +305,7 @@ namespace Asset {
 		XtraResourceCookie saveCookie = NULL;
 		XtraResourceCookie myCookie = callbackInterfacePointer->MoaBeginUsingResources(gXtraFileRef, &saveCookie);
 
-		SCOPE_EXIT{
+		SCOPE_EXIT {
 			endUsingResources(gXtraFileRef, saveCookie, callbackInterfacePointer);
 		};
 

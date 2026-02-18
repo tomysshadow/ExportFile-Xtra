@@ -35,5 +35,5 @@ namespace Mixer {
 	};
 	#endif
 
-	unsigned int __stdcall thread(void* argList);
+	unsigned int thread(void* argList);
 }

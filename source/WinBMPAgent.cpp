@@ -473,7 +473,6 @@ MoaError CWinBMPAgent_IMoaReader::ReadPixels(PIMoaReceptorPixels receptorPixelsI
 		}
 
 		LPBYTE bytesPointer = (LPBYTE)winBMPMedia.mappedView;
-		ThrowNull(bytesPointer);
 
 		// a loop that can go either direction
 		// be super careful here: access violations abound if you're off by one with the top/bottom row
@@ -486,9 +485,7 @@ MoaError CWinBMPAgent_IMoaReader::ReadPixels(PIMoaReceptorPixels receptorPixelsI
 
 		for (MoaLong i = topRow; i != bottomRow; i += nextRow) {
 			ThrowErr(receptorPixelsInterfacePointer->SetPixels(i, bytesPointer, pixelFormat.dim.rowBytes));
-
 			bytesPointer += (SIZE_T)pixelFormat.dim.rowBytes;
-			ThrowNull(bytesPointer);
 		}
 
 		ThrowErr(receptorPixelsInterfacePointer->EndPixels());

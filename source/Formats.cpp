@@ -342,8 +342,11 @@ namespace Formats {
 		}
 
 		void destroy() {
-			handleInterfacePointer->Unlock(handle);
-			handleInterfacePointer->Free(handle);
+			// may be NULL if constructor throws
+			if (handleInterfacePointer) {
+				handleInterfacePointer->Unlock(handle);
+				handleInterfacePointer->Free(handle);
+			}
 
 			releaseInterface((PPMoaVoid)&handleInterfacePointer);
 		}
@@ -422,10 +425,6 @@ namespace Formats {
 			)
 		{
 			globalHandleLockPointer = std::make_unique<MEDIA_DATA_GLOBAL_HANDLE_LOCK>(mediaData);
-
-			if (!globalHandleLockPointer) {
-				throw std::logic_error("globalHandleLockPointer must not be zero");
-			}
 		}
 
 		#ifdef MACINTOSH
@@ -488,8 +487,6 @@ namespace Formats {
 			size = globalHandleLockPointer->size();
 
 			RETURN_NULL(data);
-			RETURN_ERR(writeStreamSafe(data, size, writeStreamInterfacePointer)); // TEMP
-			memset(data, 0, size); // TEMP
 			return writeStreamSafe(data, size, writeStreamInterfacePointer);
 		}
 	};
@@ -509,7 +506,7 @@ namespace Formats {
 			PIMoaCalloc callocInterfacePointer
 		);
 
-		virtual ~WinDIBFormat();
+		virtual ~WinDIBFormat() = default;
 		MoaError get(PMoaVoid &data, MoaUlong &size) const;
 		MoaError get(MoaUlong &size, PIMoaStream writeStreamInterfacePointer) const;
 	};
@@ -539,7 +536,7 @@ namespace Formats {
 			PIMoaHandle handleInterfacePointer, PIMoaCalloc callocInterfacePointer
 		);
 
-		virtual ~CompositeFormat();
+		virtual ~CompositeFormat() = default;
 		MoaError get(PMoaVoid &data, MoaUlong &size) const;
 	};
 
@@ -649,7 +646,7 @@ namespace Formats {
 			PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer
 		);
 
-		virtual ~XtraMediaSWFFormat();
+		virtual ~XtraMediaSWFFormat() = default;
 	};
 
 	class XtraMediaW3DFormat : public XtraMediaMemoryFormat {
@@ -661,7 +658,7 @@ namespace Formats {
 			PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer
 		);
 
-		virtual ~XtraMediaW3DFormat();
+		virtual ~XtraMediaW3DFormat() = default;
 	};
 
 	class XtraMediaMixerAsyncFormat : public XtraMediaFormat {
@@ -796,8 +793,6 @@ namespace Formats {
 		)
 	{
 	}
-
-	WinDIBFormat::~WinDIBFormat() = default;
 
 	MoaError WinDIBFormat::get(PMoaVoid &data, MoaUlong &size) const {
 		PBITMAPINFO globalHandleLockData = globalHandleLockPointer->get();
@@ -1069,8 +1064,6 @@ namespace Formats {
 	{
 	}
 
-	CompositeFormat::~CompositeFormat() = default;
-
 	MoaError CompositeFormat::get(PMoaVoid &data, MoaUlong &size) const {
 		RETURN_ERR(HandleLockFormat::get(data, size));
 		RETURN_NULL(data);
@@ -1101,7 +1094,7 @@ namespace Formats {
 		),
 
 		mmValueInterfacePointer(
-		mmValueInterfacePointer
+			mmValueInterfacePointer
 		)
 	{
 		if (!memberPropertyValuePointer) {
@@ -1492,8 +1485,6 @@ namespace Formats {
 	{
 	}
 
-	XtraMediaSWFFormat::~XtraMediaSWFFormat() = default;
-
 	MoaError XtraMediaW3DFormat::seekStream(Stream &stream, MoaUlong &size) const {
 		// this is (as close as possible) a recreation of the behaviour
 		// of the Shockwave 3D Asset's StreamInMedia method
@@ -1562,8 +1553,6 @@ namespace Formats {
 		)
 	{
 	}
-
-	XtraMediaW3DFormat::~XtraMediaW3DFormat() = default;
 
 	void XtraMediaMixerAsyncFormat::destroy() {
 		releaseInterface((PPMoaVoid)&drCastMemInterfacePointer);

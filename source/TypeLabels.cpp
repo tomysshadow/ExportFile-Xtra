@@ -18,7 +18,11 @@ namespace TypeLabel {
 
 			symbolVariantVector = {};
 
-			for (Label::MAPPED_VECTOR::CONST_ITERATOR labelMappedVectorIterator = labelMappedVector.cbegin(); labelMappedVectorIterator != labelMappedVector.cend(); labelMappedVectorIterator++) {
+			for (
+				Label::MAPPED_VECTOR::CONST_ITERATOR labelMappedVectorIterator = labelMappedVector.cbegin();
+				labelMappedVectorIterator != labelMappedVector.cend();
+				labelMappedVectorIterator++
+			) {
 				symbolVariant = *labelMappedVectorIterator;
 				RETURN_ERR(getSymbol(symbolVariant, mmValueInterfacePointer));
 
