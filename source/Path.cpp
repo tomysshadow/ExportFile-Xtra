@@ -345,7 +345,6 @@ namespace Path {
 		// even if its corresponding absolute path would be longer than MAX_PATH
 		// note: we can't use GetRelativePath, Director doesn't implement it
 		// so we can use the filesystem functionality here instead
-		// TODO: this can throw supposedly?
 		std::string relativePath = FILESYSTEM_DIRECTOR_STRING(
 			FILESYSTEM_DIRECTOR_PATH(
 				path,

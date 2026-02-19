@@ -1314,7 +1314,7 @@ namespace Formats {
 
 	MoaError XtraMediaMemoryFormat::determineSize(Stream &stream, MoaUlong &size) const {
 		// get the determinate size if it's unknown
-		if (size == -1) {
+		if (size == (MoaUlong)-1) {
 			RETURN_ERR(stream.getEnd(size));
 		}
 		return kMoaErr_NoErr;

@@ -213,7 +213,7 @@ MoaError Stream::copy(PIMoaStream writeStreamInterfacePointer, MoaUlong size) {
 			return kMoaStreamErr_WrotePastEnd;
 		}
 
-		if (size != -1) {
+		if (size != (MoaUlong)-1) {
 			size -= numberOfBytesCopied;
 
 			if (!size) {
@@ -222,7 +222,7 @@ MoaError Stream::copy(PIMoaStream writeStreamInterfacePointer, MoaUlong size) {
 		}
 	} while (numberOfBytesToRead == numberOfBytesCopied);
 
-	if (size != -1) {
+	if (size != (MoaUlong)-1) {
 		if (size) {
 			return kMoaStreamErr_ReadPastEnd;
 		}

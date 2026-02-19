@@ -24,7 +24,7 @@ class Stream : NonCopyable {
 	MoaError open();
 	MoaError close();
 	MoaError flush();
-	MoaError copy(PIMoaStream writeStreamInterfacePointer, MoaUlong size = -1);
+	MoaError copy(PIMoaStream writeStreamInterfacePointer, MoaUlong size = (MoaUlong)-1);
 	MoaError readSafe(PMoaVoid buffer, MoaStreamCount numberOfBytesToRead);
 	MoaError writeSafe(PMoaVoid buffer, MoaStreamCount numberOfBytesToWrite);
 	MoaError readPartial(PMoaVoid buffer, MoaStreamCount numberOfBytesToRead, MoaStreamCount &numberOfBytesRead);
