@@ -1805,7 +1805,9 @@ namespace Formats {
 			err = errOrDefaultErr(deleteSwapFile(), err);
 		};
 
-		RETURN_ERR(Format::swapFile(status));
+		// NOT the status passed to us
+		// status we pass here should be true if swap file wasn't deleted
+		RETURN_ERR(Format::swapFile((bool)swapFileInterfacePointer));
 		deleteSwapFileInterfacePointerScopeExit.dismiss();
 		return err;
 	}
