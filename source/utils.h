@@ -231,7 +231,7 @@ inline MoaError osErr(BOOL b) {
 
 template<bool doserrno = false>
 inline MoaError osErr(HANDLE h) {
-	if (h != NULL && h != INVALID_HANDLE_VALUE) {
+	if (h && h != INVALID_HANDLE_VALUE) {
 		return kMoaErr_NoErr;
 	}
 	return osErrOrDefaultErr<doserrno>(kMoaErr_OutOfMem);
