@@ -200,35 +200,41 @@ inline MoaError fileErr(MoaError err) {
 }
 #endif
 #ifdef WINDOWS
-inline MoaError osErrOrDefaultErr(MoaError defaultErr, bool doserrno = false) {
+template<bool doserrno = false>
+inline MoaError osErrOrDefaultErr(MoaError defaultErr) {
 	DWORD lastError = doserrno ? _doserrno : GetLastError();
 	return errOrDefaultErr(HRESULT_FROM_WIN32(lastError), defaultErr);
 }
 
-inline MoaError osErr(DWORD dw, bool doserrno = false) {
+template<bool doserrno = false>
+inline MoaError osErr(DWORD dw) {
 	if (dw) {
 		return kMoaErr_NoErr;
 	}
-	return osErrOrDefaultErr(kMoaErr_OutOfMem, doserrno);
+	return osErrOrDefaultErr<doserrno>(kMoaErr_OutOfMem);
 }
 
-inline MoaError osErr(WORD w, bool doserrno = false) {
-	return osErr((DWORD)w, doserrno);
+template<bool doserrno = false>
+inline MoaError osErr(WORD w) {
+	return osErr<doserrno>((DWORD)w);
 }
 
-inline MoaError osErr(BYTE by, bool doserrno = false) {
-	return osErr((DWORD)by, doserrno);
+template<bool doserrno = false>
+inline MoaError osErr(BYTE by) {
+	return osErr<doserrno>((DWORD)by);
 }
 
-inline MoaError osErr(BOOL b, bool doserrno = false) {
-	return osErr((DWORD)b, doserrno);
+template<bool doserrno = false>
+inline MoaError osErr(BOOL b) {
+	return osErr<doserrno>((DWORD)b);
 }
 
-inline MoaError osErr(HANDLE h, bool doserrno = false) {
+template<bool doserrno = false>
+inline MoaError osErr(HANDLE h) {
 	if (h != NULL && h != INVALID_HANDLE_VALUE) {
 		return kMoaErr_NoErr;
 	}
-	return osErrOrDefaultErr(kMoaErr_OutOfMem, doserrno);
+	return osErrOrDefaultErr<doserrno>(kMoaErr_OutOfMem);
 }
 
 inline MoaError fileErr(MoaError err) {
