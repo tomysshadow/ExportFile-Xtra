@@ -404,6 +404,6 @@ namespace Asset {
 	}
 
 	bool Assets::Info::insert(SYMBOL_VARIANT typeSymbol, const Asset::Info &assetInfo) {
-		return assetInfoMap.insert({typeSymbol, assetInfo}).second;
+		return assetInfoMap.try_emplace(typeSymbol, assetInfo).second;
 	}
 }

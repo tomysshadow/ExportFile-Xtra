@@ -278,7 +278,7 @@ STDMETHODIMP_(MoaError) GetAssetInfoIcons_TStdXtra(
 		// this will cause getExportFileIconPropList to fall back to the default Xtra Media icon
 		if (err == kMoaErr_NoErr
 		|| err2 == kMoaErr_NoErr) {
-			assetInfoPointer->iconValuesMap.insert({ "", iconValuesPointer });
+			assetInfoPointer->iconValuesMap.try_emplace("", iconValuesPointer);
 		}
 	}
 
