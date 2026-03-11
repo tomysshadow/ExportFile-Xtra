@@ -351,8 +351,6 @@ ValueConverter &ValueConverter::operator=(const ValueConverter &valueConverter) 
 }
 
 MoaError ValueConverter::toString(const MoaMmValue &value, std::string &string, bool strict) {
-	string = "";
-
 	MoaMmValue stringValue = value;
 
 	ConstPMoaChar stringPointer = NULL;
@@ -786,26 +784,13 @@ MoaError ValueConverter::getValueType(const MoaMmValue &value, bool &voidP, MoaM
 }
 
 MoaError ValueConverter::getAt(const MoaMmValue &listValue, MoaLong index, MoaMmValue &value) {
-	MAKE_SCOPE_EXIT(valueScopeExit) {
-		value = kVoidMoaMmValueInitializer;
-	};
-
 	MoaError err = mmListInterfacePointer->GetValueByIndex(&listValue, index, &value);
 
-	if (err == kMoaDrErr_HandlerNotDefined) {
-		return kMoaErr_NoErr;
-	}
-
-	RETURN_ERR(err);
-	valueScopeExit.dismiss();
-	return kMoaErr_NoErr;
+	return err == kMoaDrErr_HandlerNotDefined
+		? kMoaErr_NoErr : err;
 }
 
 MoaError ValueConverter::getAt(const MoaMmValue &listValue, MoaLong index, MoaLong &integer) {
-	MAKE_SCOPE_EXIT(integerScopeExit) {
-		integer = 0;
-	};
-
 	MoaMmValue integerValue = kVoidMoaMmValueInitializer;
 
 	SCOPE_EXIT {
@@ -819,9 +804,7 @@ MoaError ValueConverter::getAt(const MoaMmValue &listValue, MoaLong index, MoaLo
 	}
 
 	RETURN_ERR(err);
-	RETURN_ERR(mmValueInterfacePointer->ValueToInteger(&integerValue, &integer));
-	integerScopeExit.dismiss();
-	return kMoaErr_NoErr;
+	return mmValueInterfacePointer->ValueToInteger(&integerValue, &integer);
 }
 
 MoaError ValueConverter::getProp(const MoaMmValue &propListValue, MoaMmSymbol propertySymbol, MoaMmValue &value) {
@@ -856,52 +839,29 @@ MoaError ValueConverter::getProp(const MoaMmValue &propListValue, SYMBOL_VARIANT
 }
 
 MoaError ValueConverter::getAProp(const MoaMmValue &propListValue, MoaMmSymbol propertySymbol, MoaMmValue &value) {
-	MAKE_SCOPE_EXIT(valueScopeExit) {
-		value = kVoidMoaMmValueInitializer;
-	};
-
 	MoaError err = getProp(propListValue, propertySymbol, value);
 
 	// if the value isn't found we don't throw, instead the value is set to void
-	if (err == kMoaDrErr_HandlerNotDefined) {
-		return kMoaErr_NoErr;
-	}
-
-	RETURN_ERR(err);
-	valueScopeExit.dismiss();
-	return kMoaErr_NoErr;
+	return err == kMoaDrErr_HandlerNotDefined
+		? kMoaErr_NoErr : err;
 }
 
 MoaError ValueConverter::getAProp(const MoaMmValue &propListValue, ConstPMoaChar propertyStringPointer, MoaMmValue &value) {
-	MAKE_SCOPE_EXIT(valueScopeExit) {
-		value = kVoidMoaMmValueInitializer;
-	};
-
 	RETURN_NULL(propertyStringPointer);
 
 	MoaError err = getProp(propListValue, propertyStringPointer, value);
 
-	if (err == kMoaDrErr_HandlerNotDefined) {
-		return kMoaErr_NoErr;
-	}
-
-	RETURN_ERR(err);
-	valueScopeExit.dismiss();
-	return kMoaErr_NoErr;
+	return err == kMoaDrErr_HandlerNotDefined
+		? kMoaErr_NoErr : err;
 }
 
 MoaError ValueConverter::getAProp(const MoaMmValue &propListValue, SYMBOL_VARIANT propertySymbolVariant, MoaMmValue &value) {
-	MAKE_SCOPE_EXIT(valueScopeExit) {
-		value = kVoidMoaMmValueInitializer;
-	};
-
 	MoaError err = getProp(propListValue, propertySymbolVariant, value);
 
 	if (err == kMoaDrErr_HandlerNotDefined) {
 		return kMoaErr_NoErr;
 	}
 
-	RETURN_ERR(err);
-	valueScopeExit.dismiss();
-	return kMoaErr_NoErr;
+	return err == kMoaDrErr_HandlerNotDefined
+		? kMoaErr_NoErr : err;
 }

@@ -378,11 +378,8 @@ namespace Media {
 			return kMoaErr_NoErr;
 		}
 
-		MAKE_SCOPE_EXIT(sourceBitmapHeaderFileOptionalScopeExit) {
+		MAKE_SCOPE_EXIT(sourceBitmapScopeExit) {
 			sourceBitmapFileHeaderOptional = std::nullopt;
-		};
-
-		MAKE_SCOPE_EXIT(sourceBitmapInfoPointerScopeExit) {
 			sourceBitmapInfoPointer = 0;
 		};
 
@@ -434,8 +431,7 @@ namespace Media {
 			RETURN_ERR(readStreamSafe((PMoaVoid)sourceBitmapInfoPointer.get(), sourceBitmapInfoSize, readStreamInterfacePointer));
 		}
 
-		sourceBitmapHeaderFileOptionalScopeExit.dismiss();
-		sourceBitmapInfoPointerScopeExit.dismiss();
+		sourceBitmapScopeExit.dismiss();
 		return kMoaErr_NoErr;
 	}
 

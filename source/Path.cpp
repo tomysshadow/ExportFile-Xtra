@@ -16,11 +16,6 @@ namespace Path {
 
 		std::smatch matches = {};
 
-		// clear again on failure
-		MAKE_SCOPE_EXIT(clearExtensionsScopeExit) {
-			extensions.clear();
-		};
-
 		// note: although the documentation says there must not be a trailing semicolon
 		// in practice, the MP4 Audio agent includes one anyway so we must handle it
 		while (std::regex_search(filterPattern, matches, FILTER_PATTERN_EXTENSIONS)
@@ -36,14 +31,7 @@ namespace Path {
 
 			filterPattern = matches.suffix();
 		}
-
-		// invalid
-		if (!filterPattern.empty()) {
-			return false;
-		}
-
-		clearExtensionsScopeExit.dismiss();
-		return true;
+		return filterPattern.empty();
 	}
 
 	bool filterExtensions(ConstPMoaChar filterPointer, EXTENSION_MAPPED_VECTOR &extensions) {
@@ -52,11 +40,6 @@ namespace Path {
 		RETURN_NULL_BOOL(filterPointer);
 
 		EXTENSION_MAPPED_VECTOR patternExtensions = {};
-
-		// immediately before the loop so we don't clear twice pointlessly when filterPointer is NULL
-		MAKE_SCOPE_EXIT(clearExtensionsScopeExit) {
-			extensions.clear();
-		};
 
 		while (*filterPointer) {
 			filterPointer += stringSize(filterPointer);
@@ -71,8 +54,6 @@ namespace Path {
 
 			filterPointer += stringSize(filterPointer);
 		}
-
-		clearExtensionsScopeExit.dismiss();
 		return true;
 	}
 
@@ -271,7 +252,7 @@ namespace Path {
 			return kMoaErr_NoErr;
 		}
 
-		path = "";
+		path.clear();
 
 		MAKE_SCOPE_EXIT(releasePathNameInterfacePointerScopeExit) {
 			releaseInterface((PPMoaVoid)&pathNameInterfacePointer);
@@ -736,7 +717,7 @@ namespace Path {
 	}
 
 	bool Info::getPath(std::string &path, bool relative) {
-		path = "";
+		path.clear();
 
 		RETURN_ERR_BOOL(makePath());
 	
@@ -753,13 +734,6 @@ namespace Path {
 		std::string &path,
 		bool relative
 	) {
-		MAKE_SCOPE_EXIT(elementsScopeExit) {
-			dirname = "";
-			basename = "";
-			extension = "";
-			filename = "";
-		};
-
 		std::optional<std::string> elementOptional = std::nullopt;
 
 		if (!getDirnameOptional(elementOptional)) {
@@ -785,13 +759,7 @@ namespace Path {
 		}
 
 		filename = elementOrEmpty(elementOptional);
-
-		if (!getPath(path, relative)) {
-			return false;
-		}
-
-		elementsScopeExit.dismiss();
-		return true;
+		return getPath(path, relative);
 	}
 
 	bool Info::getElementsOrEmpty(
@@ -853,13 +821,6 @@ namespace Path {
 		std::string &path,
 		bool relative
 	) {
-		MAKE_SCOPE_EXIT(elementOptionalsScopeExit) {
-			dirnameOptional = std::nullopt;
-			basenameOptional = std::nullopt;
-			extensionOptional = std::nullopt;
-			filenameOptional = std::nullopt;
-		};
-
 		if (!getDirnameOptional(dirnameOptional)) {
 			return false;
 		}
@@ -875,13 +836,7 @@ namespace Path {
 		if (!getFilenameOptional(filenameOptional)) {
 			return false;
 		}
-
-		if (!getPath(path, relative)) {
-			return false;
-		}
-
-		elementOptionalsScopeExit.dismiss();
-		return true;
+		return getPath(path, relative);
 	}
 
 	bool Info::getElementOptionals(
@@ -1124,7 +1079,7 @@ namespace Path {
 		// at this stage we now replace the any path that was previously here
 		releaseInterface((PPMoaVoid)&pathNameInterfacePointer);
 
-		this->path = "";
+		this->path.clear();
 
 		MoaError err = setPathNameInterfacePointer->GetDisplayFileName((PMoaChar)elementStringPointer, elementStringSize, TRUE);
 
@@ -1188,7 +1143,7 @@ namespace Path {
 	void Info::setDirnameOptional(const std::optional<std::string> &dirnameOptional) {
 		releaseInterface((PPMoaVoid)&pathNameInterfacePointer);
 
-		path = "";
+		path.clear();
 
 		this->dirnameOptional = dirnameOptional;
 	}
@@ -1196,7 +1151,7 @@ namespace Path {
 	void Info::setBasenameOptional(const std::optional<std::string> &basenameOptional) {
 		releaseInterface((PPMoaVoid)&pathNameInterfacePointer);
 
-		path = "";
+		path.clear();
 
 		this->basenameOptional = basenameOptional;
 	}
@@ -1204,7 +1159,7 @@ namespace Path {
 	void Info::setExtensionOptional(const std::optional<std::string> &extensionOptional) {
 		releaseInterface((PPMoaVoid)&pathNameInterfacePointer);
 
-		path = "";
+		path.clear();
 
 		this->extensionOptional = extensionOptional;
 	}
@@ -1212,7 +1167,7 @@ namespace Path {
 	void Info::setFilenameOptional(const std::optional<std::string> &filenameOptional) {
 		releaseInterface((PPMoaVoid)&pathNameInterfacePointer);
 
-		path = "";
+		path.clear();
 
 		this->filenameOptional = filenameOptional;
 	}

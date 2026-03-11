@@ -4341,7 +4341,7 @@ MoaError TStdXtra_IMoaMmXScript::GetTypeDisplayName(MoaMmSymbol typeSymbol, std:
 	moa_catch
 
 	if (typeDisplayNamePointer) {
-		*typeDisplayNamePointer = "";
+		typeDisplayNamePointer->clear();
 	}
 
 	moa_catch_end

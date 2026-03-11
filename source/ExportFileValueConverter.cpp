@@ -367,10 +367,6 @@ MoaError ExportFileValueConverter::toValue(const IconValues::ICON_VALUE_MAP &ico
 }
 
 MoaError ExportFileValueConverter::testMemberLinked(MoaLong &linked, PIMoaDrCastMem drCastMemInterfacePointer) {
-	MAKE_SCOPE_EXIT(linkedScopeExit) {
-		linked = FALSE;
-	};
-
 	RETURN_NULL(drCastMemInterfacePointer);
 
 	MoaMmValue linkedValue = kVoidMoaMmValueInitializer;
@@ -384,7 +380,6 @@ MoaError ExportFileValueConverter::testMemberLinked(MoaLong &linked, PIMoaDrCast
 	if (err != kMoaMmErr_PropertyNotFound) {
 		RETURN_ERR(err);
 		RETURN_ERR(mmValueInterfacePointer->ValueToInteger(&linkedValue, &linked));
-		linkedScopeExit.dismiss();
 		return kMoaErr_NoErr;
 	}
 
@@ -402,8 +397,6 @@ MoaError ExportFileValueConverter::testMemberLinked(MoaLong &linked, PIMoaDrCast
 	RETURN_ERR(testStringValueEmpty(filenameValue, filenameEmpty));
 
 	linked = !filenameEmpty;
-
-	linkedScopeExit.dismiss();
 	return kMoaErr_NoErr;
 }
 
