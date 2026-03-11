@@ -7,6 +7,8 @@ ExportFile Xtra is an open source software, created by Anthony Kleine. It is not
 
 Currently, ExportFile Xtra is only available for Windows. However, it may be available for Mac in the future, so any platform specific behaviour will still be noted. ExportFile is compatible with Windows XP to Windows 11.
 
+NOTE: Although ExportFile is compatible with Windows XP, the provided binary on the Releases page is for Windows Vista and above. This is because Visual Studio 2019 broke Windows XP compilation in an update. The project will be downgraded to Visual Studio 2017 in a future release to address this issue.
+
 # How to Use the ExportFile Xtra
 
 This README focuses on how to compile the ExportFile Xtra. If you would like to download the binary instead, please go to the [Releases page.](https://github.com/tomysshadow/ExportFile-Xtra/releases) Install the Xtra as normal, by copying it to the Xtras folder in the Director install directory (located in the Configuration folder in Director MX 2004 and newer.)
