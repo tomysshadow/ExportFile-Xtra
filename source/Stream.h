@@ -14,7 +14,7 @@ class Stream : NonCopyable {
 	public:
 	class DuplicateSpec : public std::runtime_error {
 		public:
-		DuplicateSpec() noexcept : std::runtime_error("Stream duplicate spec") {
+		DuplicateSpec() noexcept : std::runtime_error("stream duplicate spec") {
 		}
 	};
 

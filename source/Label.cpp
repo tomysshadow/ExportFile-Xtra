@@ -32,7 +32,7 @@ namespace Label {
 		MoaError err = getLabelInfoMapSymbols(mmValueInterfacePointer);
 
 		if (err != kMoaErr_NoErr) {
-			throw std::runtime_error("Failed to Get Label Info Map Symbols");
+			throw std::runtime_error("failed to get label info map symbols");
 		}
 	}
 

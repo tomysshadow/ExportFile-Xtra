@@ -31,7 +31,7 @@ Options::Options(PIMoaMmValue mmValueInterfacePointer)
 	MoaError err = mmValueInterfacePointer->StringToSymbol("Current", &locationSymbol);
 
 	if (err != kMoaErr_NoErr) {
-		throw std::runtime_error("Failed to Convert String To Symbol");
+		throw std::runtime_error("failed to convert string to symbol");
 	}
 }
 

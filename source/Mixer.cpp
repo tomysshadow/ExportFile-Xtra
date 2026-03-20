@@ -147,7 +147,7 @@ void Mixer::Window::create() {
 		)
 
 		|| !moduleHandle) {
-			throw std::runtime_error("Failed to Get Module Handle Ex");
+			throw std::runtime_error("failed to get module handle");
 		}
 	}
 
@@ -165,7 +165,7 @@ void Mixer::Window::create() {
 		registeredClass = RegisterClassEx(&windowClassEx);
 
 		if (!registeredClass) {
-			throw std::runtime_error("Failed to Register Class");
+			throw std::runtime_error("failed to register class");
 		}
 	}
 
@@ -185,13 +185,13 @@ void Mixer::Window::create() {
 	);
 
 	if (!handle) {
-		throw std::runtime_error("Failed to Create Window Ex");
+		throw std::runtime_error("failed to create window");
 	}
 }
 
 void Mixer::Window::destroy() {
 	if (!destroyWindow(handle)) {
-		throw std::runtime_error("Failed to Destroy Window");
+		throw std::runtime_error("failed to destroy window");
 	}
 
 	// errors here are ignored in case another instance has a window open
@@ -204,7 +204,7 @@ void Mixer::Window::destroy() {
 
 void Mixer::Window::duplicate(const Window &window) {
 	if (!destroyWindow(handle)) {
-		throw std::runtime_error("Failed to Destroy Window");
+		throw std::runtime_error("failed to destroy window");
 	}
 
 	create();

@@ -35,7 +35,7 @@ void IconValues::duplicate(const IconValues &iconValues) {
 		err = mmImageInterfacePointer->Duplicate(&iconValueMapIterator->second, &iconValueMapIterator->second);
 
 		if (err != kMoaErr_NoErr && err != kMoaDrErr_HandlerNotDefined) {
-			throw std::runtime_error("Failed to Duplicate Image");
+			throw std::runtime_error("failed to duplicate image");
 		}
 	}
 }

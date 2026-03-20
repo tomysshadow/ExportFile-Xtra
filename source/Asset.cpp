@@ -353,13 +353,13 @@ namespace Asset {
 		MoaError err = getAssetInfoMapSymbols();
 
 		if (err != kMoaErr_NoErr) {
-			throw std::runtime_error("Failed to Get Asset Info Map Symbols");
+			throw std::runtime_error("failed to get asset info map symbols");
 		}
 
 		err = getAssetInfoMapIcons(bitmapImporter, productVersionMajor, callbackInterfacePointer);
 
 		if (err != kMoaErr_NoErr) {
-			throw std::runtime_error("Failed to Get Asset Info Map Icons");
+			throw std::runtime_error("failed to get asset info map icons");
 		}
 	}
 
@@ -397,7 +397,7 @@ namespace Asset {
 			err = findIconValue(iconValuesMapIterator->second);
 
 			if (err != kMoaErr_NoErr) {
-				throw std::runtime_error("Failed to Find Icon Value");
+				throw std::runtime_error("failed to find icon value");
 			}
 		}
 		return foundAssetInfo->second;

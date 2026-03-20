@@ -7,7 +7,7 @@ void BitmapImporter::destroy() {
 		err = drCastInterfacePointer->DeleteCastMem(memberIndex);
 
 		if (err != kMoaErr_NoErr) {
-			throw std::runtime_error("Failed to Delete Cast Member");
+			throw std::runtime_error("failed to delete cast member");
 		}
 	}
 
@@ -15,7 +15,7 @@ void BitmapImporter::destroy() {
 		err = drMovieInterfacePointer->RemoveCast(castIndex);
 
 		if (err != kMoaErr_NoErr) {
-			throw std::runtime_error("Failed to Remove Cast");
+			throw std::runtime_error("failed to remove cast");
 		}
 	}
 
@@ -44,7 +44,7 @@ void BitmapImporter::duplicate(const BitmapImporter &bitmapImporter) {
 	MoaError err = createMember();
 
 	if (err != kMoaErr_NoErr) {
-		throw std::runtime_error("Failed to Create Member");
+		throw std::runtime_error("failed to create member");
 	}
 }
 
@@ -205,19 +205,19 @@ BitmapImporter::BitmapImporter(
 	MoaError err = getSymbols();
 
 	if (err != kMoaErr_NoErr) {
-		throw std::runtime_error("Failed to Get Symbols");
+		throw std::runtime_error("failed to get symbols");
 	}
 
 	err = getFormatSymbol(labelsInfo);
 
 	if (err != kMoaErr_NoErr) {
-		throw std::runtime_error("Failed to Get Format Symbol");
+		throw std::runtime_error("failed to get format symbol");
 	}
 
 	err = createMember();
 
 	if (err != kMoaErr_NoErr) {
-		throw std::runtime_error("Failed to Create Member");
+		throw std::runtime_error("failed to create member");
 	}
 }
 
@@ -253,26 +253,26 @@ BitmapImporter::BitmapImporter(
 	MoaError err = getSymbols();
 
 	if (err != kMoaErr_NoErr) {
-		throw std::runtime_error("Failed to Get Symbols");
+		throw std::runtime_error("failed to get symbols");
 	}
 
 	err = getFormatSymbol(labelsInfo);
 
 	if (err != kMoaErr_NoErr) {
-		throw std::runtime_error("Failed to Get Format Symbol");
+		throw std::runtime_error("failed to get format symbol");
 	}
 
 	err = drPlayerInterfacePointer->GetActiveMovie(&drMovieInterfacePointer);
 	
 	if (err != kMoaErr_NoErr
 	|| !drMovieInterfacePointer) {
-		throw std::runtime_error("Failed to Get Active Movie");
+		throw std::runtime_error("failed to get active movie");
 	}
 
 	err = createMember();
 
 	if (err != kMoaErr_NoErr) {
-		throw std::runtime_error("Failed to Create Member");
+		throw std::runtime_error("failed to create member");
 	}
 }
 

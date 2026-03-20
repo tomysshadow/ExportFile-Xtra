@@ -47,7 +47,7 @@ namespace TypeLabel {
 		MoaError err = getTypeLabelMapSymbols(mmValueInterfacePointer);
 
 		if (err != kMoaErr_NoErr) {
-			throw std::runtime_error("Failed to Get Type Label Map Symbols");
+			throw std::runtime_error("failed to get type label map symbols");
 		}
 	}
 

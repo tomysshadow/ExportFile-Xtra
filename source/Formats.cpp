@@ -337,7 +337,7 @@ namespace Formats {
 			lock = (MediaData*)handleInterfacePointer->Lock(handle);
 
 			if (!lock) {
-				throw std::runtime_error("Failed to Lock Handle");
+				throw std::runtime_error("failed to lock handle");
 			}
 		}
 
@@ -846,7 +846,7 @@ namespace Formats {
 
 	void WinPALETTEFormat::destroy() {
 		if (!deleteGDIObject(*(HGDIOBJ*)&paletteHandle)) {
-			throw std::runtime_error("Failed to Delete GDI Object");
+			throw std::runtime_error("failed to delete GDI object");
 		}
 	}
 
@@ -1563,7 +1563,7 @@ namespace Formats {
 		MoaError err = closeStream(writeStreamInterfacePointer);
 
 		if (err != kMoaErr_NoErr) {
-			throw std::runtime_error("Failed to Close Stream");
+			throw std::runtime_error("failed to close stream");
 		}
 	}
 
@@ -1679,7 +1679,7 @@ namespace Formats {
 		MoaError err = getSymbols();
 
 		if (err != kMoaErr_NoErr) {
-			throw std::runtime_error("Failed to Get Symbols");
+			throw std::runtime_error("failed to get symbols");
 		}
 	}
 

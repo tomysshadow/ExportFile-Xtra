@@ -329,7 +329,7 @@ ValueConverter::ValueConverter(PIMoaDrPlayer drPlayerInterfacePointer, PIMoaMmVa
 	MoaError err = getSymbols();
 
 	if (err != kMoaErr_NoErr) {
-		throw std::runtime_error("Failed to Get Symbols");
+		throw std::runtime_error("failed to get symbols");
 	}
 }
 

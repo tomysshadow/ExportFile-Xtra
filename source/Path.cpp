@@ -115,7 +115,7 @@ namespace Path {
 		}
 
 		if (err != kMoaErr_NoErr) {
-			throw std::runtime_error("Failed to Close Find Vector");
+			throw std::runtime_error("failed to close find vector");
 		}
 		#endif
 	}
@@ -470,7 +470,7 @@ namespace Path {
 		MoaError err = setPath(path);
 
 		if (err != kMoaErr_NoErr) {
-			throw std::runtime_error("Failed to Set Path");
+			throw std::runtime_error("failed to set path");
 		}
 
 		validate();

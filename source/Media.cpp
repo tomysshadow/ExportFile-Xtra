@@ -116,7 +116,7 @@ namespace Media {
 		MoaError err = mmValueInterfacePointer->StringToSymbol("IsSaving", &isSavingSymbol);
 
 		if (err != kMoaErr_NoErr) {
-			throw std::runtime_error("Failed to Convert String To Symbol");
+			throw std::runtime_error("failed to convert string to symbol");
 		}
 
 		// may be null if Director version doesn't need it
@@ -150,7 +150,7 @@ namespace Media {
 		MoaError err = mmValueInterfacePointer->StringToSymbol("IsSaving", &isSavingSymbol);
 
 		if (err != kMoaErr_NoErr) {
-			throw std::runtime_error("Failed to Convert String To Symbol");
+			throw std::runtime_error("failed to convert string to symbol");
 		}
 
 		PIMoaDrMovie drMovieInterfacePointer = lingo.getDrMovieInterfacePointer();
@@ -271,13 +271,13 @@ namespace Media {
 		MoaError err = getSymbols();
 
 		if (err != kMoaErr_NoErr) {
-			throw std::runtime_error("Failed to Get Symbols");
+			throw std::runtime_error("failed to get symbols");
 		}
 
 		err = getDefaultValues();
 
 		if (err != kMoaErr_NoErr) {
-			throw std::runtime_error("Failed to Get Default Err Code Value");
+			throw std::runtime_error("failed to get default err code value");
 		}
 	}
 
@@ -294,7 +294,7 @@ namespace Media {
 		MoaError err = drPlayerInterfacePointer->GetActiveMovie(&drMovieInterfacePointer);
 
 		if (err != kMoaErr_NoErr) {
-			throw std::runtime_error("Failed to Get Active Movie");
+			throw std::runtime_error("failed to get active movie");
 		}
 
 		mmValueInterfacePointer->AddRef();
@@ -302,13 +302,13 @@ namespace Media {
 		err = getSymbols();
 
 		if (err != kMoaErr_NoErr) {
-			throw std::runtime_error("Failed to Get Symbols");
+			throw std::runtime_error("failed to get symbols");
 		}
 
 		err = getDefaultValues();
 
 		if (err != kMoaErr_NoErr) {
-			throw std::runtime_error("Failed to Get Default Err Code Value");
+			throw std::runtime_error("failed to get default err code value");
 		}
 	}
 
@@ -365,11 +365,11 @@ namespace Media {
 	#ifdef WINDOWS
 	void WinBMPMedia::destroy() {
 		if (!unmapMappedView(mappedView)) {
-			throw std::runtime_error("Failed to Unmap Mapped View");
+			throw std::runtime_error("failed to unmap mapped view");
 		}
 
 		if (!closeHandle(fileMapping)) {
-			throw std::runtime_error("Failed to Close Handle");
+			throw std::runtime_error("failed to close handle");
 		}
 	}
 

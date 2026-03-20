@@ -6,14 +6,14 @@ void Stream::destroy() {
 	MoaError err = closeStream(streamInterfacePointer);
 
 	if (err != kMoaErr_NoErr) {
-		throw std::runtime_error("Failed to Close Stream");
+		throw std::runtime_error("failed to close stream");
 	}
 
 	if (temp) {
 		err = deleteFile(fileInterfacePointer);
 
 		if (err != kMoaErr_NoErr) {
-			throw std::runtime_error("Failed to Delete File");
+			throw std::runtime_error("failed to delete file");
 		}
 	}
 }
@@ -55,7 +55,7 @@ Stream::Stream(PIMoaCallback callbackInterfacePointer)
 		err = callbackInterfacePointer->MoaCreateInstance(&CLSID_CMoaFile, &IID_IMoaFile, (PPMoaVoid)&fileInterfacePointer);
 
 		if (err != kMoaErr_NoErr) {
-			throw std::runtime_error("Failed to Create Instance");
+			throw std::runtime_error("failed to create instance");
 		}
 
 		if (!fileInterfacePointer) {
@@ -65,19 +65,19 @@ Stream::Stream(PIMoaCallback callbackInterfacePointer)
 		err = fileInterfacePointer->SetNewTempSpec(NULL);
 
 		if (err != kMoaErr_NoErr) {
-			throw std::runtime_error("Failed to Set New Temp Spec");
+			throw std::runtime_error("failed to set new temp spec");
 		}
 
 		err = fileInterfacePointer->CreateFile();
 
 		if (err != kMoaErr_NoErr) {
-			throw std::runtime_error("Failed to Create File");
+			throw std::runtime_error("failed to create file");
 		}
 
 		err = fileInterfacePointer->GetStream(0, &streamInterfacePointer);
 
 		if (err != kMoaErr_NoErr) {
-			throw std::runtime_error("Failed to Get Stream");
+			throw std::runtime_error("failed to get stream");
 		}
 
 		if (!streamInterfacePointer) {
@@ -99,7 +99,7 @@ Stream::Stream(ConstPMoaChar pathStringPointer, bool replace, PIMoaCallback call
 	MoaError err = callbackInterfacePointer->MoaCreateInstance(&CLSID_CMoaFile, &IID_IMoaFile, (PPMoaVoid)&fileInterfacePointer);
 
 	if (err != kMoaErr_NoErr) {
-		throw std::runtime_error("Failed to Create Instance");
+		throw std::runtime_error("failed to create instance");
 	}
 
 	if (!fileInterfacePointer) {
@@ -109,7 +109,7 @@ Stream::Stream(ConstPMoaChar pathStringPointer, bool replace, PIMoaCallback call
 	err = fileInterfacePointer->SetPathnameSpec(pathStringPointer, FALSE);
 
 	if (err != kMoaErr_NoErr) {
-		throw std::runtime_error("Failed to Set Pathname Spec");
+		throw std::runtime_error("failed to set pathname spec");
 	}
 
 	err = fileInterfacePointer->CreateFile();
@@ -123,13 +123,13 @@ Stream::Stream(ConstPMoaChar pathStringPointer, bool replace, PIMoaCallback call
 	}
 
 	if (err != kMoaErr_NoErr) {
-		throw std::runtime_error("Failed to Create File");
+		throw std::runtime_error("failed to create file");
 	}
 
 	err = fileInterfacePointer->GetStream(0, &streamInterfacePointer);
 
 	if (err != kMoaErr_NoErr) {
-		throw std::runtime_error("Failed to Get Stream");
+		throw std::runtime_error("failed to get stream");
 	}
 
 	if (!streamInterfacePointer) {
