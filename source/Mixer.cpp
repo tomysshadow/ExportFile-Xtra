@@ -146,7 +146,9 @@ void Mixer::Window::create() {
 			&moduleHandle
 		));
 
-		osErr(moduleHandle);
+		if (!moduleHandle) {
+			throw std::runtime_error("failed to get module handle");
+		}
 	}
 
 	static const TCHAR CLASS_NAME[] = TEXT("Mixer");
