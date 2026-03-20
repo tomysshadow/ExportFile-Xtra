@@ -138,17 +138,15 @@ MoaError mixerSaved(Media::MixerMedia* mixerMediaPointer) {
 void Mixer::Window::create() {
 	if (!moduleHandle) {
 		// shouldn't increment the refcount, this object won't outlive the module
-		if (!GetModuleHandleEx(
+		osErr(GetModuleHandleEx(
 			GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS
 			| GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
 
 			(LPCSTR)&moduleHandle,
 			&moduleHandle
-		)
+		));
 
-		|| !moduleHandle) {
-			throw std::runtime_error("failed to get module handle");
-		}
+		osErr(moduleHandle);
 	}
 
 	static const TCHAR CLASS_NAME[] = TEXT("Mixer");
