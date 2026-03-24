@@ -396,7 +396,7 @@ namespace Formats {
 			destroy();
 		}
 
-		MoaError get(PMoaVoid &data, MoaUlong &size) const {
+		virtual MoaError get(PMoaVoid &data, MoaUlong &size) const override {
 			data = lock;
 			size = (MoaUlong)handleInterfacePointer->GetSize(handle);
 
@@ -472,7 +472,7 @@ namespace Formats {
 
 		virtual ~GlobalHandleLockFormat() = default;
 
-		MoaError get(PMoaVoid &data, MoaUlong &size) const {
+		virtual MoaError get(PMoaVoid &data, MoaUlong &size) const override {
 			data = globalHandleLockPointer->get();
 			size = globalHandleLockPointer->size();
 
@@ -480,7 +480,7 @@ namespace Formats {
 			return duplicateMemory(data, size, callocInterfacePointer);
 		}
 
-		MoaError get(MoaUlong &size, PIMoaStream writeStreamInterfacePointer) const {
+		virtual MoaError get(MoaUlong &size, PIMoaStream writeStreamInterfacePointer) const override {
 			RETURN_NULL(writeStreamInterfacePointer);
 
 			PMoaVoid data = globalHandleLockPointer->get();
@@ -507,8 +507,8 @@ namespace Formats {
 		);
 
 		virtual ~WinDIBFormat() = default;
-		MoaError get(PMoaVoid &data, MoaUlong &size) const;
-		MoaError get(MoaUlong &size, PIMoaStream writeStreamInterfacePointer) const;
+		virtual MoaError get(PMoaVoid &data, MoaUlong &size) const override;
+		virtual MoaError get(MoaUlong &size, PIMoaStream writeStreamInterfacePointer) const override;
 	};
 
 	class WinPALETTEFormat : public MemoryFormat {
@@ -523,9 +523,9 @@ namespace Formats {
 		public:
 		WinPALETTEFormat(HPALETTE paletteHandle, unsigned long productVersionMajor, PIMoaCalloc callocInterfacePointer);
 		virtual ~WinPALETTEFormat();
-		MoaError writeFile(bool agent, PIMoaFile writeFileInterfacePointer);
-		MoaError get(PMoaVoid &data, MoaUlong &size) const;
-		MoaError get(MoaUlong &size, PIMoaStream writeStreamInterfacePointer) const;
+		virtual MoaError writeFile(bool agent, PIMoaFile writeFileInterfacePointer) override;
+		virtual MoaError get(PMoaVoid &data, MoaUlong &size) const override;
+		virtual MoaError get(MoaUlong &size, PIMoaStream writeStreamInterfacePointer) const override;
 	};
 	#endif
 
@@ -537,7 +537,7 @@ namespace Formats {
 		);
 
 		virtual ~CompositeFormat() = default;
-		MoaError get(PMoaVoid &data, MoaUlong &size) const;
+		virtual MoaError get(PMoaVoid &data, MoaUlong &size) const override;
 	};
 
 	class MemberPropertyFormat : public MemoryFormat {
@@ -556,7 +556,7 @@ namespace Formats {
 		);
 
 		virtual ~MemberPropertyFormat();
-		MoaError get(PMoaVoid &data, MoaUlong &size) const;
+		virtual MoaError get(PMoaVoid &data, MoaUlong &size) const override;
 	};
 
 	class MemberPropertyPictureFormat : public MemberPropertyFormat {
@@ -581,7 +581,7 @@ namespace Formats {
 		);
 
 		virtual ~MemberPropertyPictureFormat();
-		MoaError get(PMoaVoid &data, MoaUlong &size) const;
+		virtual MoaError get(PMoaVoid &data, MoaUlong &size) const override;
 	};
 
 	// as an optimization, because the #xtraMedia label
@@ -610,7 +610,7 @@ namespace Formats {
 		);
 		
 		virtual ~XtraMediaFormat();
-		MoaError writeFile(bool agent, PIMoaFile writeFileInterfacePointer);
+		virtual MoaError writeFile(bool agent, PIMoaFile writeFileInterfacePointer) override;
 	};
 
 	// beware the dreaded diamond here
@@ -632,14 +632,14 @@ namespace Formats {
 		);
 
 		virtual ~XtraMediaMemoryFormat();
-		MoaError writeFile(bool agent, PIMoaFile writeFileInterfacePointer);
-		MoaError get(PMoaVoid &data, MoaUlong &size) const;
-		MoaError get(MoaUlong &size, PIMoaStream writeStreamInterfacePointer) const;
+		virtual MoaError writeFile(bool agent, PIMoaFile writeFileInterfacePointer) override;
+		virtual MoaError get(PMoaVoid &data, MoaUlong &size) const override;
+		virtual MoaError get(MoaUlong &size, PIMoaStream writeStreamInterfacePointer) const override;
 	};
 
 	class XtraMediaSWFFormat : public XtraMediaMemoryFormat {
 		protected:
-		MoaError seekStream(Stream &stream, MoaUlong &size) const;
+		virtual MoaError seekStream(Stream &stream, MoaUlong &size) const override;
 		public:
 		XtraMediaSWFFormat(
 			PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor,
@@ -651,7 +651,7 @@ namespace Formats {
 
 	class XtraMediaW3DFormat : public XtraMediaMemoryFormat {
 		protected:
-		MoaError seekStream(Stream &stream, MoaUlong &size) const;
+		virtual MoaError seekStream(Stream &stream, MoaUlong &size) const override;
 		public:
 		XtraMediaW3DFormat(
 			PIMoaMmXAsset mmXAssetInterfacePointer, unsigned long productVersionMajor,
@@ -683,7 +683,8 @@ namespace Formats {
 
 		Symbols symbols;
 
-		MoaError swapTempFile(PIMoaFile tempFileInterfacePointer);
+		virtual MoaError swapTempFile(PIMoaFile tempFileInterfacePointer) override;
+
 		MoaError deleteSwapFile();
 		MoaError getSymbols();
 		public:
@@ -697,10 +698,10 @@ namespace Formats {
 		);
 
 		virtual ~XtraMediaMixerAsyncFormat();
-		MoaError writeFile(bool agent, PIMoaFile writeFileInterfacePointer);
-		MoaError cancelFile();
-		MoaError swapFile(bool status);
-		MoaError replaceExistingFile(PIMoaFile fileInterfacePointer);
+		virtual MoaError writeFile(bool agent, PIMoaFile writeFileInterfacePointer) override;
+		virtual MoaError cancelFile() override;
+		virtual MoaError swapFile(bool status) override;
+		virtual MoaError replaceExistingFile(PIMoaFile fileInterfacePointer) override;
 	};
 
 	class XtraMediaMixerWAVAsyncFormat : public XtraMediaMixerAsyncFormat {
