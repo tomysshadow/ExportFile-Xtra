@@ -1,8 +1,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.36617.4
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Script", "Script.vcxproj", "{E7886012-8A7B-45CD-86F7-4A2B5C6E7AD0}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ExportFile", "Script.vcxproj", "{E7886012-8A7B-45CD-86F7-4A2B5C6E7AD0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,5 +17,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2F8B6F18-F1FD-4375-ACF1-CA83A95A2A8F}
 	EndGlobalSection
 EndGlobal
