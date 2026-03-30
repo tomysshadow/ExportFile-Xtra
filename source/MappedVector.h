@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <map>
 #include <vector>
+#include <initializer_list>
 
 /*
 this is a pattern I often use in my tools

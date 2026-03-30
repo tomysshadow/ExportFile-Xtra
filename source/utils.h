@@ -11,6 +11,7 @@
 #include <variant>
 #include <filesystem>
 #include <thread>
+#include <stddef.h>
 #include <stdint.h>
 #include <ctype.h>
 #include <string.h>
