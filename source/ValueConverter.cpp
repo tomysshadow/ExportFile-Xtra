@@ -30,7 +30,7 @@ MoaError ValueConverter::getSymbols() {
 	return kMoaErr_NoErr;
 }
 
-typedef std::map<MoaDictTypeID, MoaLong> VALUE_SIZE_MAP;
+typedef std::unordered_map<MoaDictTypeID, MoaLong> VALUE_SIZE_MAP;
 
 static const VALUE_SIZE_MAP DICT_TYPE_ID_VALUE_SIZE_MAP = {
 	{kMoaDictType_Dict, sizeof(PIMoaDict)},
@@ -408,13 +408,11 @@ MoaError ValueConverter::toWide(const MoaMmValue &value, MoaWide &wide) {
 }
 
 MoaError ValueConverter::toID(const MoaMmValue &value, MoaID &id) {
-	static const MoaLong ID_SIZE = sizeof(id);
-
 	unsigned char* dataPointer = (unsigned char*)&id;
 
 	MoaLong integer = 0;
 
-	for (MoaLong i = 1; i <= ID_SIZE; i++) {
+	for (MoaLong i = 1; i <= sizeof(id); i++) {
 		RETURN_ERR(getAt(value, i, integer));
 		*dataPointer++ = (unsigned char)integer;
 	}
@@ -502,8 +500,6 @@ MoaError ValueConverter::toValue(const MoaID &id, MoaMmValue &value) {
 	#endif
 	*/
 
-	static const MoaLong ID_SIZE = sizeof(id);
-
 	unsigned char* dataPointer = (unsigned char*)&id;
 
 	value = kVoidMoaMmValueInitializer;
@@ -514,7 +510,7 @@ MoaError ValueConverter::toValue(const MoaID &id, MoaMmValue &value) {
 
 	RETURN_ERR(mmListInterfacePointer->NewListValue(&value));
 
-	for (MoaLong i = 1; i <= ID_SIZE; i++) {
+	for (MoaLong i = 1; i <= sizeof(id); i++) {
 		RETURN_ERR(appendToList(*dataPointer++, value));
 	}
 
@@ -610,9 +606,7 @@ MoaError ValueConverter::appendToList(const MoaMmValue &value, MoaMmValue &listV
 
 	/*
 	SCOPE_EXIT {
-		static const size_t MOA_MM_VALUE_SIZE = sizeof(MoaMmValue);
-
-		if (!memoryEquals(&modifiableValue, &value, MOA_MM_VALUE_SIZE)) {
+		if (!memoryEquals(&modifiableValue, &value, sizeof(MoaMmValue))) {
 			releaseValue(modifiableValue, mmValueInterfacePointer);
 		}
 	};
@@ -659,8 +653,6 @@ MoaError ValueConverter::appendToList(ConstPMoaChar stringPointer, MoaMmValue &l
 }
 
 MoaError ValueConverter::appendToPropList(const MoaMmValue &propertyValue, const MoaMmValue &value, MoaMmValue &propListValue) {
-	static const size_t MOA_MM_VALUE_SIZE = sizeof(MoaMmValue);
-
 	// because AppendValueToPropList has a non-const value input
 	// we technically have to check for a different output
 	// (even though I don't think it ever does)
@@ -668,7 +660,7 @@ MoaError ValueConverter::appendToPropList(const MoaMmValue &propertyValue, const
 
 	/*
 	SCOPE_EXIT {
-		if (!memoryEquals(&modifiablePropertyValue, &propertyValue, MOA_MM_VALUE_SIZE)) {
+		if (!memoryEquals(&modifiablePropertyValue, &propertyValue, sizeof(MoaMmValue))) {
 			releaseValue(modifiablePropertyValue, mmValueInterfacePointer);
 		}
 	};
@@ -678,7 +670,7 @@ MoaError ValueConverter::appendToPropList(const MoaMmValue &propertyValue, const
 
 	/*
 	SCOPE_EXIT {
-		if (!memoryEquals(&modifiableValue, &value, MOA_MM_VALUE_SIZE)) {
+		if (!memoryEquals(&modifiableValue, &value, sizeof(MoaMmValue))) {
 			releaseValue(modifiableValue, mmValueInterfacePointer);
 		}
 	};

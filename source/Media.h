@@ -171,10 +171,7 @@ namespace Media {
 		static bool getBitmapInfoColorsUsedRGB(const BITMAPINFOHEADER &bitmapInfoHeader, bool allocation, DWORD &colorsUsed);
 
 		public:
-		static const DWORD BITMAPINFO_SIZE = sizeof(BITMAPINFO);
-		static const DWORD BITMAPFILEHEADER_SIZE = sizeof(BITMAPFILEHEADER);
-		static const DWORD BITMAPINFOHEADER_SIZE = sizeof(BITMAPINFOHEADER);
-		static const WORD TYPE = 0x4D42;
+		static constexpr WORD TYPE = 0x4D42;
 
 		static bool validateBitmapFileHeader(const BITMAPFILEHEADER &bitmapFileHeader, DWORD end);
 		static bool validateBitmapInfoHeader(const BITMAPINFOHEADER &bitmapInfoHeader);

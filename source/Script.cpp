@@ -477,9 +477,7 @@ STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_AgentHiddenReaderSet_TStdX
 
 	if (equalID) {
 		MoaBool hidden = FALSE;
-		static const MoaLong HIDDEN_SIZE = sizeof(hidden);
-
-		err = registryEntryDictInterfacePointer->Get(kMoaDictType_Bool, &hidden, HIDDEN_SIZE, kReaderRegKey_Hidden);
+		err = registryEntryDictInterfacePointer->Get(kMoaDictType_Bool, &hidden, sizeof(hidden), kReaderRegKey_Hidden);
 
 		// default to FALSE in case of error
 		if (err == kMoaErr_NoErr
@@ -837,9 +835,9 @@ STDMETHODIMP TStdXtra_IMoaMmXScript::Call(PMoaDrCallInfo callPtr) {
 
 	ThrowNull(callPtr);
 
-	static const MoaLong ARGS_BASE_STANDARD_SYNTAX = 0;
-	static const MoaLong ARGS_BASE_ALTERNATE_SYNTAX_EXPORT_FILE = 1;
-	static const MoaLong ARGS_BASE_ALTERNATE_SYNTAX_CALL = 2;
+	static constexpr MoaLong ARGS_BASE_STANDARD_SYNTAX = 0;
+	static constexpr MoaLong ARGS_BASE_ALTERNATE_SYNTAX_EXPORT_FILE = 1;
+	static constexpr MoaLong ARGS_BASE_ALTERNATE_SYNTAX_CALL = 2;
 
 	MoaError err = kMoaErr_NoErr;
 
@@ -2343,8 +2341,8 @@ MoaError TStdXtra_IMoaMmXScript::HandleCreateFileError(
 	// (so now there's a file not found error)
 	// we only do this to a maximum of twenty retries, in case there's some scenario
 	// where two errors alternate back and forth, to not get stuck in an infinite loop
-	static const int DEFAULT_RETRIES = 10;
-	static const int MAX_RETRIES = DEFAULT_RETRIES + DEFAULT_RETRIES;
+	static constexpr int DEFAULT_RETRIES = 10;
+	static constexpr int MAX_RETRIES = DEFAULT_RETRIES + DEFAULT_RETRIES;
 
 	MoaError err2 = kMoaErr_NoErr;
 
@@ -2478,7 +2476,7 @@ MoaError TStdXtra_IMoaMmXScript::HandleDuplicateSpec(
 		// retry more than once
 		// also on Mac the filename is only incremented by one number per loop
 		// even if the file exists already, so this must be at least 1000
-		static const int MAX_RETRIES = 1000;
+		static constexpr int MAX_RETRIES = 1000;
 
 		if (!argsPointer->pathInfoOptional.has_value()) {
 			Throw(kMoaErr_InternalError);
@@ -2852,7 +2850,7 @@ MoaError TStdXtra_IMoaMmXScript::AddAgentInfoExtensions(
 	ThrowNull(agentInfoPathExtensionsPointer);
 	ThrowNull(mixFormatInfoInterfacePointer);
 
-	static const MoaUlong FILTER_PATTERN_SIZE = 7;
+	static constexpr MoaUlong FILTER_PATTERN_SIZE = 7;
 
 	MoaUlong fileExtListSize = stringSize(agentInfoNameStringPointer) + 1 + FILTER_PATTERN_SIZE + 1;
 
@@ -2987,7 +2985,7 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPropertyName(PMoaDrCallInfo callPtr, PMoa
 	ThrowNull(propertyNameSymbolPointer);
 
 	{
-		static const MoaLong PROPERTY_NAME_ARG_INDEX = 2;
+		static constexpr MoaLong PROPERTY_NAME_ARG_INDEX = 2;
 
 		MoaMmValue argumentValue = kVoidMoaMmValueInitializer;
 		AccessArgByIndex(PROPERTY_NAME_ARG_INDEX, &argumentValue);
@@ -4646,9 +4644,7 @@ MoaError TStdXtra_IMoaMmXScript::GetReceptorIDs(
 	MoaLong &receptorCount = *receptorCountPointer;
 	ThrowErr(readerInterfacePointer->CountUnderstoodReceptorIDs(&receptorCount));
 
-	static const MoaUlong MOA_INTERFACE_ID_SIZE = sizeof(MoaInterfaceID);
-
-	MoaUlong receptorIDsSize = receptorCount * MOA_INTERFACE_ID_SIZE;
+	MoaUlong receptorIDsSize = receptorCount * sizeof(MoaInterfaceID);
 
 	PMoaVoid &receptorIDsPointer = *receptorIDsPointerPointer;
 	receptorIDsPointer = pObj->pCalloc->NRAlloc(receptorIDsSize);
@@ -4856,17 +4852,14 @@ MoaError TStdXtra_IMoaMmXScript::GetAgentInfoHidden(
 
 	if (err == kMoaErr_NoErr
 		&& writerRegistryEntryDictInterfacePointer) {
-		static const MoaLong AGENT_REGISTRY_ENTRY_DICT_INTERFACE_POINTER_SIZE = sizeof(agentRegistryEntryDictInterfacePointer);
-
-		err = writerRegistryEntryDictInterfacePointer->Get(kMoaDictType_Dict, &agentRegistryEntryDictInterfacePointer, AGENT_REGISTRY_ENTRY_DICT_INTERFACE_POINTER_SIZE, kWriterRegKey_AgentRegDict);
+		err = writerRegistryEntryDictInterfacePointer->Get(kMoaDictType_Dict, &agentRegistryEntryDictInterfacePointer, sizeof(agentRegistryEntryDictInterfacePointer), kWriterRegKey_AgentRegDict);
 
 		if (err == kMoaErr_NoErr
 			&& agentRegistryEntryDictInterfacePointer) {
 			agentInfoPointer->hidden = FALSE;
-			static const MoaLong HIDDEN_SIZE = sizeof(agentInfoPointer->hidden);
 
 			// do not error if this fails
-			agentRegistryEntryDictInterfacePointer->Get(kMoaDictType_Bool, &agentInfoPointer->hidden, HIDDEN_SIZE, kReaderRegKey_Hidden);
+			agentRegistryEntryDictInterfacePointer->Get(kMoaDictType_Bool, &agentInfoPointer->hidden, sizeof(agentInfoPointer->hidden), kReaderRegKey_Hidden);
 		}
 	}
 	*/

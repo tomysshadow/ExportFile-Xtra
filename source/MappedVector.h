@@ -45,7 +45,7 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 	using SIZE_TYPE = typename VECTOR::size_type;
 	using CONST_ITERATOR = typename VECTOR::const_iterator;
 
-	static const SIZE_TYPE NPOS = (SIZE_TYPE)-1;
+	static constexpr SIZE_TYPE NPOS = (SIZE_TYPE)-1;
 
 	private:
 	using MAP = std::map<ValueType, SIZE_TYPE, Comparer>;

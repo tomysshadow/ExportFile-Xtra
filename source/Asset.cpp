@@ -5,7 +5,7 @@ namespace Asset {
 		// when displaying the type for the Cast window
 		// Director will strip ellipsis off the end of the Display Name
 		// (but ONLY if there are three periods or more)
-		static const std::string::size_type ELLIPSIS_SIZE = 3;
+		static constexpr std::string::size_type ELLIPSIS_SIZE = 3;
 
 		std::string::size_type ellipsisIndex = displayName.find_last_not_of(".") + 1;
 
@@ -137,10 +137,10 @@ namespace Asset {
 
 	RESOURCE_ID Assets::Info::getBaseResourceID(unsigned long productVersionMajor) {
 		// 8, 9, 10, 11, 12
-		static const unsigned long MIN_PRODUCT_VERSION_MAJOR = 8;
-		static const unsigned long MAX_PRODUCT_VERSION_MAJOR = 12;
+		static constexpr unsigned long MIN_PRODUCT_VERSION_MAJOR = 8;
+		static constexpr unsigned long MAX_PRODUCT_VERSION_MAJOR = 12;
 
-		static const RESOURCE_ID ASSET_INFO_MAP_ICON_RESOURCES_COUNT = 6;
+		static constexpr RESOURCE_ID ASSET_INFO_MAP_ICON_RESOURCES_COUNT = 6;
 
 		productVersionMajor = min(MAX_PRODUCT_VERSION_MAJOR, max(MIN_PRODUCT_VERSION_MAJOR, productVersionMajor));
 		return (RESOURCE_ID)((productVersionMajor - MIN_PRODUCT_VERSION_MAJOR) * ASSET_INFO_MAP_ICON_RESOURCES_COUNT);

@@ -1,12 +1,13 @@
 #pragma once
 #include "utils.h"
+#include <unordered_map>
 #include <map>
 
 #include "mmiimage.h"
 
 class IconValues {
 	public:
-	typedef std::map<RESOURCE_ID, MoaMmValue> ICON_VALUE_MAP;
+	typedef std::unordered_map<RESOURCE_ID, MoaMmValue> ICON_VALUE_MAP;
 
 	typedef std::shared_ptr<IconValues> POINTER;
 	typedef std::variant<MoaLong, POINTER> VARIANT;

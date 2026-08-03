@@ -36,10 +36,10 @@ EXTERN_BEGIN_DEFINE_CLASS_INSTANCE_VARS(CWinBMPAgent)
 
 	PIMoaDataObject sourceDataObjectInterfacePointer = NULL;
 
-	static const MoaLong RECEPTORS_SIZE = 1;
+	static constexpr MoaLong RECEPTORS_SIZE = 1;
 	static const MoaInterfaceID RECEPTORS[RECEPTORS_SIZE];
 
-	static const MoaLong RECEPTOR_IID_I_MOA_RECEPTOR_PIXELS_INDEX = 0;
+	static constexpr MoaLong RECEPTOR_IID_I_MOA_RECEPTOR_PIXELS_INDEX = 0;
 EXTERN_END_DEFINE_CLASS_INSTANCE_VARS
 
 EXTERN_BEGIN_DEFINE_CLASS_INTERFACE(CWinBMPAgent, IMoaRegister)

@@ -1,6 +1,7 @@
 #pragma once
 #include "utils.h"
 #include <map>
+#include <unordered_map>
 
 class ValueConverter {
 	private:
@@ -9,7 +10,7 @@ class ValueConverter {
 
 	protected:
 	typedef std::map<const PMoaMmValue, PIMoaDict> PROP_LIST_DICT_VALUE_MAP;
-	typedef std::map<PIMoaDict, PMoaMmValue> DICT_VALUE_PROP_LIST_MAP;
+	typedef std::unordered_map<PIMoaDict, PMoaMmValue> DICT_VALUE_PROP_LIST_MAP;
 
 	PIMoaDrPlayer drPlayerInterfacePointer = NULL;
 	PIMoaMmValue mmValueInterfacePointer = NULL;

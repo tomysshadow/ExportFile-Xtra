@@ -21,7 +21,7 @@ namespace Path {
 		void destroy();
 		void duplicate(const Info &info);
 
-		static const char PERIOD = '.';
+		static constexpr char PERIOD = '.';
 
 		PIMoaCallback callbackInterfacePointer = NULL;
 		PIMoaCalloc callocInterfacePointer = NULL;

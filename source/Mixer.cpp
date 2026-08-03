@@ -155,9 +155,7 @@ void Mixer::Window::create() {
 
 	if (!registeredClass) {
 		WNDCLASSEX windowClassEx = {};
-		static const UINT WINDOW_CLASS_EX_SIZE = sizeof(windowClassEx);
-
-		windowClassEx.cbSize = WINDOW_CLASS_EX_SIZE;
+		windowClassEx.cbSize = sizeof(windowClassEx);
 		windowClassEx.lpfnWndProc = proc;
 		windowClassEx.hInstance = moduleHandle;
 		windowClassEx.lpszClassName = CLASS_NAME;

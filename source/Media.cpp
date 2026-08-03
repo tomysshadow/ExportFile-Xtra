@@ -246,8 +246,8 @@ namespace Media {
 	}
 
 	MoaError MixerMedia::Lingo::getDefaultValues() {
-		static const MoaLong DEFAULT_RESULT_VALUE = IS_ERROR(kMoaErr_InternalError);
-		static const MoaLong DEFAULT_ERR_CODE_VALUE = HRESULT_CODE(kMoaErr_InternalError);
+		static constexpr MoaLong DEFAULT_RESULT_VALUE = IS_ERROR(kMoaErr_InternalError);
+		static constexpr MoaLong DEFAULT_ERR_CODE_VALUE = HRESULT_CODE(kMoaErr_InternalError);
 
 		RETURN_ERR(mmValueInterfacePointer->IntegerToValue(DEFAULT_RESULT_VALUE, &defaultResultValue));
 		RETURN_ERR(mmValueInterfacePointer->IntegerToValue(DEFAULT_ERR_CODE_VALUE, &defaultErrCodeValue));
@@ -351,8 +351,13 @@ namespace Media {
 		MoaError err2 = mmValueInterfacePointer->IntegerToValue(errCode, &errCodeValue);
 
 		// default values so this will theoretically NEVER fail
-		static const MoaLong ARGS_SIZE = 3;
-		MoaMmValue args[ARGS_SIZE] = { memberValue, err == kMoaErr_NoErr ? resultValue : defaultResultValue, err2 == kMoaErr_NoErr ? errCodeValue : defaultErrCodeValue };
+		static constexpr MoaLong ARGS_SIZE = 3;
+
+		MoaMmValue args[ARGS_SIZE] = {
+			memberValue,
+			err == kMoaErr_NoErr ? resultValue : defaultResultValue,
+			err2 == kMoaErr_NoErr ? errCodeValue : defaultErrCodeValue
+		};
 
 		// don't care if this fails, handler may not be defined
 		drMovieInterfacePointer->CallHandler(symbols.MixerSaved, ARGS_SIZE, args, NULL);
@@ -389,9 +394,7 @@ namespace Media {
 		sourceBitmapFileHeaderOptional.emplace();
 		BITMAPFILEHEADER &sourceBitmapFileHeader = sourceBitmapFileHeaderOptional.value();
 
-		static const MoaStreamCount SOURCE_BITMAP_FILE_HEADER_SIZE = sizeof(sourceBitmapFileHeader);
-
-		RETURN_ERR(readStreamSafe(&sourceBitmapFileHeader, SOURCE_BITMAP_FILE_HEADER_SIZE, readStreamInterfacePointer));
+		RETURN_ERR(readStreamSafe(&sourceBitmapFileHeader, sizeof(sourceBitmapFileHeader), readStreamInterfacePointer));
 
 		MoaStreamPosition sourceBitmapInfoPosition = 0;
 
@@ -401,7 +404,7 @@ namespace Media {
 		// assume at first that there is no color table
 		// I don't like writing the word color without a u by the way
 		// I'm just doing so for consistency's sake
-		sourceBitmapInfoSize = BITMAPINFO_SIZE;
+		sourceBitmapInfoSize = sizeof(BITMAPINFO);
 		sourceBitmapInfoPointer = makeSharedArray<char>(sourceBitmapInfoSize);
 
 		{
@@ -409,9 +412,7 @@ namespace Media {
 			// we need this ugly get call because this is technically a char pointer
 			BITMAPINFOHEADER &sourceBitmapInfoHeader = ((PBITMAPINFO)sourceBitmapInfoPointer.get())->bmiHeader;
 
-			static const MoaStreamCount SOURCE_BITMAP_INFO_HEADER_SIZE = sizeof(sourceBitmapInfoHeader);
-
-			RETURN_ERR(readStreamSafe(&sourceBitmapInfoHeader, SOURCE_BITMAP_INFO_HEADER_SIZE, readStreamInterfacePointer));
+			RETURN_ERR(readStreamSafe(&sourceBitmapInfoHeader, sizeof(sourceBitmapInfoHeader), readStreamInterfacePointer));
 
 			// using the source bitmap info, see if there is a color table
 			if (!getBitmapInfoColorsSize(sourceBitmapInfoHeader, true, sourceBitmapInfoColorsSize)) {
@@ -498,7 +499,7 @@ namespace Media {
 		imageSize = 0;
 
 		#if defined READ_RPCS_INDEXED_RGB || defined READ_RPCS_RGB16
-		typedef std::map<MoaLong, WORD> BIT_COUNT_MAP;
+		typedef std::unordered_map<MoaLong, WORD> BIT_COUNT_MAP;
 
 		static const BIT_COUNT_MAP _BIT_COUNT_MAP = {
 			{ RPCS_INDEXED_RGB, 8 },
@@ -530,7 +531,7 @@ namespace Media {
 		samplesPerPixel = 0;
 
 		#if defined READ_RPCS_INDEXED_RGB || defined READ_RPCS_RGB16
-		typedef std::map<MoaLong, MoaShort> SAMPLES_PER_PIXEL_MAP;
+		typedef std::unordered_map<MoaLong, MoaShort> SAMPLES_PER_PIXEL_MAP;
 
 		static const SAMPLES_PER_PIXEL_MAP _SAMPLES_PER_PIXEL_MAP = {
 			{ RPCS_INDEXED_RGB, 1 },
@@ -569,17 +570,12 @@ namespace Media {
 			return false;
 		}
 
-		static const MoaLong ENTRY_SIZE = sizeof(TMoaCTableEntry);
-
-		if (!ENTRY_SIZE) {
+		if (!sizeof(TMoaCTableEntry)) {
 			return false;
 		}
 
-		static const MoaLong ENTRIES_SIZE = sizeof(pixelFormat.cs.colorTable.Entry);
-		static const MoaLong NUM_ENTRIES_ALLOC = ENTRIES_SIZE / ENTRY_SIZE;
-
 		pixelFormat.cs.colorTable.Header.iNumEntries = (MoaLong)colorsUsed;
-		pixelFormat.cs.colorTable.Header.iNumEntriesAlloc = NUM_ENTRIES_ALLOC;
+		pixelFormat.cs.colorTable.Header.iNumEntriesAlloc = sizeof(pixelFormat.cs.colorTable.Entry) / sizeof(TMoaCTableEntry);
 
 		// the math works out such that there should be enough space allocated for every entry
 		// but maybe the source bitmap is invalid here
@@ -635,7 +631,7 @@ namespace Media {
 	}
 
 	bool WinBMPMedia::validateBitmapInfoHeader(const BITMAPINFOHEADER &bitmapInfoHeader) {
-		return bitmapInfoHeader.biSize >= BITMAPINFOHEADER_SIZE // may be larger for newer versions
+		return bitmapInfoHeader.biSize >= sizeof(BITMAPINFOHEADER) // may be larger for newer versions
 		&& (
 			bitmapInfoHeader.biCompression != BI_BITFIELDS // if compression is bitfields, must be 16-bit or 32-bit
 			|| bitmapInfoHeader.biBitCount == 16
@@ -661,17 +657,12 @@ namespace Media {
 				return false;
 			}
 
-			static const DWORD RGBQUAD_SIZE = sizeof(RGBQUAD);
-
-			colorsSize = colorsUsed * RGBQUAD_SIZE;
+			colorsSize = colorsUsed * sizeof(RGBQUAD);
 			return true;
 		}
 
 		if (bitmapInfoHeader.biCompression == BI_BITFIELDS) {
-			static const DWORD DWORD_SIZE = sizeof(DWORD);
-			static const DWORD COLOR_MASKS_SIZE = DWORD_SIZE * 3;
-
-			colorsSize = COLOR_MASKS_SIZE;
+			colorsSize = sizeof(DWORD) * 3;
 		}
 		return true;
 	}
@@ -730,7 +721,7 @@ namespace Media {
 		}
 
 		// no thumbnail size, only the canonical size available
-		static const MoaLong DIMENSION_COUNT = 1;
+		static constexpr MoaLong DIMENSION_COUNT = 1;
 
 		LONG absSourceWidth = abs(sourceBitmapInfoHeader.biWidth);
 		pixelFormat.dim.pixels.x = absSourceWidth;
@@ -740,7 +731,7 @@ namespace Media {
 
 		// both should ideally be provided
 		// (PNG Writer just gives up if there's no TOP_DOWN option)
-		static const MoaLong DIRECTIONS_SIZE = 2;
+		static constexpr MoaLong DIRECTIONS_SIZE = 2;
 		MoaLong DIRECTIONS[DIRECTIONS_SIZE] = { BOTTOM_UP, TOP_DOWN };
 
 		RETURN_ERR(
@@ -809,7 +800,7 @@ namespace Media {
 				bitmapInfoSize = colorsBitmapInfoSize;
 				bitmapInfoPointer = colorsBitmapInfoPointer;
 			} else {
-				bitmapInfoSize = BITMAPINFO_SIZE + colorsSize;
+				bitmapInfoSize = sizeof(BITMAPINFO) + colorsSize;
 				bitmapInfoPointer = makeSharedArray<char>(bitmapInfoSize);
 
 				((PBITMAPINFO)bitmapInfoPointer.get())->bmiHeader = colorsBitmapInfoHeader;
@@ -865,7 +856,7 @@ namespace Media {
 		pixelFormat.cs.flags = pixelFormat.cs.colorSpace == RPCS_RGBA ? RPCSFLAGS_TRANSPARENT : RPCSFLAGS_NONE;
 
 		// can't be an integer divide: must be able to round down OR up to nearest number
-		static const double METERS_TO_INCHES = 0.0254;
+		static constexpr double METERS_TO_INCHES = 0.0254;
 
 		pixelFormat.dim.resolution.x = (MoaCoord)round(METERS_TO_INCHES * bitmapInfoHeader.biXPelsPerMeter);
 		pixelFormat.dim.resolution.y = (MoaCoord)round(METERS_TO_INCHES * bitmapInfoHeader.biYPelsPerMeter);
@@ -1054,17 +1045,16 @@ namespace Media {
 			// it creates its own internal file mapping
 			// so because it is a mapped view, we can use VirtualQuery to get the size
 			MEMORY_BASIC_INFORMATION memoryBasicInformation = {};
-			static const SIZE_T MEMORY_BASIC_INFORMATION_SIZE = sizeof(memoryBasicInformation);
 
 			RETURN_ERR(
 				osErr(
 					VirtualQuery(
 						sourceBitsPointer,
 						&memoryBasicInformation,
-						MEMORY_BASIC_INFORMATION_SIZE
+						sizeof(memoryBasicInformation)
 					)
 
-					== MEMORY_BASIC_INFORMATION_SIZE
+					== sizeof(memoryBasicInformation)
 					&& memoryBasicInformation.State == MEM_COMMIT
 					&& memoryBasicInformation.Protect
 					&& memoryBasicInformation.BaseAddress == sourceBitsPointer

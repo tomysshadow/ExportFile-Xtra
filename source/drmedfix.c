@@ -92,9 +92,7 @@ void DrFixMediaHeader(const char * pMediaData, MoaUlong size)
 	MOA_ASSERT((offsetof(MediaDataHdrDirector5, propLength) == 26), "DrMedFix, sizeof(MediaDataHdrDirector5) seems wrong!\n");
 	MOA_ASSERT((offsetof(MediaDataHdrDirector7, propLength) == 24), "DrMedFix, sizeof(MediaDataHdrDirector7) seems wrong!\n");
 
-	static const MoaUlong HDR_SIZE_OFFSET_SIZE = offsetof(MediaDataHdrDirector5, hdrSize) + sizeof(pMDHdr->director5.hdrSize);
-
-	if (size < HDR_SIZE_OFFSET_SIZE) {
+	if (size < offsetof(MediaDataHdrDirector5, hdrSize) + sizeof(pMDHdr->director5.hdrSize)) {
 		return;
 	}
 
@@ -108,9 +106,7 @@ void DrFixMediaHeader(const char * pMediaData, MoaUlong size)
 		return;
 	}
 
-	static const MoaUlong DIRECTOR5_SIZE = sizeof(pMDHdr->director5);
-
-	if (size < DIRECTOR5_SIZE) {
+	if (size < sizeof(pMDHdr->director5)) {
 		return;
 	}
 

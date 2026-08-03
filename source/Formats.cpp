@@ -113,7 +113,7 @@ namespace Formats {
 		// we also can't put this in the system temporary directory
 		// because later we'll call SwapFile on this, which requires
 		// that it be on the same volume as the file we're swapping with
-		static const size_t ABC_SIZE = 4;
+		static constexpr size_t ABC_SIZE = 4;
 		char abc[ABC_SIZE] = "";
 
 		size_t index = 2;
@@ -195,9 +195,7 @@ namespace Formats {
 		};
 
 		MoaSystemFileSpec sysSpec = "";
-		static const MoaLong SYS_SPEC_SIZE = sizeof(sysSpec);
-
-		RETURN_ERR(tempFileInterfacePointer->GetSysSpec(sysSpec, SYS_SPEC_SIZE));
+		RETURN_ERR(tempFileInterfacePointer->GetSysSpec(sysSpec, sizeof(sysSpec)));
 
 		RETURN_ERR(setFileAttributeHiddenWide(hidden, CA2W(sysSpec, CP_DIRECTOR(productVersionMajor))));
 		deleteTempFileInterfacePointerScopeExit.dismiss();
@@ -569,7 +567,7 @@ namespace Formats {
 		// When PICT is used as a standalone file format, the file usually starts with an unused 512-byte header, usually with all bytes set to 0.
 		// When PICT is embedded as a resource inside some other format, this header is usually not present.
 		// http://fileformats.archiveteam.org/wiki/PICT
-		static const MoaUlong PICT_HEADER_SIZE = 512;
+		static constexpr MoaUlong PICT_HEADER_SIZE = 512;
 
 		public:
 		MemberPropertyPictureFormat(
@@ -757,8 +755,8 @@ namespace Formats {
 			return kMoaErr_BadParam;
 		}
 
-		bitmapFileHeader.bfOffBits = Media::WinBMPMedia::BITMAPFILEHEADER_SIZE + bitmapInfoHeader.biSize + bitmapInfoColorsSize;
-		bitmapFileHeader.bfSize = Media::WinBMPMedia::BITMAPFILEHEADER_SIZE + globalHandleLockPointer->size();
+		bitmapFileHeader.bfOffBits = sizeof(BITMAPFILEHEADER) + bitmapInfoHeader.biSize + bitmapInfoColorsSize;
+		bitmapFileHeader.bfSize = sizeof(BITMAPFILEHEADER) + globalHandleLockPointer->size();
 		return kMoaErr_NoErr;
 	}
 
@@ -804,7 +802,7 @@ namespace Formats {
 		BITMAPFILEHEADER bitmapFileHeader = {};
 		RETURN_ERR(getBitmapFileHeader(bitmapFileHeader));
 
-		size = Media::WinBMPMedia::BITMAPFILEHEADER_SIZE + globalHandleLockSize;
+		size = sizeof(BITMAPFILEHEADER) + globalHandleLockSize;
 		data = callocInterfacePointer->NRAlloc(size);
 
 		MAKE_SCOPE_EXIT(freeMemoryDataScopeExit) {
@@ -813,12 +811,12 @@ namespace Formats {
 
 		RETURN_NULL(data);
 
-		if (memcpy_s(data, size, &bitmapFileHeader, Media::WinBMPMedia::BITMAPFILEHEADER_SIZE)) {
+		if (memcpy_s(data, size, &bitmapFileHeader, sizeof(BITMAPFILEHEADER))) {
 			return kMoaErr_OutOfMem;
 		}
 
 		if (memcpy_s(
-			(BITMAPFILEHEADER*)data + 1, size - Media::WinBMPMedia::BITMAPFILEHEADER_SIZE,
+			(BITMAPFILEHEADER*)data + 1, size - sizeof(BITMAPFILEHEADER),
 			globalHandleLockData,
 			globalHandleLockSize
 		)) {
@@ -840,8 +838,8 @@ namespace Formats {
 		BITMAPFILEHEADER bitmapFileHeader = {};
 		RETURN_ERR(getBitmapFileHeader(bitmapFileHeader));
 
-		size = Media::WinBMPMedia::BITMAPFILEHEADER_SIZE + globalHandleLockSize;
-		RETURN_ERR(writeStreamSafe((PMoaVoid)&bitmapFileHeader, Media::WinBMPMedia::BITMAPFILEHEADER_SIZE, writeStreamInterfacePointer));
+		size = sizeof(BITMAPFILEHEADER) + globalHandleLockSize;
+		RETURN_ERR(writeStreamSafe((PMoaVoid)&bitmapFileHeader, sizeof(BITMAPFILEHEADER), writeStreamInterfacePointer));
 		return writeStreamSafe(globalHandleLockData, globalHandleLockSize, writeStreamInterfacePointer);
 	}
 
@@ -929,14 +927,11 @@ namespace Formats {
 
 		paletteGlobalHandleLockPointer = std::make_unique<GlobalHandleLock<char>>(paletteGlobalHandle);
 
-		// RIFF is word-aligned
-		static const DWORD WORD_SIZE = sizeof(WORD);
-
 		MMIOINFO mmioinfo = {};
 		mmioinfo.pchBuffer = paletteGlobalHandleLockPointer->get();
 		mmioinfo.cchBuffer = (LONG)logicalPaletteSize;
 		mmioinfo.fccIOProc = FOURCC_MEM;
-		*mmioinfo.adwInfo = WORD_SIZE;
+		*mmioinfo.adwInfo = sizeof(WORD); // RIFF is word-aligned
 		return makeMMIO(logicalPalettePointer, logicalPaletteSize, mmioinfo);
 	}
 
@@ -987,9 +982,7 @@ namespace Formats {
 		}
 
 		MoaSystemFileSpec sysSpec = "";
-		static const MoaLong SYS_SPEC_SIZE = sizeof(sysSpec);
-
-		RETURN_ERR(this->writeFileInterfacePointer->GetSysSpec(sysSpec, SYS_SPEC_SIZE));
+		RETURN_ERR(this->writeFileInterfacePointer->GetSysSpec(sysSpec, sizeof(sysSpec)));
 
 		CA2W sysSpecWide(sysSpec, CP_DIRECTOR(productVersionMajor));
 
@@ -1428,9 +1421,7 @@ namespace Formats {
 		// of the Flash Asset's StreamInMedia method
 		// first, read a ChunkID
 		CHUNK_ID chunkID = 0;
-		static const MoaStreamCount CHUNK_ID_SIZE = sizeof(chunkID);
-
-		RETURN_ERR(stream.readSafe(&chunkID, CHUNK_ID_SIZE));
+		RETURN_ERR(stream.readSafe(&chunkID, sizeof(chunkID)));
 
 		// little endian, so we need to byteswap it on Mac
 		#ifdef MACINTOSH
@@ -1441,8 +1432,8 @@ namespace Formats {
 		chunkID &= 0x00FFFFFF;
 
 		// check if the ChunkID is SWF or SWC
-		static const CHUNK_ID SWF_CHUNK_ID = 0x00535746;
-		static const CHUNK_ID SWC_CHUNK_ID = 0x00535743;
+		static constexpr CHUNK_ID SWF_CHUNK_ID = 0x00535746;
+		static constexpr CHUNK_ID SWC_CHUNK_ID = 0x00535743;
 
 		if (chunkID == SWF_CHUNK_ID || chunkID == SWC_CHUNK_ID) {
 			// if it is, the entire stream is the SWF
@@ -1453,14 +1444,10 @@ namespace Formats {
 		// this value is 1 if the SWF is embedded, FLLK if it's linked
 		// it is unused when reading the asset stream
 		uint32_t unused = 0;
-		static const MoaStreamCount UNUSED_SIZE = sizeof(unused);
-
-		RETURN_ERR(stream.readSafe(&unused, UNUSED_SIZE));
+		RETURN_ERR(stream.readSafe(&unused, sizeof(unused)));
 
 		// the SWF size
-		static const MoaStreamCount SIZE_SIZE = sizeof(size);
-
-		RETURN_ERR(stream.readSafe(&size, SIZE_SIZE));
+		RETURN_ERR(stream.readSafe(&size, sizeof(size)));
 
 		// big endian, so we need to byteswap it on Windows
 		#ifdef WINDOWS
@@ -1491,9 +1478,7 @@ namespace Formats {
 		// of the Shockwave 3D Asset's StreamInMedia method
 		// first, read a ChunkID
 		CHUNK_ID chunkID = 0;
-		static const MoaStreamCount CHUNK_ID_SIZE = sizeof(chunkID);
-
-		RETURN_ERR(stream.readSafe(&chunkID, CHUNK_ID_SIZE));
+		RETURN_ERR(stream.readSafe(&chunkID, sizeof(chunkID)));
 
 		// big endian, so we need to byteswap it on Windows
 		#ifdef WINDOWS
@@ -1507,8 +1492,8 @@ namespace Formats {
 		// if the W3D size is less than 16 bytes, it is invalid
 		// the 3DMD ChunkID is likely just a placeholder
 		// so that the stream is not empty
-		static const CHUNK_ID THREEDEM_CHUNK_ID = 0x3344454D;
-		static const uint32_t MIN_W3D_SIZE = 16;
+		static constexpr CHUNK_ID THREEDEM_CHUNK_ID = 0x3344454D;
+		static constexpr uint32_t MIN_W3D_SIZE = 16;
 
 		if (chunkID == THREEDEM_CHUNK_ID) {
 			// the next two values are unused when reading the asset stream
@@ -1516,15 +1501,11 @@ namespace Formats {
 			// the size and constant value 0x20000000 look suspiciously similar to
 			// the ID tags used in the 3DS model format
 			uint32_t unused = 0;
-			static const MoaStreamCount UNUSED_SIZE = sizeof(unused);
-
-			RETURN_ERR(stream.readSafe(&unused, UNUSED_SIZE));
-			RETURN_ERR(stream.readSafe(&unused, UNUSED_SIZE));
+			RETURN_ERR(stream.readSafe(&unused, sizeof(unused)));
+			RETURN_ERR(stream.readSafe(&unused, sizeof(unused)));
 
 			// the W3D size
-			static const MoaStreamCount SIZE_SIZE = sizeof(size);
-
-			RETURN_ERR(stream.readSafe(&size, SIZE_SIZE));
+			RETURN_ERR(stream.readSafe(&size, sizeof(size)));
 
 			#ifdef WINDOWS
 			size = (MoaUlong)mem_XLong((long)size);
@@ -1721,7 +1702,7 @@ namespace Formats {
 		RETURN_NULL(writeStreamInterfacePointer);
 
 		// CallFunction demands that the first argument be left empty
-		static const MoaLong ARGS_SIZE = 2;
+		static constexpr MoaLong ARGS_SIZE = 2;
 		MoaMmValue args[ARGS_SIZE] = { kVoidMoaMmValueInitializer, kVoidMoaMmValueInitializer };
 
 		MoaChar pathnameSpec[MOA_MAX_PATHNAME] = "";
@@ -1776,7 +1757,7 @@ namespace Formats {
 
 		// don't call Stop if we didn't call Save first
 		if (saveStatus == kMoaStatus_False) {
-			static const MoaLong ARGS_SIZE = 1;
+			static constexpr MoaLong ARGS_SIZE = 1;
 			MoaMmValue args[ARGS_SIZE] = { kVoidMoaMmValueInitializer };
 
 			RETURN_ERR(drCastMemInterfacePointer->CallFunction(symbols.Stop, ARGS_SIZE, args, NULL));

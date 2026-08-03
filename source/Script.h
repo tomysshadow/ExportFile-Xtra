@@ -132,12 +132,12 @@ EXTERN_BEGIN_DEFINE_CLASS_INSTANCE_VARS(TStdXtra)
 
 	Symbols symbols;
 
-	static const MoaLong ARG_INDEX_MIXER_SAVED_CALL_HANDLER = 1;
-	static const MoaLong ARG_INDEX_MEMBER = 1;
-	static const MoaLong ARG_INDEX_PATH = 2;
-	static const MoaLong ARG_INDEX_INFO = ARG_INDEX_PATH;
-	static const MoaLong ARG_INDEX_LABEL = 3;
-	static const MoaLong ARG_INDEX_AGENT = 4;
+	static constexpr MoaLong ARG_INDEX_MIXER_SAVED_CALL_HANDLER = 1;
+	static constexpr MoaLong ARG_INDEX_MEMBER = 1;
+	static constexpr MoaLong ARG_INDEX_PATH = 2;
+	static constexpr MoaLong ARG_INDEX_INFO = ARG_INDEX_PATH;
+	static constexpr MoaLong ARG_INDEX_LABEL = 3;
+	static constexpr MoaLong ARG_INDEX_AGENT = 4;
 
 	MoaLong argsBase = 0;
 EXTERN_END_DEFINE_CLASS_INSTANCE_VARS

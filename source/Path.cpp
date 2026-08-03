@@ -386,15 +386,13 @@ namespace Path {
 	}
 
 	std::string Info::toExtension(const std::string &filename) {
-		static const std::string::size_type PERIOD_SIZE = sizeof(PERIOD);
-
 		std::string::size_type periodIndex = filename.rfind(PERIOD);
 
 		return periodIndex == std::string::npos
 		? ""
 
 		: filename.substr(
-			periodIndex + PERIOD_SIZE,
+			periodIndex + sizeof(PERIOD),
 			std::string::npos
 		);
 	}
@@ -604,8 +602,8 @@ namespace Path {
 			// if no (brackets) found, stick them on the end of the basename, after a space
 			if (std::regex_search(filenameOptional.value(), matches, INCREMENT_FILENAME)
 			&& matches.length() > 3) {
-				static const unsigned long MIN_NUMBER = 1;
-				static const unsigned long MAX_NUMBER = 999;
+				static constexpr unsigned long MIN_NUMBER = 1;
+				static constexpr unsigned long MAX_NUMBER = 999;
 
 				basename = matches[1];
 

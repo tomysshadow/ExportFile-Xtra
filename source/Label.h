@@ -2,6 +2,7 @@
 #include "utils.h"
 #include "Path.h"
 #include "Agent.h"
+#include <unordered_map>
 #include <map>
 #include <variant>
 
@@ -11,35 +12,35 @@ namespace Label {
 
 	typedef unsigned int TYPE;
 
-	static const TYPE TYPE_MEDIA_INFO = 0x00000001;
-	static const TYPE TYPE_MEMBER_PROPERTY = 0x00000002;
-	static const TYPE TYPE_XTRA_MEDIA = 0x00000004;
+	static constexpr TYPE TYPE_MEDIA_INFO = 0x00000001;
+	static constexpr TYPE TYPE_MEMBER_PROPERTY = 0x00000002;
+	static constexpr TYPE TYPE_XTRA_MEDIA = 0x00000004;
 
-	static const TYPE TYPE_MEDIA_INFO_GLOBAL_HANDLE = 0x00000100;
-	static const TYPE TYPE_MEDIA_INFO_COMPOSITE = 0x00000200;
+	static constexpr TYPE TYPE_MEDIA_INFO_GLOBAL_HANDLE = 0x00000100;
+	static constexpr TYPE TYPE_MEDIA_INFO_COMPOSITE = 0x00000200;
 	#ifdef MACINTOSH
 	// reserved in case the Mac labels need their own types
 	// because I legitimately don't know if they can use the Global Handle Format or
 	// will need their own Format classes
-	static const TYPE TYPE_MEDIA_INFO_MAC_RESERVED = 0x00000400; // reserved in case Mac #image label needs its own type
-	static const TYPE TYPE_MEDIA_INFO_MAC_RESERVED2 = 0x00000800; // reserved in case Mac #sound label needs its own type
-	static const TYPE TYPE_MEDIA_INFO_MAC_RESERVED3 = 0x00001000; // reserved in case Mac #palette label needs its own type
+	static constexpr TYPE TYPE_MEDIA_INFO_MAC_RESERVED = 0x00000400; // reserved in case Mac #image label needs its own type
+	static constexpr TYPE TYPE_MEDIA_INFO_MAC_RESERVED2 = 0x00000800; // reserved in case Mac #sound label needs its own type
+	static constexpr TYPE TYPE_MEDIA_INFO_MAC_RESERVED3 = 0x00001000; // reserved in case Mac #palette label needs its own type
 	#endif
 	#ifdef WINDOWS
-	static const TYPE TYPE_MEDIA_INFO_WIN_DIB = 0x00002000;
-	static const TYPE TYPE_MEDIA_INFO_WIN_PALETTE = 0x00004000;
+	static constexpr TYPE TYPE_MEDIA_INFO_WIN_DIB = 0x00002000;
+	static constexpr TYPE TYPE_MEDIA_INFO_WIN_PALETTE = 0x00004000;
 	#endif
 
-	static const TYPE TYPE_MEMBER_PROPERTY_PICTURE = 0x00000100;
+	static constexpr TYPE TYPE_MEMBER_PROPERTY_PICTURE = 0x00000100;
 
-	static const TYPE TYPE_XTRA_MEDIA_SWF = 0x00000100;
-	static const TYPE TYPE_XTRA_MEDIA_W3D = 0x00000200;
-	static const TYPE TYPE_XTRA_MEDIA_MIXER_ASYNC = 0x00000400;
+	static constexpr TYPE TYPE_XTRA_MEDIA_SWF = 0x00000100;
+	static constexpr TYPE TYPE_XTRA_MEDIA_W3D = 0x00000200;
+	static constexpr TYPE TYPE_XTRA_MEDIA_MIXER_ASYNC = 0x00000400;
 
-	static const TYPE TYPE_XTRA_MEDIA_MIXER_WAV_ASYNC = 0x00010000;
-	static const TYPE TYPE_XTRA_MEDIA_MIXER_MP4_ASYNC = 0x00020000;
+	static constexpr TYPE TYPE_XTRA_MEDIA_MIXER_WAV_ASYNC = 0x00010000;
+	static constexpr TYPE TYPE_XTRA_MEDIA_MIXER_MP4_ASYNC = 0x00020000;
 
-	typedef std::map<MoaMmSymbol, Agent::Info::MAP> AGENT_INFO_MAP;
+	typedef std::unordered_map<MoaMmSymbol, Agent::Info::MAP> AGENT_INFO_MAP;
 
 	struct Info {
 		typedef std::map<SYMBOL_VARIANT, Info> MAP;

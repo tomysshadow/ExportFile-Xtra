@@ -23,7 +23,7 @@ namespace Mixer {
 		static LRESULT CALLBACK proc(HWND windowHandle, UINT message, WPARAM wParam, LPARAM lParam);
 
 		public:
-		static const UINT WM_MIXER_SAVED = WM_USER;
+		static constexpr UINT WM_MIXER_SAVED = WM_USER;
 
 		Window();
 		~Window();
