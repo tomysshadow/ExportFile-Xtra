@@ -11,8 +11,8 @@ namespace Formats {
 		public:
 		typedef std::shared_ptr<Format> POINTER;
 
-		const std::string TEMP_FILE_EXTENSION = "tmp"; // MUST not exceed three characters (8.3 filename compatible)
-		const bool PATH_RELATIVE = true;
+		const std::string tempFileExtension = "tmp"; // MUST not exceed three characters (8.3 filename compatible)
+		const bool pathRelative = true;
 
 		private:
 		void destroy();

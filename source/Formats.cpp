@@ -89,9 +89,9 @@ namespace Formats {
 		// use extension of .tmp for a further clue to the file's purpose
 		// unless other specific extension required
 		static const std::string PREFIX = "~ExFi";
-		const std::string PERIOD_TEMP_FILE_EXTENSION = "." + TEMP_FILE_EXTENSION;
+		const std::string periodTempFileExtension = "." + tempFileExtension;
 
-		std::string filename = PREFIX + PERIOD_TEMP_FILE_EXTENSION;
+		std::string filename = PREFIX + periodTempFileExtension;
 
 		MoaError err = hasParentPath
 			? tempFileInterfacePointer->SetFilename(filename.c_str())
@@ -121,7 +121,7 @@ namespace Formats {
 		for (abc[0] = 'A'; abc[0] <= 'Z'; abc[0]++) {
 			for (abc[1] = 'A'; abc[1] <= 'Z'; abc[1]++) {
 				for (abc[2] = 'A'; abc[2] <= 'Z'; abc[2]++) {
-					filename = PREFIX + (char*)&abc[index] + PERIOD_TEMP_FILE_EXTENSION;
+					filename = PREFIX + (char*)&abc[index] + periodTempFileExtension;
 
 					err = hasParentPath
 						? tempFileInterfacePointer->SetFilename(filename.c_str())
@@ -208,8 +208,8 @@ namespace Formats {
 	}
 
 	Format::Format(unsigned long productVersionMajor, const std::string &tempFileExtension, bool pathRelative)
-		: TEMP_FILE_EXTENSION(tempFileExtension),
-		PATH_RELATIVE(pathRelative),
+		: tempFileExtension(tempFileExtension),
+		pathRelative(pathRelative),
 		productVersionMajor(productVersionMajor) {
 	}
 

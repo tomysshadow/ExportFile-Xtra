@@ -79,13 +79,11 @@ namespace Asset {
 			return kMoaErr_NoErr;
 		}
 
-		if (std::holds_alternative<MoaLong>(iconValuesVariant)) {
-			const MoaLong &INDEX = std::get<MoaLong>(iconValuesVariant);
-
+		if (auto index = std::get_if<MoaLong>(&iconValuesVariant)) {
 			IconValues::ICON_VALUE_MAP iconValueMap = iconValuesOptional.value().toIconValueMap();
 
 			MoaRect rect = {};
-			rect.left = 24 * INDEX;
+			rect.left = 24 * *index;
 			rect.right = rect.left + 16;
 			rect.bottom = 16;
 

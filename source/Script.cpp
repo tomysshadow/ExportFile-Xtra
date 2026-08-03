@@ -309,12 +309,12 @@ STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_RegistryEntryDict_TStdXtra
 	}
 
 	if (std::holds_alternative<Registry::Entry>(registryEntryVariant)) {
-		const Registry::Entry &REGISTRY_ENTRY = std::get<Registry::Entry>(registryEntryVariant);
-		ThrowNull(REGISTRY_ENTRY.classIDPointer);
-		ThrowNull(REGISTRY_ENTRY.interfaceIDPointer);
+		const Registry::Entry &registryEntry = std::get<Registry::Entry>(registryEntryVariant);
+		ThrowNull(registryEntry.classIDPointer);
+		ThrowNull(registryEntry.interfaceIDPointer);
 
-		MoaLong equalID = MoaEqualID(classIDPointer, REGISTRY_ENTRY.classIDPointer)
-			&& MoaEqualID(interfaceIDPointer, REGISTRY_ENTRY.interfaceIDPointer);
+		MoaLong equalID = MoaEqualID(classIDPointer, registryEntry.classIDPointer)
+			&& MoaEqualID(interfaceIDPointer, registryEntry.interfaceIDPointer);
 
 		if (equalID) {
 			registryEntryVariant = (PIMoaRegistryEntryDict)NULL;
@@ -979,8 +979,8 @@ MoaError TStdXtra_IMoaMmXScript::ExportFileOut(PMoaDrCallInfo callPtr) {
 
 	// we do not want to resolve this path
 	// (that is, check the searchPath and whatnot for an existing file with this name)
-	// the PATH_RELATIVE constant is because some formats (mixers) can't use relative paths
-	if (!args.pathInfoOptional.value().getPath(path, content.formatPointer->PATH_RELATIVE)) {
+	// the pathRelative variable is because some formats (mixers) can't use relative paths
+	if (!args.pathInfoOptional.value().getPath(path, content.formatPointer->pathRelative)) {
 		Throw(kMoaErr_BadParam);
 	}
 
@@ -1225,10 +1225,10 @@ MoaError TStdXtra_IMoaMmXScript::GetExportFileDisplayName(PMoaDrCallInfo callPtr
 			Throw(kMoaErr_InternalError);
 		}
 
-		const Label::Info &LABEL_INFO = directorMedia.labelInfoMapIterator->second;
+		const Label::Info &labelInfo = directorMedia.labelInfoMapIterator->second;
 
 		// this being empty signals to use Type Display Name instead
-		if (LABEL_INFO.name.empty()) {
+		if (labelInfo.name.empty()) {
 			drCastMemInterfacePointer = args.getDrCastMemInterfacePointer();
 			
 			if (!drCastMemInterfacePointer) {
@@ -1242,7 +1242,7 @@ MoaError TStdXtra_IMoaMmXScript::GetExportFileDisplayName(PMoaDrCallInfo callPtr
 
 			ThrowErr(GetTypeDisplayName(typeSymbol, &displayName));
 		} else {
-			displayName = LABEL_INFO.name;
+			displayName = labelInfo.name;
 		}
 	} else {
 		ThrowErr(FindAgentInfo(&args, &directorMedia));
@@ -1392,28 +1392,28 @@ MoaError TStdXtra_IMoaMmXScript::GetExportFileIconPropList(PMoaDrCallInfo callPt
 
 	// scope because assetInfoOptional's value may change after this
 	{
-		const Asset::Info &ASSET_INFO = directorMedia.assetInfoOptional.value();
+		const Asset::Info &assetInfo = directorMedia.assetInfoOptional.value();
 
-		if (std::holds_alternative<MoaMmSymbol>(ASSET_INFO.subType)) {
+		if (std::holds_alternative<MoaMmSymbol>(assetInfo.subType)) {
 			// for behaviour/movie/parent scripts, different icons for same type
-			ThrowErr(drCastMemInterfacePointer->GetProp(std::get<MoaMmSymbol>(ASSET_INFO.subType), &subTypeValue));
+			ThrowErr(drCastMemInterfacePointer->GetProp(std::get<MoaMmSymbol>(assetInfo.subType), &subTypeValue));
 
 			MoaMmSymbol subTypeSymbol = 0;
 			ThrowErr(pObj->mmValueInterfacePointer->ValueToSymbol(&subTypeValue, &subTypeSymbol));
 
-			foundIconValues = ASSET_INFO.iconValuesMap.find(subTypeSymbol);
+			foundIconValues = assetInfo.iconValuesMap.find(subTypeSymbol);
 
-			if (foundIconValues == ASSET_INFO.iconValuesMap.end()) {
+			if (foundIconValues == assetInfo.iconValuesMap.end()) {
 				// default icon if not one of the known subtypes
-				foundIconValues = ASSET_INFO.iconValuesMap.find("");
+				foundIconValues = assetInfo.iconValuesMap.find("");
 			}
 		} else {
 			// no subtypes for this type
-			foundIconValues = ASSET_INFO.iconValuesMap.find("");
+			foundIconValues = assetInfo.iconValuesMap.find("");
 		}
 	}
 
-	// we use cend here because we aren't getting this off the const ASSET_INFO variable
+	// we use cend here because we aren't getting this off the const assetInfo variable
 	if (foundIconValues == directorMedia.assetInfoOptional.value().iconValuesMap.cend()) {
 		if (!assetXtra) {
 			Throw(kMoaErr_InternalError);
@@ -1426,11 +1426,11 @@ MoaError TStdXtra_IMoaMmXScript::GetExportFileIconPropList(PMoaDrCallInfo callPt
 			Throw(kMoaErr_InternalError);
 		}
 
-		const Asset::Info &ASSET_INFO = directorMedia.assetInfoOptional.value();
+		const Asset::Info &assetInfo = directorMedia.assetInfoOptional.value();
 
-		foundIconValues = ASSET_INFO.iconValuesMap.find("");
+		foundIconValues = assetInfo.iconValuesMap.find("");
 
-		if (foundIconValues == ASSET_INFO.iconValuesMap.end()) {
+		if (foundIconValues == assetInfo.iconValuesMap.end()) {
 			// failed to get any icons
 			Throw(kMoaErr_InternalError);
 		}
@@ -1566,9 +1566,9 @@ MoaError TStdXtra_IMoaMmXScript::FindLabelInfo(Args* argsPointer, Media::Directo
 			Throw(kMoaErr_InternalError);
 		}
 
-		const Label::Info::MAP &LABEL_INFO_MAP = pObj->labelsInfoPointer->get();
+		const Label::Info::MAP &labelInfoMap = pObj->labelsInfoPointer->get();
 
-		directorMediaPointer->labelInfoMapIterator = LABEL_INFO_MAP.find(std::get<MoaMmSymbol>(argsPointer->labelSymbolVariant));
+		directorMediaPointer->labelInfoMapIterator = labelInfoMap.find(std::get<MoaMmSymbol>(argsPointer->labelSymbolVariant));
 
 		if (directorMediaPointer->labelInfoMapIterator == LABEL_INFO_NOT_FOUND) {
 			Throw(kMoaDrErr_LabelNotFound);
@@ -1604,15 +1604,15 @@ MoaError TStdXtra_IMoaMmXScript::FindAgentInfo(Args* argsPointer, Media::Directo
 			Throw(kMoaErr_InternalError);
 		}
 
-		const Agent::Info::MAP &AGENT_INFO_MAP = directorMediaPointer->agentInfoMapOptional.value();
+		const Agent::Info::MAP &agentInfoMap = directorMediaPointer->agentInfoMapOptional.value();
 
 		if (!argsPointer->agentStringOptional.has_value()) {
 			Throw(kMoaErr_InternalError);
 		}
 
-		foundAgentMapInfo = AGENT_INFO_MAP.find(argsPointer->agentStringOptional.value());
+		foundAgentMapInfo = agentInfoMap.find(argsPointer->agentStringOptional.value());
 
-		if (foundAgentMapInfo == AGENT_INFO_MAP.end()) {
+		if (foundAgentMapInfo == agentInfoMap.end()) {
 			Throw(kMoaMixErr_NoSuchAgent);
 		}
 
@@ -1857,7 +1857,7 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentFormat(Args* argsPointer, Media::D
 			Throw(kMoaErr_InternalError);
 		}
 
-		const Label::Info &LABEL_INFO = directorMediaPointer->labelInfoMapIterator->second;
+		const Label::Info &labelInfo = directorMediaPointer->labelInfoMapIterator->second;
 
 		drCastMemInterfacePointer = argsPointer->getDrCastMemInterfacePointer();
 
@@ -1865,16 +1865,16 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentFormat(Args* argsPointer, Media::D
 			Throw(kMoaErr_InternalError);
 		}
 
-		if (LABEL_INFO.labelType & Label::TYPE_XTRA_MEDIA) {
+		if (labelInfo.labelType & Label::TYPE_XTRA_MEDIA) {
 			// must be loaded for StreamOutMedia to work
 			ThrowErr(LoadMember(drCastMemInterfacePointer));
 
 			ThrowErr(pObj->exportFileValueConverterPointer->toAsset(drCastMemInterfacePointer, mmXAssetInterfacePointer));
 			ThrowNull(mmXAssetInterfacePointer);
 
-			if (LABEL_INFO.labelType & Label::TYPE_XTRA_MEDIA_MIXER_ASYNC) {
+			if (labelInfo.labelType & Label::TYPE_XTRA_MEDIA_MIXER_ASYNC) {
 				content.formatPointer = Formats::FormatFactory::createXtraMediaFormat(
-					LABEL_INFO.labelType,
+					labelInfo.labelType,
 					mmXAssetInterfacePointer,
 					pObj->productVersionMajor,
 					drCastMemInterfacePointer,
@@ -1884,7 +1884,7 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentFormat(Args* argsPointer, Media::D
 				);
 			} else {
 				content.formatPointer = Formats::FormatFactory::createXtraMediaFormat(
-					LABEL_INFO.labelType,
+					labelInfo.labelType,
 					mmXAssetInterfacePointer,
 					pObj->productVersionMajor,
 					pObj->pCallback,
@@ -1892,23 +1892,23 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentFormat(Args* argsPointer, Media::D
 				);
 			}
 		} else {
-			if (!std::holds_alternative<MoaMmSymbol>(LABEL_INFO.labelFormat)) {
+			if (!std::holds_alternative<MoaMmSymbol>(labelInfo.labelFormat)) {
 				Throw(kMoaDrErr_MediaFormatNotSupported);
 			}
 
 			// label symbols should directly map to these
-			const MoaMmSymbol &FORMAT_SYMBOL = std::get<MoaMmSymbol>(LABEL_INFO.labelFormat);
+			MoaMmSymbol formatSymbol = std::get<MoaMmSymbol>(labelInfo.labelFormat);
 
 			MoaError err = kMoaErr_NoErr;
 
-			if (LABEL_INFO.labelType & Label::TYPE_MEDIA_INFO) {
+			if (labelInfo.labelType & Label::TYPE_MEDIA_INFO) {
 				if (!std::holds_alternative<MoaMmSymbol>(argsPointer->labelSymbolVariant)) {
 					Throw(kMoaErr_InternalError);
 				}
 
-				const MoaMmSymbol &LABEL_SYMBOL = std::get<MoaMmSymbol>(argsPointer->labelSymbolVariant);
+				MoaMmSymbol labelSymbol = std::get<MoaMmSymbol>(argsPointer->labelSymbolVariant);
 
-				if (LABEL_SYMBOL == pObj->symbols.Sound) {
+				if (labelSymbol == pObj->symbols.Sound) {
 					// test if its bit depth is 0 bits
 					// this prevents a crash in IML when converting sounds created with _movie.newMember(#sound)
 					// and replicates the Director 6.5 (before the crash was introduced) behaviour
@@ -1926,8 +1926,8 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentFormat(Args* argsPointer, Media::D
 				// the format takes ownership (and knows the native call to release this data)
 				ThrowErr(
 					pObj->drUtilsInterfacePointer->NewMediaInfo(
-						LABEL_SYMBOL,
-						FORMAT_SYMBOL,
+						labelSymbol,
+						formatSymbol,
 						NULL,
 						kMoaDrMediaOpts_None,
 						NULL,
@@ -1937,7 +1937,7 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentFormat(Args* argsPointer, Media::D
 
 				bool gotMedia = false;
 
-				if (LABEL_SYMBOL == pObj->symbols.Image) {
+				if (labelSymbol == pObj->symbols.Image) {
 					// no point importing a bitmap to another bitmap
 					ThrowErr(drCastMemInterfacePointer->GetProp(pObj->symbols.Type, &typeValue));
 
@@ -1989,7 +1989,7 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentFormat(Args* argsPointer, Media::D
 				}
 
 				content.formatPointer = Formats::FormatFactory::createMediaInfoFormat(
-					LABEL_INFO.labelType,
+					labelInfo.labelType,
 					mediaInfo.mediaData,
 					pObj->productVersionMajor,
 					pObj->handleInterfacePointer,
@@ -2000,12 +2000,12 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentFormat(Args* argsPointer, Media::D
 				if (!content.formatPointer) {
 					ThrowErr(releaseMedia(mediaInfo, pObj->drUtilsInterfacePointer));
 				}
-			} else if (LABEL_INFO.labelType & Label::TYPE_MEMBER_PROPERTY) {
+			} else if (labelInfo.labelType & Label::TYPE_MEMBER_PROPERTY) {
 				// needs to be GetPropA for the benefit of Text Agents, which don't expect wide strings
 				// (this is fine, it'll return out UTF-8 in Director 11 where Unicode is supported)
-				err = drCastMemInterfacePointer->GetPropA(FORMAT_SYMBOL, &memberPropertyValue);
+				err = drCastMemInterfacePointer->GetPropA(formatSymbol, &memberPropertyValue);
 
-				if (FORMAT_SYMBOL == pObj->symbols.Picture
+				if (formatSymbol == pObj->symbols.Picture
 					&& err != kMoaErr_NoErr) {
 					ThrowErr(LoadMember(drCastMemInterfacePointer));
 
@@ -2024,14 +2024,14 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentFormat(Args* argsPointer, Media::D
 
 				ThrowErr(err);
 
-				if (LABEL_INFO.labelType & Label::TYPE_MEMBER_PROPERTY_PICTURE) {
+				if (labelInfo.labelType & Label::TYPE_MEMBER_PROPERTY_PICTURE) {
 					if (!pObj->drMediaValueInterfacePointer) {
 						// pre-Director 7
 						Throw(kMoaErr_BadClass);
 					}
 
 					content.formatPointer = Formats::FormatFactory::createMemberPropertyFormat(
-						LABEL_INFO.labelType,
+						labelInfo.labelType,
 						&memberPropertyValue,
 						pObj->productVersionMajor,
 						pObj->handleInterfacePointer,
@@ -2041,7 +2041,7 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentFormat(Args* argsPointer, Media::D
 					);
 				} else {
 					content.formatPointer = Formats::FormatFactory::createMemberPropertyFormat(
-						LABEL_INFO.labelType,
+						labelInfo.labelType,
 						&memberPropertyValue,
 						pObj->productVersionMajor,
 						pObj->mmValueInterfacePointer,
@@ -2153,9 +2153,9 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentDataObject(Args* argsPointer, Medi
 			Throw(kMoaErr_InternalError);
 		}
 
-		const Label::Info &LABEL_INFO = directorMediaPointer->labelInfoMapIterator->second;
+		const Label::Info &labelInfo = directorMediaPointer->labelInfoMapIterator->second;
 
-		if (LABEL_INFO.agentFormatName.empty()) {
+		if (labelInfo.agentFormatName.empty()) {
 			Throw(kMoaMixErr_BadDataSourceType);
 		}
 
@@ -2175,7 +2175,7 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentDataObject(Args* argsPointer, Medi
 
 		// format etc.
 		MixFormat mixFormat = 0;
-		ThrowErr(pObj->formatServicesInterfacePointer->RegisterFormat(LABEL_INFO.agentFormatName.c_str(), &mixFormat));
+		ThrowErr(pObj->formatServicesInterfacePointer->RegisterFormat(labelInfo.agentFormatName.c_str(), &mixFormat));
 
 		SetMoaFormatEtc(&formatEtc, mixFormat, kMoaStorageMediumType_HGlobal);
 
@@ -2466,11 +2466,11 @@ MoaError TStdXtra_IMoaMmXScript::HandleDuplicateSpec(
 		Throw(kMoaErr_InternalError);
 	}
 
-	const Options &OPTIONS = argsPointer->optionsOptional.value();
+	const Options &options = argsPointer->optionsOptional.value();
 
 	MoaError err = kMoaErr_NoErr;
 
-	if (OPTIONS.incrementFilename) {
+	if (options.incrementFilename) {
 		// some time passes between incrementing the filename and
 		// creating the file, so to prevent a filesystem race issue we
 		// retry more than once
@@ -2509,7 +2509,7 @@ MoaError TStdXtra_IMoaMmXScript::HandleDuplicateSpec(
 		Throw(err);
 	}
 
-	if (OPTIONS.replaceExistingFile) {
+	if (options.replaceExistingFile) {
 		ThrowErr(CreateContentFormat(argsPointer, directorMediaPointer));
 
 		if (!directorMediaPointer->contentPointer) {
@@ -2568,7 +2568,7 @@ MoaError TStdXtra_IMoaMmXScript::HandleDefaultCreateFileError(
 		Throw(kMoaErr_InternalError);
 	}
 
-	if (!argsPointer->pathInfoOptional.value().getPath(path, content.formatPointer->PATH_RELATIVE)) {
+	if (!argsPointer->pathInfoOptional.value().getPath(path, content.formatPointer->pathRelative)) {
 		Throw(kMoaErr_BadParam);
 	}
 
@@ -2682,7 +2682,7 @@ MoaError TStdXtra_IMoaMmXScript::WriteFile(Args* argsPointer, Media::DirectorMed
 			Throw(kMoaErr_InternalError);
 		}
 
-		const Agent::Info::WRITER_VECTOR &WRITER_VECTOR = directorMediaPointer->agentInfoOptional.value().writerVector;
+		const Agent::Info::WRITER_VECTOR &writerVector = directorMediaPointer->agentInfoOptional.value().writerVector;
 
 		if (!argsPointer->optionsOptional.has_value()) {
 			Throw(kMoaErr_InternalError);
@@ -2718,7 +2718,7 @@ MoaError TStdXtra_IMoaMmXScript::WriteFile(Args* argsPointer, Media::DirectorMed
 
 		MoaLong size = 0;
 
-		for (writerVectorIterator = WRITER_VECTOR.begin(); writerVectorIterator != WRITER_VECTOR.end(); writerVectorIterator++) {
+		for (writerVectorIterator = writerVector.begin(); writerVectorIterator != writerVector.end(); writerVectorIterator++) {
 			if (options.writerClassID != IID_NULL
 			&& options.writerClassID != writerVectorIterator->classID) {
 				continue;
@@ -2746,7 +2746,7 @@ MoaError TStdXtra_IMoaMmXScript::WriteFile(Args* argsPointer, Media::DirectorMed
 
 		ThrowErr(err);
 
-		if (writerVectorIterator != WRITER_VECTOR.end()) {
+		if (writerVectorIterator != writerVector.end()) {
 			options.writerClassID = writerVectorIterator->classID;
 		}
 
@@ -3220,11 +3220,11 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultDirname(Args* argsPointer) {
 			Throw(kMoaErr_InternalError);
 		}
 
-		const Options &OPTIONS = argsPointer->optionsOptional.value();
+		const Options &options = argsPointer->optionsOptional.value();
 
-		const MoaMmSymbol &LOCATION_SYMBOL = OPTIONS.locationSymbol;
+		MoaMmSymbol locationSymbol = options.locationSymbol;
 
-		if (LOCATION_SYMBOL == pObj->symbols.Current) {
+		if (locationSymbol == pObj->symbols.Current) {
 			pathInfo.setDirnameOptional(
 				FILESYSTEM_DIRECTOR_STRING(
 					(
@@ -3265,13 +3265,13 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultDirname(Args* argsPointer) {
 			// http://forums.ivanti.com/s/article/Environment-Manager-Engineering-Setting-CreateSpecialPaths?language=en_US
 			int csidl = CSIDL_FLAG_DONT_VERIFY;
 
-			if (LOCATION_SYMBOL == pObj->symbols.Documents) {
+			if (locationSymbol == pObj->symbols.Documents) {
 				csidl |= CSIDL_PERSONAL;
-			} else if (LOCATION_SYMBOL == pObj->symbols.Pictures) {
+			} else if (locationSymbol == pObj->symbols.Pictures) {
 				csidl |= CSIDL_MYPICTURES;
-			} else if (LOCATION_SYMBOL == pObj->symbols.Music) {
+			} else if (locationSymbol == pObj->symbols.Music) {
 				csidl |= CSIDL_MYMUSIC;
-			} else if (LOCATION_SYMBOL == pObj->symbols.Videos) {
+			} else if (locationSymbol == pObj->symbols.Videos) {
 				csidl |= CSIDL_MYVIDEO;
 			} else {
 				Throw(kMoaErr_BadParam);
@@ -3346,7 +3346,7 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultExtension(Args* argsPointer, M
 			Throw(kMoaErr_InternalError);
 		}
 
-		const Options &OPTIONS = argsPointer->optionsOptional.value();
+		const Options &options = argsPointer->optionsOptional.value();
 
 		// the agent can change after this, based on the extension, if the agent options are set
 		if (argsPointer->agentStringOptional.value_or("").empty()) {
@@ -3356,33 +3356,33 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultExtension(Args* argsPointer, M
 				Throw(kMoaErr_InternalError);
 			}
 
-			const Label::Info &LABEL_INFO = directorMediaPointer->labelInfoMapIterator->second;
+			const Label::Info &labelInfo = directorMediaPointer->labelInfoMapIterator->second;
 
 			// this being empty signals to use Xtra Asset Info instead
-			if (LABEL_INFO.pathExtensions.empty()) {
+			if (labelInfo.pathExtensions.empty()) {
 				ThrowErr(FindXtraAssetInfo(argsPointer, directorMediaPointer));
 
 				if (!directorMediaPointer->assetInfoOptional.has_value()) {
 					Throw(kMoaErr_InternalError);
 				}
 
-				const Asset::Info &ASSET_INFO = directorMediaPointer->assetInfoOptional.value();
+				const Asset::Info &assetInfo = directorMediaPointer->assetInfoOptional.value();
 
-				if (ASSET_INFO.pathExtensions.empty()) {
+				if (assetInfo.pathExtensions.empty()) {
 					pathInfo.setExtensionOptional("");
 				} else {
-					if (OPTIONS.alternatePathExtension >= ASSET_INFO.pathExtensions.size()) {
+					if (options.alternatePathExtension >= assetInfo.pathExtensions.size()) {
 						Throw(kMoaMmErr_ArgOutOfRange);
 					}
 
-					pathInfo.setExtensionOptional(ASSET_INFO.pathExtensions[OPTIONS.alternatePathExtension]);
+					pathInfo.setExtensionOptional(assetInfo.pathExtensions[options.alternatePathExtension]);
 				}
 			} else {
-				if (OPTIONS.alternatePathExtension >= LABEL_INFO.pathExtensions.size()) {
+				if (options.alternatePathExtension >= labelInfo.pathExtensions.size()) {
 					Throw(kMoaMmErr_ArgOutOfRange);
 				}
 
-				pathInfo.setExtensionOptional(LABEL_INFO.pathExtensions[OPTIONS.alternatePathExtension]);
+				pathInfo.setExtensionOptional(labelInfo.pathExtensions[options.alternatePathExtension]);
 			}
 		} else {
 			ThrowErr(FindAgentInfo(argsPointer, directorMediaPointer));
@@ -3391,16 +3391,16 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultExtension(Args* argsPointer, M
 				Throw(kMoaErr_InternalError);
 			}
 
-			const Agent::Info &AGENT_INFO = directorMediaPointer->agentInfoOptional.value();
+			const Agent::Info &agentInfo = directorMediaPointer->agentInfoOptional.value();
 
-			if (AGENT_INFO.pathExtensions.empty()) {
+			if (agentInfo.pathExtensions.empty()) {
 				pathInfo.setExtensionOptional("");
 			} else {
-				if (OPTIONS.alternatePathExtension >= AGENT_INFO.pathExtensions.size()) {
+				if (options.alternatePathExtension >= agentInfo.pathExtensions.size()) {
 					Throw(kMoaMmErr_ArgOutOfRange);
 				}
 
-				pathInfo.setExtensionOptional(AGENT_INFO.pathExtensions[OPTIONS.alternatePathExtension]);
+				pathInfo.setExtensionOptional(agentInfo.pathExtensions[options.alternatePathExtension]);
 			}
 		}
 	}
@@ -3674,11 +3674,11 @@ MoaError TStdXtra_IMoaMmXScript::GetArgLabelDefault(Args* argsPointer, Media::Di
 					Throw(kMoaErr_InternalError);
 				}
 
-				const Label::Info &LABEL_INFO = directorMediaPointer->labelInfoMapIterator->second;
-				const std::string &EXTENSION = extensionOptional.value();
+				const Label::Info &labelInfo = directorMediaPointer->labelInfoMapIterator->second;
+				const std::string &extension = extensionOptional.value();
 
 				// consider Xtra Media extensions too
-				if (LABEL_INFO.pathExtensions.empty()) {
+				if (labelInfo.pathExtensions.empty()) {
 					err = FindXtraAssetInfo(argsPointer, directorMediaPointer);
 
 					if (err != kMoaErr_NoErr) {
@@ -3689,14 +3689,14 @@ MoaError TStdXtra_IMoaMmXScript::GetArgLabelDefault(Args* argsPointer, Media::Di
 						Throw(kMoaErr_InternalError);
 					}
 
-					const Asset::Info &ASSET_INFO = directorMediaPointer->assetInfoOptional.value();
+					const Asset::Info &assetInfo = directorMediaPointer->assetInfoOptional.value();
 
-					if ((ASSET_INFO.pathExtensions.empty() && EXTENSION.empty())
-						|| ASSET_INFO.pathExtensions.find(EXTENSION)) {
+					if ((assetInfo.pathExtensions.empty() && extension.empty())
+						|| assetInfo.pathExtensions.find(extension)) {
 						break;
 					}
 				} else {
-					if (LABEL_INFO.pathExtensions.find(EXTENSION)) {
+					if (labelInfo.pathExtensions.find(extension)) {
 						break;
 					}
 				}
@@ -3880,20 +3880,20 @@ MoaError TStdXtra_IMoaMmXScript::GetArgAgentDefault(Args* argsPointer, Media::Di
 				Throw(kMoaErr_InternalError);
 			}
 
-			const Agent::Info::MAP &AGENT_INFO_MAP = directorMediaPointer->agentInfoMapOptional.value();
-			const std::string &EXTENSION = extensionOptional.value();
+			const Agent::Info::MAP &agentInfoMap = directorMediaPointer->agentInfoMapOptional.value();
+			const std::string &extension = extensionOptional.value();
 
-			for (agentInfoMapIterator = AGENT_INFO_MAP.begin(); agentInfoMapIterator != AGENT_INFO_MAP.end(); agentInfoMapIterator++) {
-				const Path::EXTENSION_MAPPED_VECTOR &PATH_EXTENSIONS = agentInfoMapIterator->second.pathExtensions;
+			for (agentInfoMapIterator = agentInfoMap.begin(); agentInfoMapIterator != agentInfoMap.end(); agentInfoMapIterator++) {
+				const Path::EXTENSION_MAPPED_VECTOR &pathExtensions = agentInfoMapIterator->second.pathExtensions;
 
-				if ((PATH_EXTENSIONS.empty() && EXTENSION.empty())
-					|| PATH_EXTENSIONS.find(EXTENSION)) {
+				if ((pathExtensions.empty() && extension.empty())
+					|| pathExtensions.find(extension)) {
 					argsPointer->agentStringOptional = agentInfoMapIterator->first;
 					break;
 				}
 			}
 
-			if (agentInfoMapIterator == AGENT_INFO_MAP.end()) {
+			if (agentInfoMapIterator == agentInfoMap.end()) {
 				// NEVER set the agent string to an empty string here in GetArgAgentDefault
 				// this method only cares about the current label
 				// if the label changes later, setting the agent in advance will be wrong
@@ -4432,12 +4432,12 @@ MoaError TStdXtra_IMoaMmXScript::GetLabelMappedVector(Args* argsPointer, Media::
 					labelMappedVector = { scriptSyntaxSymbol };
 				}
 			} else {
-				const TypeLabel::MAP &TYPE_LABEL_MAP = pObj->typeLabelsPointer->get();
+				const TypeLabel::MAP &typeLabelMap = pObj->typeLabelsPointer->get();
 
-				foundTypeLabel = TYPE_LABEL_MAP.find(typeSymbol);
+				foundTypeLabel = typeLabelMap.find(typeSymbol);
 
 				// otherwise get the label mapped vector for this type
-				if (foundTypeLabel == TYPE_LABEL_MAP.end()) {
+				if (foundTypeLabel == typeLabelMap.end()) {
 					labelMappedVector = {};
 				} else {
 					labelMappedVector = foundTypeLabel->second;
@@ -4481,9 +4481,9 @@ MoaError TStdXtra_IMoaMmXScript::GetLabelMappedVector(Args* argsPointer, Media::
 						Throw(kMoaErr_InternalError);
 					}
 
-					const Label::Info &LABEL_INFO = getLabelMappedVectorDirectorMedia.labelInfoMapIterator->second;
+					const Label::Info &labelInfo = getLabelMappedVectorDirectorMedia.labelInfoMapIterator->second;
 
-					if (LABEL_INFO.labelType & Label::TYPE_XTRA_MEDIA) {
+					if (labelInfo.labelType & Label::TYPE_XTRA_MEDIA) {
 						//&& !mmXAssetInterfacePointer) {
 						labelMappedVector.eraseIterator(labelMappedVectorIterator);
 					}
@@ -4523,13 +4523,13 @@ MoaError TStdXtra_IMoaMmXScript::GetLabelAgentInfoMap(Args* argsPointer, Media::
 			Throw(kMoaErr_InternalError);
 		}
 
-		const MoaMmSymbol &LABEL_SYMBOL = std::get<MoaMmSymbol>(argsPointer->labelSymbolVariant);
+		MoaMmSymbol labelSymbol = std::get<MoaMmSymbol>(argsPointer->labelSymbolVariant);
 
 		// so that we have agentMoaIDsHash
 		ThrowErr(GetAgentHiddenReaderSet(directorMediaPointer));
 
 		if (directorMediaPointer->agentMoaIDsHash == pObj->agentMoaIDsHash) {
-			labelAgentInfoMapIterator = pObj->labelAgentInfoMapPointer->find(LABEL_SYMBOL);
+			labelAgentInfoMapIterator = pObj->labelAgentInfoMapPointer->find(labelSymbol);
 		} else {
 			*pObj->labelAgentInfoMapPointer = {};
 			pObj->agentMoaIDsHash = directorMediaPointer->agentMoaIDsHash;
@@ -4552,7 +4552,7 @@ MoaError TStdXtra_IMoaMmXScript::GetLabelAgentInfoMap(Args* argsPointer, Media::
 				directorMediaPointer->agentInfoMapOptional.emplace();
 			}
 
-			(*pObj->labelAgentInfoMapPointer)[LABEL_SYMBOL] = directorMediaPointer->agentInfoMapOptional.value();
+			(*pObj->labelAgentInfoMapPointer)[labelSymbol] = directorMediaPointer->agentInfoMapOptional.value();
 		} else {
 			directorMediaPointer->agentInfoMapOptional = labelAgentInfoMapIterator->second;
 		}

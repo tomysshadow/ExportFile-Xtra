@@ -20,13 +20,13 @@ namespace Path {
 		// in practice, the MP4 Audio agent includes one anyway so we must handle it
 		while (std::regex_search(filterPattern, matches, FILTER_PATTERN_EXTENSIONS)
 			&& matches.size() > 1) {
-			const std::string &MATCH = matches[1];
+			const std::string &match = matches[1];
 
 			// don't add invalid names
 			// for example, don't add *.* if present in the filter pattern
 			// (checked outside of the regex so we still continue to the next extension)
-			if (testValidName(MATCH)) {
-				extensions.push(MATCH);
+			if (testValidName(match)) {
+				extensions.push(match);
 			}
 
 			filterPattern = matches.suffix();
@@ -189,9 +189,9 @@ namespace Path {
 			return;
 		}
 
-		const std::string &FILENAME = filenameOptional.value();
+		const std::string &filename = filenameOptional.value();
 
-		if (!testValidName(FILENAME)) {
+		if (!testValidName(filename)) {
 			throw Invalid();
 		}
 
@@ -201,12 +201,12 @@ namespace Path {
 		// if the basename has a value, then
 		// check for a mismatch
 		if (basenameOptionalHasValue) {
-			const std::string &BASENAME = basenameOptional.value();
+			const std::string &basename = basenameOptional.value();
 
 			if (empty) {
 				// if the extension is empty but the basename has a period in it
 				// then after the period should be interpreted as the extension
-				if (!basenameEquals(toBasename(BASENAME), FILENAME)) {
+				if (!basenameEquals(toBasename(basename), filename)) {
 					// potentially: extension empty, basename does not have extension, but filename does
 					// in this case, we should not call toBasename or toExtension on the basename and 
 					// should treat the basename and extension like normal
@@ -216,7 +216,7 @@ namespace Path {
 			}
 
 			if (!empty) {
-				if (!basenameEquals(BASENAME, FILENAME)) {
+				if (!basenameEquals(basename, filename)) {
 					// no dice, mismatch
 					throw Invalid();
 				}
@@ -239,9 +239,9 @@ namespace Path {
 					)
 
 					: extensionOptional.value(),
-					FILENAME
-					)
-				) {
+					filename
+				)
+			) {
 				throw Invalid();
 			}
 		}

@@ -77,21 +77,21 @@ MoaError BitmapImporter::getSymbols() {
 }
 
 MoaError BitmapImporter::getFormatSymbol(const Label::Labels::Info &labelsInfo) {
-	const Label::Info::MAP &LABEL_INFO_MAP = labelsInfo.get();
+	const Label::Info::MAP &labelInfoMap = labelsInfo.get();
 
-	Label::Info::MAP::const_iterator foundLabelInfo = LABEL_INFO_MAP.find(symbols.Image);
+	Label::Info::MAP::const_iterator foundLabelInfo = labelInfoMap.find(symbols.Image);
 
-	if (foundLabelInfo == LABEL_INFO_MAP.cend()) {
+	if (foundLabelInfo == labelInfoMap.cend()) {
 		return kMoaDrErr_LabelNotFound;
 	}
 
-	const Label::Info &LABEL_INFO = foundLabelInfo->second;
+	const Label::Info &labelInfo = foundLabelInfo->second;
 
-	if (!std::holds_alternative<MoaMmSymbol>(LABEL_INFO.labelFormat)) {
+	if (!std::holds_alternative<MoaMmSymbol>(labelInfo.labelFormat)) {
 		return kMoaDrErr_MediaFormatNotSupported;
 	}
 
-	formatSymbol = std::get<MoaMmSymbol>(LABEL_INFO.labelFormat);
+	formatSymbol = std::get<MoaMmSymbol>(labelInfo.labelFormat);
 	return kMoaErr_NoErr;
 }
 
