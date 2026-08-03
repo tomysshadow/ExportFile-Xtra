@@ -3,16 +3,14 @@
 MoaError getSymbol(SYMBOL_VARIANT &symbolVariant, PIMoaMmValue mmValueInterfacePointer) {
 	RETURN_NULL(mmValueInterfacePointer);
 
-	if (std::holds_alternative<std::string>(symbolVariant)) {
-		const std::string &str = std::get<std::string>(symbolVariant);
-
+	if (auto str = std::get_if<std::string>(&symbolVariant)) {
 		// IMPORTANT: if empty string, leave it! Don't set it to zero!
-		if (str.empty()) {
+		if (str->empty()) {
 			return kMoaErr_NoErr;
 		}
 
 		MoaMmSymbol symbol = 0;
-		RETURN_ERR(mmValueInterfacePointer->StringToSymbol(str.c_str(), &symbol));
+		RETURN_ERR(mmValueInterfacePointer->StringToSymbol(str->c_str(), &symbol));
 		symbolVariant = symbol;
 		return kMoaErr_NoErr;
 	}

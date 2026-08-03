@@ -308,13 +308,12 @@ STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_RegistryEntryDict_TStdXtra
 		Throw(kMoaStatus_False);
 	}
 
-	if (std::holds_alternative<Registry::Entry>(registryEntryVariant)) {
-		const Registry::Entry &registryEntry = std::get<Registry::Entry>(registryEntryVariant);
-		ThrowNull(registryEntry.classIDPointer);
-		ThrowNull(registryEntry.interfaceIDPointer);
+	if (auto registryEntry = std::get_if<Registry::Entry>(&registryEntryVariant)) {
+		ThrowNull(registryEntry->classIDPointer);
+		ThrowNull(registryEntry->interfaceIDPointer);
 
-		MoaLong equalID = MoaEqualID(classIDPointer, registryEntry.classIDPointer)
-			&& MoaEqualID(interfaceIDPointer, registryEntry.interfaceIDPointer);
+		MoaLong equalID = MoaEqualID(classIDPointer, registryEntry->classIDPointer)
+			&& MoaEqualID(interfaceIDPointer, registryEntry->interfaceIDPointer);
 
 		if (equalID) {
 			registryEntryVariant = (PIMoaRegistryEntryDict)NULL;
@@ -334,8 +333,8 @@ STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_RegistryEntryDict_TStdXtra
 		if (refCon) {
 			Registry::Entry::VARIANT &registryEntryVariant = *(Registry::Entry::VARIANT*)refCon;
 
-			if (std::holds_alternative<PIMoaRegistryEntryDict>(registryEntryVariant)) {
-				releaseInterface((PPMoaVoid)&std::get<PIMoaRegistryEntryDict>(registryEntryVariant));
+			if (auto registryEntry = std::get_if<PIMoaRegistryEntryDict>(&registryEntryVariant)) {
+				releaseInterface((PPMoaVoid)&*registryEntry);
 			}
 		}
 	}
@@ -707,8 +706,8 @@ STDMETHODIMP_(void) MoaDestroy_TStdXtra(TStdXtra* This) {
 	if (This->registryEntryVariantPointer) {
 		Registry::Entry::VARIANT &registryEntryVariant = *This->registryEntryVariantPointer;
 
-		if (std::holds_alternative<PIMoaRegistryEntryDict>(registryEntryVariant)) {
-			releaseInterface((PPMoaVoid)&std::get<PIMoaRegistryEntryDict>(registryEntryVariant));
+		if (auto registryEntry = std::get_if<PIMoaRegistryEntryDict>(&registryEntryVariant)) {
+			releaseInterface((PPMoaVoid)&*registryEntry);
 		}
 
 		delete This->registryEntryVariantPointer;
@@ -1394,9 +1393,9 @@ MoaError TStdXtra_IMoaMmXScript::GetExportFileIconPropList(PMoaDrCallInfo callPt
 	{
 		const Asset::Info &assetInfo = directorMedia.assetInfoOptional.value();
 
-		if (std::holds_alternative<MoaMmSymbol>(assetInfo.subType)) {
+		if (auto subType = std::get_if<MoaMmSymbol>(&assetInfo.subType)) {
 			// for behaviour/movie/parent scripts, different icons for same type
-			ThrowErr(drCastMemInterfacePointer->GetProp(std::get<MoaMmSymbol>(assetInfo.subType), &subTypeValue));
+			ThrowErr(drCastMemInterfacePointer->GetProp(*subType, &subTypeValue));
 
 			MoaMmSymbol subTypeSymbol = 0;
 			ThrowErr(pObj->mmValueInterfacePointer->ValueToSymbol(&subTypeValue, &subTypeSymbol));
@@ -1436,10 +1435,10 @@ MoaError TStdXtra_IMoaMmXScript::GetExportFileIconPropList(PMoaDrCallInfo callPt
 		}
 	}
 
-	if (std::holds_alternative<IconValues::POINTER>(foundIconValues->second)) {
+	if (auto iconValuesPointer = std::get_if<IconValues::POINTER>(&foundIconValues->second)) {
 		// intentional copy of icon values for Lingo so scripts can't modify a direct reference to our cached icons occurs HERE
 		// (so if you call getExportFileIconPropList once, modify the image, and call it again, you won't get the modified image)
-		IconValues iconValues = *std::get<IconValues::POINTER>(foundIconValues->second); // removing this line causes the same image objects to be returned every time
+		IconValues iconValues = **iconValuesPointer; // removing this line causes the same image objects to be returned every time
 		ThrowErr(pObj->exportFileValueConverterPointer->toValue(iconValues.toIconValueMap(), callPtr->resultValue, drCastMemInterfacePointer));
 	} else {
 		// Mix Services missing
