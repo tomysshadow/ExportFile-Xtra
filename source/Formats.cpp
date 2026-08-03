@@ -1203,7 +1203,7 @@ namespace Formats {
 
 		memset(data, 0, PICT_HEADER_SIZE);
 
-		if (memcpy_s((void*)((const char*)data + PICT_HEADER_SIZE), size - PICT_HEADER_SIZE, memberPropertyHandleLock, (rsize_t)memberPropertyHandleSize)) {
+		if (memcpy_s((void*)((char*)data + PICT_HEADER_SIZE), size - PICT_HEADER_SIZE, memberPropertyHandleLock, (rsize_t)memberPropertyHandleSize)) {
 			return kMoaErr_OutOfMem;
 		}
 
