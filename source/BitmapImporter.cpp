@@ -68,11 +68,14 @@ void BitmapImporter::move(BitmapImporter &bitmapImporter) {
 }
 
 MoaError BitmapImporter::getSymbols() {
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("Bitmap", &symbols.Bitmap));
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("Field", &symbols.Field));
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("Image", &symbols.Image));
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("Picture", &symbols.Picture));
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("Type", &symbols.Type));
+	PIMoaMmValue p = mmValueInterfacePointer;
+	auto &s = symbols;
+
+	RETURN_ERR(p->StringToSymbol("Bitmap", &s.Bitmap));
+	RETURN_ERR(p->StringToSymbol("Field", &s.Field));
+	RETURN_ERR(p->StringToSymbol("Image", &s.Image));
+	RETURN_ERR(p->StringToSymbol("Picture", &s.Picture));
+	RETURN_ERR(p->StringToSymbol("Type", &s.Type));
 	return kMoaErr_NoErr;
 }
 

@@ -11,7 +11,7 @@ class IconValues {
 
 	typedef std::shared_ptr<IconValues> POINTER;
 	typedef std::variant<MoaLong, POINTER> VARIANT;
-	typedef std::map<SYMBOL_VARIANT, VARIANT> MAP;
+	typedef std::map<SYMBOL_VARIANT, VARIANT, std::less<SYMBOL_VARIANT>> MAP;
 
 	private:
 	void destroy();

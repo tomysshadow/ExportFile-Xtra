@@ -9,7 +9,7 @@ class ValueConverter {
 	void duplicate(const ValueConverter &valueConverter);
 
 	protected:
-	typedef std::map<const PMoaMmValue, PIMoaDict> PROP_LIST_DICT_VALUE_MAP;
+	typedef std::map<const PMoaMmValue, PIMoaDict, std::less<const PMoaMmValue>> PROP_LIST_DICT_VALUE_MAP;
 	typedef std::unordered_map<PIMoaDict, PMoaMmValue> DICT_VALUE_PROP_LIST_MAP;
 
 	PIMoaDrPlayer drPlayerInterfacePointer = NULL;

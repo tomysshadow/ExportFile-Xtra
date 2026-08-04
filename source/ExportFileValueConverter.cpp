@@ -1,33 +1,36 @@
 #include "ExportFileValueConverter.h"
 
 MoaError ExportFileValueConverter::getSymbols() {
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("Agent", &symbols.Agent));
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("AgentOptions", &symbols.AgentOptions));
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("AlternatePathExtension", &symbols.AlternatePathExtension));
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("Basename", &symbols.Basename));
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("BW", &symbols.BW));
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("Color", &symbols.Color));
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("Current", &symbols.Current));
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("Dirname", &symbols.Dirname));
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("Filename", &symbols.Filename));
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("Extension", &symbols.Extension));
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("PathExtensions", &symbols.PathExtensions));
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("Hidden", &symbols.Hidden));
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("IncrementFilename", &symbols.IncrementFilename));
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("Interface", &symbols.Interface));
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("Label", &symbols.Label));
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("Linked", &symbols.Linked));
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("Location", &symbols.Location));
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("Mask", &symbols.Mask));
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("Member", &symbols.Member));
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("Name", &symbols.Name));
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("NewFolder", &symbols.NewFolder));
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("Options", &symbols.Options));
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("Path", &symbols.Path));
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("PathInfo", &symbols.PathInfo));
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("ReplaceExistingFile", &symbols.ReplaceExistingFile));
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("WriterClassID", &symbols.WriterClassID));
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("WriterClassIDs", &symbols.WriterClassIDs));
+	PIMoaMmValue p = mmValueInterfacePointer;
+	auto &s = symbols;
+
+	RETURN_ERR(p->StringToSymbol("Agent", &s.Agent));
+	RETURN_ERR(p->StringToSymbol("AgentOptions", &s.AgentOptions));
+	RETURN_ERR(p->StringToSymbol("AlternatePathExtension", &s.AlternatePathExtension));
+	RETURN_ERR(p->StringToSymbol("Basename", &s.Basename));
+	RETURN_ERR(p->StringToSymbol("BW", &s.BW));
+	RETURN_ERR(p->StringToSymbol("Color", &s.Color));
+	RETURN_ERR(p->StringToSymbol("Current", &s.Current));
+	RETURN_ERR(p->StringToSymbol("Dirname", &s.Dirname));
+	RETURN_ERR(p->StringToSymbol("Filename", &s.Filename));
+	RETURN_ERR(p->StringToSymbol("Extension", &s.Extension));
+	RETURN_ERR(p->StringToSymbol("PathExtensions", &s.PathExtensions));
+	RETURN_ERR(p->StringToSymbol("Hidden", &s.Hidden));
+	RETURN_ERR(p->StringToSymbol("IncrementFilename", &s.IncrementFilename));
+	RETURN_ERR(p->StringToSymbol("Interface", &s.Interface));
+	RETURN_ERR(p->StringToSymbol("Label", &s.Label));
+	RETURN_ERR(p->StringToSymbol("Linked", &s.Linked));
+	RETURN_ERR(p->StringToSymbol("Location", &s.Location));
+	RETURN_ERR(p->StringToSymbol("Mask", &s.Mask));
+	RETURN_ERR(p->StringToSymbol("Member", &s.Member));
+	RETURN_ERR(p->StringToSymbol("Name", &s.Name));
+	RETURN_ERR(p->StringToSymbol("NewFolder", &s.NewFolder));
+	RETURN_ERR(p->StringToSymbol("Options", &s.Options));
+	RETURN_ERR(p->StringToSymbol("Path", &s.Path));
+	RETURN_ERR(p->StringToSymbol("PathInfo", &s.PathInfo));
+	RETURN_ERR(p->StringToSymbol("ReplaceExistingFile", &s.ReplaceExistingFile));
+	RETURN_ERR(p->StringToSymbol("WriterClassID", &s.WriterClassID));
+	RETURN_ERR(p->StringToSymbol("WriterClassIDs", &s.WriterClassIDs));
 	return kMoaErr_NoErr;
 }
 

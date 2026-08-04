@@ -20,7 +20,7 @@ namespace Asset {
 	*/
 
 	struct Info {
-		typedef std::map<SYMBOL_VARIANT, Info> MAP;
+		typedef std::map<SYMBOL_VARIANT, Info, std::less<SYMBOL_VARIANT>> MAP;
 
 		//MoaChar type[kMoaMmMaxXtraDisplayName] = "";
 

@@ -23,10 +23,13 @@ void ValueConverter::duplicate(const ValueConverter &valueConverter) {
 }
 
 MoaError ValueConverter::getSymbols() {
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("Hi", &symbols.Hi));
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("Lo", &symbols.Lo));
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("Member", &symbols.Member));
-	RETURN_ERR(mmValueInterfacePointer->StringToSymbol("String", &symbols.String));
+	PIMoaMmValue p = mmValueInterfacePointer;
+	auto &s = symbols;
+
+	RETURN_ERR(p->StringToSymbol("Hi", &s.Hi));
+	RETURN_ERR(p->StringToSymbol("Lo", &s.Lo));
+	RETURN_ERR(p->StringToSymbol("Member", &s.Member));
+	RETURN_ERR(p->StringToSymbol("String", &s.String));
 	return kMoaErr_NoErr;
 }
 

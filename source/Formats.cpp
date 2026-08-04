@@ -1594,8 +1594,11 @@ namespace Formats {
 	}
 
 	MoaError XtraMediaMixerAsyncFormat::getSymbols() {
-		RETURN_ERR(mmValueInterfacePointer->StringToSymbol("Save", &symbols.Save));
-		RETURN_ERR(mmValueInterfacePointer->StringToSymbol("Stop", &symbols.Stop));
+		PIMoaMmValue p = mmValueInterfacePointer;
+		auto &s = symbols;
+
+		RETURN_ERR(p->StringToSymbol("Save", &s.Save));
+		RETURN_ERR(p->StringToSymbol("Stop", &s.Stop));
 		return kMoaErr_NoErr;
 	}
 

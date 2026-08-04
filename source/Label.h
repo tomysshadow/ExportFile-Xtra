@@ -43,7 +43,7 @@ namespace Label {
 	typedef std::unordered_map<MoaMmSymbol, Agent::Info::MAP> AGENT_INFO_MAP;
 
 	struct Info {
-		typedef std::map<SYMBOL_VARIANT, Info> MAP;
+		typedef std::map<SYMBOL_VARIANT, Info, std::less<SYMBOL_VARIANT>> MAP;
 
 		std::string name = "";
 

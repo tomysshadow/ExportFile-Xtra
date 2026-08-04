@@ -241,7 +241,10 @@ namespace Media {
 	}
 
 	MoaError MixerMedia::Lingo::getSymbols() {
-		RETURN_ERR(mmValueInterfacePointer->StringToSymbol("MixerSaved", &symbols.MixerSaved));
+		PIMoaMmValue p = mmValueInterfacePointer;
+		auto &s = symbols;
+
+		RETURN_ERR(p->StringToSymbol("MixerSaved", &s.MixerSaved));
 		return kMoaErr_NoErr;
 	}
 
