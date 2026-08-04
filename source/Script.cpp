@@ -139,7 +139,9 @@ STDMETHODIMP_(MoaError) GetType_TStdXtra(
 
 	MoaChar type[kMoaMmMaxPropName] = "";
 
-	ThrowErr(registryEntryDictInterfacePointer->Get(kMoaMmDictType_SymbolString, type, kMoaMmMaxPropName, kMoaMmDictKey_SymbolString));
+	ThrowErr(registryEntryDictInterfacePointer->Get(kMoaMmDictType_SymbolString, type,
+		kMoaMmMaxPropName, kMoaMmDictKey_SymbolString));
+	
 	ThrowErr(mmValueInterfacePointer->StringToSymbol(type, typeSymbolPointer));
 
 	moa_catch
@@ -160,24 +162,33 @@ STDMETHODIMP_(MoaError) GetAssetInfoExtensions_TStdXtra(
 	ThrowNull(registryEntriesAssetInfoMapPointer);
 	ThrowNull(registryEntryDictInterfacePointer);
 
-	Registry::AssetInfoMap &registryEntriesAssetInfoMap = *registryEntriesAssetInfoMapPointer;
+	Registry::AssetInfoMap &registryEntriesAssetInfoMap
+		= *registryEntriesAssetInfoMapPointer;
+	
 	ThrowNull(registryEntriesAssetInfoMap.callocInterfacePointer);
 
 	// extensions
 	MoaLong fileExtListSize = 0;
 
-	MoaError err = registryEntryDictInterfacePointer->GetInfo(NULL, &fileExtListSize, kAgentRegKey_FileExts);
+	MoaError err = registryEntryDictInterfacePointer->GetInfo(NULL,
+		&fileExtListSize, kAgentRegKey_FileExts);
 
 	if (err == kMoaErr_NoErr) {
-		fileExtListPointer = registryEntriesAssetInfoMap.callocInterfacePointer->NRAlloc((MoaUlong)fileExtListSize);
+		fileExtListPointer
+			= registryEntriesAssetInfoMap.callocInterfacePointer->NRAlloc((MoaUlong)fileExtListSize);
+		
 		ThrowNull(fileExtListPointer);
 
-		err = registryEntryDictInterfacePointer->Get(kMoaDictType_CString, fileExtListPointer, fileExtListSize, kAgentRegKey_FileExts);
+		err = registryEntryDictInterfacePointer->Get(kMoaDictType_CString,
+			fileExtListPointer, fileExtListSize, kAgentRegKey_FileExts);
 
 		if (err == kMoaErr_NoErr) {
 			// error intentionally not returned here so one Xtra doesn't break it for everyone
 			// instead we just clear the path extensions
-			if (!Path::filterPatternExtensions((PMoaChar)fileExtListPointer, assetInfoPointer->pathExtensions)) {
+			if (!Path::filterPatternExtensions(
+				(PMoaChar)fileExtListPointer,
+				assetInfoPointer->pathExtensions
+			)) {
 				assetInfoPointer->pathExtensions.clear();
 			}
 		}
@@ -187,7 +198,8 @@ STDMETHODIMP_(MoaError) GetAssetInfoExtensions_TStdXtra(
 	moa_catch_end
 
 	if (registryEntriesAssetInfoMapPointer) {
-		freeMemory(fileExtListPointer, registryEntriesAssetInfoMapPointer->callocInterfacePointer);
+		freeMemory(fileExtListPointer,
+			registryEntriesAssetInfoMapPointer->callocInterfacePointer);
 	}
 
 	moa_try_end
@@ -208,7 +220,9 @@ STDMETHODIMP_(MoaError) GetAssetInfoIcon_TStdXtra(
 	ThrowNull(registryEntriesAssetInfoMapPointer);
 	ThrowNull(registryEntryDictInterfacePointer);
 
-	Registry::AssetInfoMap &registryEntriesAssetInfoMap = *registryEntriesAssetInfoMapPointer;
+	Registry::AssetInfoMap &registryEntriesAssetInfoMap
+		= *registryEntriesAssetInfoMapPointer;
+	
 	ThrowNull(registryEntriesAssetInfoMap.bitmapImporterPointer);
 
 	MoaLong iconSize = 0;
@@ -219,7 +233,8 @@ STDMETHODIMP_(MoaError) GetAssetInfoIcon_TStdXtra(
 	// no idea
 	#endif
 	#ifdef WINDOWS
-	GlobalHandleLock<>::GlobalHandle iconGlobalHandle = GlobalAlloc(GMEM_MOVEABLE | GMEM_SHARE, (SIZE_T)iconSize);
+	GlobalHandleLock<>::GlobalHandle iconGlobalHandle
+		= GlobalAlloc(GMEM_MOVEABLE | GMEM_SHARE, (SIZE_T)iconSize);
 	#endif
 
 	ThrowNull(iconGlobalHandle);
@@ -228,13 +243,14 @@ STDMETHODIMP_(MoaError) GetAssetInfoIcon_TStdXtra(
 		GlobalHandleLock<> iconGlobalHandleLock(iconGlobalHandle);
 
 		// NewImageFromStream doesn't allow setting the color depth, so this is done with BitmapImporter instead
-		ThrowErr(registryEntryDictInterfacePointer->Get(dictTypeID, iconGlobalHandleLock.get(), iconSize, keyStringPointer));
+		ThrowErr(registryEntryDictInterfacePointer->Get(dictTypeID, iconGlobalHandleLock.get(),
+			iconSize, keyStringPointer));
 		
 		ThrowErr(registryEntriesAssetInfoMap.bitmapImporterPointer->insertIntoIconValues(
 			iconGlobalHandleLock.getGlobalHandle(),
 			*iconValuesPointer,
-			resourceID)
-		);
+			resourceID
+		));
 	}
 
 	moa_catch
@@ -253,7 +269,9 @@ STDMETHODIMP_(MoaError) GetAssetInfoIcons_TStdXtra(
 	ThrowNull(registryEntriesAssetInfoMapPointer);
 	ThrowNull(registryEntryDictInterfacePointer);
 
-	Registry::AssetInfoMap &registryEntriesAssetInfoMap = *registryEntriesAssetInfoMapPointer;
+	Registry::AssetInfoMap &registryEntriesAssetInfoMap
+		= *registryEntriesAssetInfoMapPointer;
+
 	ThrowNull(registryEntriesAssetInfoMap.mmValueInterfacePointer);
 
 	if (registryEntriesAssetInfoMap.mmImageInterfacePointer) {
@@ -262,7 +280,8 @@ STDMETHODIMP_(MoaError) GetAssetInfoIcons_TStdXtra(
 			registryEntriesAssetInfoMap.mmImageInterfacePointer
 		);
 
-		#define SET_ICON_VALUE(dictTypeID, keyStringPointer, resourceID) (GetAssetInfoIcon_TStdXtra(\
+		#define SET_ICON_VALUE(dictTypeID, keyStringPointer, resourceID) \
+		(GetAssetInfoIcon_TStdXtra(\
 			(dictTypeID),\
 			(keyStringPointer),\
 			iconValuesPointer,\
@@ -271,8 +290,17 @@ STDMETHODIMP_(MoaError) GetAssetInfoIcons_TStdXtra(
 			registryEntryDictInterfacePointer\
 		))
 
-		MoaError err = SET_ICON_VALUE(kMoaMmDictType_ColorIcon, kMoaMmDictKey_ColorIcon, IDB_ASSET_INFO_MAP_ICON_COLOR);
-		MoaError err2 = SET_ICON_VALUE(kMoaMmDictType_BWIcon, kMoaMmDictKey_BWIcon, IDB_ASSET_INFO_MAP_ICON_BW);
+		MoaError err = SET_ICON_VALUE(
+			kMoaMmDictType_ColorIcon,
+			kMoaMmDictKey_ColorIcon,
+			IDB_ASSET_INFO_MAP_ICON_COLOR
+		);
+
+		MoaError err2 = SET_ICON_VALUE(
+			kMoaMmDictType_BWIcon,
+			kMoaMmDictKey_BWIcon,
+			IDB_ASSET_INFO_MAP_ICON_BW
+		);
 
 		// if neither icon value is set, don't add them to the map
 		// this will cause getExportFileIconPropList to fall back to the default Xtra Media icon
@@ -301,7 +329,8 @@ STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_RegistryEntryDict_TStdXtra
 	ThrowNull(interfaceIDPointer);
 	ThrowNull(refCon);
 
-	Registry::Entry::VARIANT &registryEntryVariant = *(Registry::Entry::VARIANT*)refCon;
+	Registry::Entry::VARIANT &registryEntryVariant
+		= *(Registry::Entry::VARIANT*)refCon;
 
 	if (std::holds_alternative<PIMoaRegistryEntryDict>(registryEntryVariant)) {
 		result = true;
@@ -312,12 +341,18 @@ STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_RegistryEntryDict_TStdXtra
 		ThrowNull(registryEntry->classIDPointer);
 		ThrowNull(registryEntry->interfaceIDPointer);
 
-		MoaLong equalID = MoaEqualID(classIDPointer, registryEntry->classIDPointer)
+		MoaLong equalID
+			= MoaEqualID(classIDPointer, registryEntry->classIDPointer)
 			&& MoaEqualID(interfaceIDPointer, registryEntry->interfaceIDPointer);
 
 		if (equalID) {
 			registryEntryVariant = (PIMoaRegistryEntryDict)NULL;
-			setInterface((PPMoaVoid)&std::get<PIMoaRegistryEntryDict>(registryEntryVariant), registryEntryDictInterfacePointer);
+
+			setInterface(
+				(PPMoaVoid)&std::get<PIMoaRegistryEntryDict>(registryEntryVariant),
+				registryEntryDictInterfacePointer
+			);
+
 			result = true;
 			Throw(kMoaStatus_False);
 		}
@@ -331,7 +366,8 @@ STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_RegistryEntryDict_TStdXtra
 	// so we need a redundant result boolean
 	if (!result) {
 		if (refCon) {
-			Registry::Entry::VARIANT &registryEntryVariant = *(Registry::Entry::VARIANT*)refCon;
+			Registry::Entry::VARIANT &registryEntryVariant
+				= *(Registry::Entry::VARIANT*)refCon;
 
 			if (auto registryEntry = std::get_if<PIMoaRegistryEntryDict>(&registryEntryVariant)) {
 				releaseInterface((PPMoaVoid)&*registryEntry);
@@ -355,7 +391,9 @@ STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_ExcludedTypeSymbolSet_TStd
 	ThrowNull(interfaceIDPointer);
 	ThrowNull(refCon);
 
-	Registry::ExcludedTypeSymbolSet &registryEntriesExcludedTypeSymbolSet = *(Registry::ExcludedTypeSymbolSet*)refCon;
+	Registry::ExcludedTypeSymbolSet &registryEntriesExcludedTypeSymbolSet
+		= *(Registry::ExcludedTypeSymbolSet*)refCon;
+
 	ThrowNull(registryEntriesExcludedTypeSymbolSet.mmValueInterfacePointer);
 	ThrowNull(registryEntriesExcludedTypeSymbolSet.excludedTypeSymbolSetPointer);
 
@@ -371,7 +409,8 @@ STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_ExcludedTypeSymbolSet_TStd
 		);
 
 		if (err == kMoaErr_NoErr) {
-			registryEntriesExcludedTypeSymbolSet.excludedTypeSymbolSetPointer->insert(typeSymbol);
+			registryEntriesExcludedTypeSymbolSet.excludedTypeSymbolSetPointer->insert(
+				typeSymbol);
 		}
 	}
 
@@ -400,7 +439,9 @@ STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_AssetMoaIDsHash_TStdXtra(
 	MoaLong equalID = MoaEqualID(interfaceIDPointer, &IID_IMoaMmXAsset);
 
 	if (equalID) {
-		assetMoaIDsHash += moaClassIDHash(*classIDPointer) ^ moaInterfaceIDHash(*interfaceIDPointer);
+		assetMoaIDsHash
+			+= moaClassIDHash(*classIDPointer)
+			^ moaInterfaceIDHash(*interfaceIDPointer);
 	}
 
 	moa_catch
@@ -422,7 +463,9 @@ STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_AssetInfoMap_TStdXtra(
 	ThrowNull(interfaceIDPointer);
 	ThrowNull(refCon);
 
-	Registry::AssetInfoMap &registryEntriesAssetInfoMap = *(Registry::AssetInfoMap*)refCon;
+	Registry::AssetInfoMap &registryEntriesAssetInfoMap
+		= *(Registry::AssetInfoMap*)refCon;
+
 	ThrowNull(registryEntriesAssetInfoMap.mmValueInterfacePointer);
 	ThrowNull(registryEntriesAssetInfoMap.assetInfoMapPointer);
 	ThrowNull(registryEntriesAssetInfoMap.bitmapImporterPointer);
@@ -432,14 +475,26 @@ STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_AssetInfoMap_TStdXtra(
 	if (equalID) {
 		MoaMmSymbol typeSymbol = 0;
 
-		MoaError err = GetType_TStdXtra(&typeSymbol, registryEntriesAssetInfoMap.mmValueInterfacePointer, registryEntryDictInterfacePointer);
+		MoaError err = GetType_TStdXtra(
+			&typeSymbol,
+			registryEntriesAssetInfoMap.mmValueInterfacePointer,
+			registryEntryDictInterfacePointer
+		);
 
 		if (err == kMoaErr_NoErr) {
 			// extensions
-			ThrowErr(GetAssetInfoExtensions_TStdXtra(&assetInfo, &registryEntriesAssetInfoMap, registryEntryDictInterfacePointer));
+			ThrowErr(GetAssetInfoExtensions_TStdXtra(
+				&assetInfo,
+				&registryEntriesAssetInfoMap,
+				registryEntryDictInterfacePointer
+			));
 
 			// icons
-			ThrowErr(GetAssetInfoIcons_TStdXtra(&assetInfo, &registryEntriesAssetInfoMap, registryEntryDictInterfacePointer));
+			ThrowErr(GetAssetInfoIcons_TStdXtra(
+				&assetInfo,
+				&registryEntriesAssetInfoMap,
+				registryEntryDictInterfacePointer
+			));
 
 			(*registryEntriesAssetInfoMap.assetInfoMapPointer)[typeSymbol] = assetInfo;
 		}
@@ -465,7 +520,9 @@ STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_AgentHiddenReaderSet_TStdX
 	ThrowNull(interfaceIDPointer);
 	ThrowNull(refCon);
 
-	Registry::AgentHiddenReaderSet &registryEntriesAgentHiddenReaderSet = *(Registry::AgentHiddenReaderSet*)refCon;
+	Registry::AgentHiddenReaderSet &registryEntriesAgentHiddenReaderSet
+		= *(Registry::AgentHiddenReaderSet*)refCon;
+
 	ThrowNull(registryEntriesAgentHiddenReaderSet.agentMoaIDsHashPointer);
 	ThrowNull(registryEntriesAgentHiddenReaderSet.agentHiddenReaderSetPointer);
 
@@ -476,12 +533,14 @@ STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_AgentHiddenReaderSet_TStdX
 
 	if (equalID) {
 		MoaBool hidden = FALSE;
-		err = registryEntryDictInterfacePointer->Get(kMoaDictType_Bool, &hidden, sizeof(hidden), kReaderRegKey_Hidden);
+		err = registryEntryDictInterfacePointer->Get(kMoaDictType_Bool, &hidden,
+			sizeof(hidden), kReaderRegKey_Hidden);
 
 		// default to FALSE in case of error
 		if (err == kMoaErr_NoErr
 		&& hidden) {
-			registryEntriesAgentHiddenReaderSet.agentHiddenReaderSetPointer->insert(*classIDPointer);
+			registryEntriesAgentHiddenReaderSet.agentHiddenReaderSetPointer->insert(
+				*classIDPointer);
 		}
 	}
 
@@ -493,7 +552,8 @@ STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_AgentHiddenReaderSet_TStdX
 	// so the same Xtra's ClassID can appear here twice
 	// we don't want them to cancel to zero
 	if (equalID) {
-		*registryEntriesAgentHiddenReaderSet.agentMoaIDsHashPointer += moaClassIDHash(*classIDPointer)
+		*registryEntriesAgentHiddenReaderSet.agentMoaIDsHashPointer
+			+= moaClassIDHash(*classIDPointer)
 			^ moaInterfaceIDHash(*interfaceIDPointer);
 	}
 
@@ -511,7 +571,8 @@ STDMETHODIMP_(MoaError) GetProductVersionMajor_TStdXtra(TStdXtra* This) {
 
 	ThrowNull(This);
 
-	MoaError err = This->pCallback->QueryInterface(&IID_IMoaAppInfo, (PPMoaVoid)&appInfoInterfacePointer);
+	MoaError err = This->pCallback->QueryInterface(
+		&IID_IMoaAppInfo, (PPMoaVoid)&appInfoInterfacePointer);
 	
 	if (err == kMoaErr_NoErr
 	&& appInfoInterfacePointer) {
@@ -556,47 +617,50 @@ STDMETHODIMP_(MoaError) GetSymbols_TStdXtra(TStdXtra* This) {
 
 	ThrowNull(This);
 
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("AgentOptions", &This->symbols.AgentOptions));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("AgentPropList", &This->symbols.AgentPropList));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("AlternatePathExtension", &This->symbols.AlternatePathExtension));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("Basename", &This->symbols.Basename));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("Bitmap", &This->symbols.Bitmap));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("Composite", &This->symbols.Composite));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("Current", &This->symbols.Current));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("DefaultAgent", &This->symbols.DefaultAgent));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("DefaultLabel", &This->symbols.DefaultLabel));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("DefaultOptions", &This->symbols.DefaultOptions));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("DefaultPath", &This->symbols.DefaultPath));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("Dirname", &This->symbols.Dirname));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("DisplayName", &This->symbols.DisplayName));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("Documents", &This->symbols.Documents));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("Empty", &This->symbols.Empty));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("Extension", &This->symbols.Extension));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("Filename", &This->symbols.Filename));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("IconPropList", &This->symbols.IconPropList));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("Image", &This->symbols.Image));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("IncrementFilename", &This->symbols.IncrementFilename));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("LabelList", &This->symbols.LabelList));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("Lingo", &This->symbols.Lingo));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("Loaded", &This->symbols.Loaded));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("Location", &This->symbols.Location));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("MixerSaved", &This->symbols.MixerSaved));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("Music", &This->symbols.Music));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("Name", &This->symbols.Name));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("NewFolder", &This->symbols.NewFolder));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("Picture", &This->symbols.Picture));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("Pictures", &This->symbols.Pictures));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("ReplaceExistingFile", &This->symbols.ReplaceExistingFile));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("SampleSize", &This->symbols.SampleSize));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("Script", &This->symbols.Script));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("ScriptSyntax", &This->symbols.ScriptSyntax));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("ScriptText", &This->symbols.ScriptText));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("Sound", &This->symbols.Sound));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("Type", &This->symbols.Type));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("TypePropList", &This->symbols.TypePropList));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("Videos", &This->symbols.Videos));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("WriterClassID", &This->symbols.WriterClassID));
-	ThrowErr(This->mmValueInterfacePointer->StringToSymbol("XtraMedia", &This->symbols.XtraMedia));
+	PIMoaMmValue pointer = This->mmValueInterfacePointer;
+	TStdXtra::Symbols &symbols = This->symbols;
+
+	ThrowErr(pointer->StringToSymbol("AgentOptions", &symbols.AgentOptions));
+	ThrowErr(pointer->StringToSymbol("AgentPropList", &symbols.AgentPropList));
+	ThrowErr(pointer->StringToSymbol("AlternatePathExtension", &symbols.AlternatePathExtension));
+	ThrowErr(pointer->StringToSymbol("Basename", &symbols.Basename));
+	ThrowErr(pointer->StringToSymbol("Bitmap", &symbols.Bitmap));
+	ThrowErr(pointer->StringToSymbol("Composite", &symbols.Composite));
+	ThrowErr(pointer->StringToSymbol("Current", &symbols.Current));
+	ThrowErr(pointer->StringToSymbol("DefaultAgent", &symbols.DefaultAgent));
+	ThrowErr(pointer->StringToSymbol("DefaultLabel", &symbols.DefaultLabel));
+	ThrowErr(pointer->StringToSymbol("DefaultOptions", &symbols.DefaultOptions));
+	ThrowErr(pointer->StringToSymbol("DefaultPath", &symbols.DefaultPath));
+	ThrowErr(pointer->StringToSymbol("Dirname", &symbols.Dirname));
+	ThrowErr(pointer->StringToSymbol("DisplayName", &symbols.DisplayName));
+	ThrowErr(pointer->StringToSymbol("Documents", &symbols.Documents));
+	ThrowErr(pointer->StringToSymbol("Empty", &symbols.Empty));
+	ThrowErr(pointer->StringToSymbol("Extension", &symbols.Extension));
+	ThrowErr(pointer->StringToSymbol("Filename", &symbols.Filename));
+	ThrowErr(pointer->StringToSymbol("IconPropList", &symbols.IconPropList));
+	ThrowErr(pointer->StringToSymbol("Image", &symbols.Image));
+	ThrowErr(pointer->StringToSymbol("IncrementFilename", &symbols.IncrementFilename));
+	ThrowErr(pointer->StringToSymbol("LabelList", &symbols.LabelList));
+	ThrowErr(pointer->StringToSymbol("Lingo", &symbols.Lingo));
+	ThrowErr(pointer->StringToSymbol("Loaded", &symbols.Loaded));
+	ThrowErr(pointer->StringToSymbol("Location", &symbols.Location));
+	ThrowErr(pointer->StringToSymbol("MixerSaved", &symbols.MixerSaved));
+	ThrowErr(pointer->StringToSymbol("Music", &symbols.Music));
+	ThrowErr(pointer->StringToSymbol("Name", &symbols.Name));
+	ThrowErr(pointer->StringToSymbol("NewFolder", &symbols.NewFolder));
+	ThrowErr(pointer->StringToSymbol("Picture", &symbols.Picture));
+	ThrowErr(pointer->StringToSymbol("Pictures", &symbols.Pictures));
+	ThrowErr(pointer->StringToSymbol("ReplaceExistingFile", &symbols.ReplaceExistingFile));
+	ThrowErr(pointer->StringToSymbol("SampleSize", &symbols.SampleSize));
+	ThrowErr(pointer->StringToSymbol("Script", &symbols.Script));
+	ThrowErr(pointer->StringToSymbol("ScriptSyntax", &symbols.ScriptSyntax));
+	ThrowErr(pointer->StringToSymbol("ScriptText", &symbols.ScriptText));
+	ThrowErr(pointer->StringToSymbol("Sound", &symbols.Sound));
+	ThrowErr(pointer->StringToSymbol("Type", &symbols.Type));
+	ThrowErr(pointer->StringToSymbol("TypePropList", &symbols.TypePropList));
+	ThrowErr(pointer->StringToSymbol("Videos", &symbols.Videos));
+	ThrowErr(pointer->StringToSymbol("WriterClassID", &symbols.WriterClassID));
+	ThrowErr(pointer->StringToSymbol("XtraMedia", &symbols.XtraMedia));
 
 	moa_catch
 	moa_catch_end
@@ -611,31 +675,45 @@ STDMETHODIMP_(MoaError) MoaCreate_TStdXtra(TStdXtra* This) {
 	This->cacheInterfacePointer = This->pCallback->MoaGetCache();
 	ThrowNull(This->cacheInterfacePointer);
 
-	ThrowErr(This->pCallback->QueryInterface(&IID_IMoaDrPlayer, (PPMoaVoid)&This->drPlayerInterfacePointer));
+	ThrowErr(This->pCallback->QueryInterface(
+		&IID_IMoaDrPlayer, (PPMoaVoid)&This->drPlayerInterfacePointer));
+	
 	ThrowNull(This->drPlayerInterfacePointer);
 
-	ThrowErr(This->pCallback->QueryInterface(&IID_IMoaMmValue, (PPMoaVoid)&This->mmValueInterfacePointer));
+	ThrowErr(This->pCallback->QueryInterface(
+		&IID_IMoaMmValue, (PPMoaVoid)&This->mmValueInterfacePointer));
+	
 	ThrowNull(This->mmValueInterfacePointer);
 
-	ThrowErr(This->pCallback->QueryInterface(&IID_IMoaDrValue, (PPMoaVoid)&This->drValueInterfacePointer));
+	ThrowErr(This->pCallback->QueryInterface(
+		&IID_IMoaDrValue, (PPMoaVoid)&This->drValueInterfacePointer));
+	
 	ThrowNull(This->drValueInterfacePointer);
 
-	ThrowErr(This->pCallback->QueryInterface(&IID_IMoaMmList, (PPMoaVoid)&This->mmListInterfacePointer));
+	ThrowErr(This->pCallback->QueryInterface(
+		&IID_IMoaMmList, (PPMoaVoid)&This->mmListInterfacePointer));
+	
 	ThrowNull(This->mmListInterfacePointer);
 
-	ThrowErr(This->pCallback->QueryInterface(&IID_IMoaDrUtils, (PPMoaVoid)&This->drUtilsInterfacePointer));
+	ThrowErr(This->pCallback->QueryInterface(
+		&IID_IMoaDrUtils, (PPMoaVoid)&This->drUtilsInterfacePointer));
+	
 	ThrowNull(This->drUtilsInterfacePointer);
 
-	ThrowErr(This->pCallback->QueryInterface(&IID_IMoaHandle, (PPMoaVoid)&This->handleInterfacePointer));
+	ThrowErr(This->pCallback->QueryInterface(
+		&IID_IMoaHandle, (PPMoaVoid)&This->handleInterfacePointer));
+	
 	ThrowNull(This->handleInterfacePointer);
 
-	MoaError err = This->pCallback->QueryInterface(&IID_IMoaMmImage, (PPMoaVoid)&This->mmImageInterfacePointer);
+	MoaError err = This->pCallback->QueryInterface(
+		&IID_IMoaMmImage, (PPMoaVoid)&This->mmImageInterfacePointer);
 
 	if (err != kMoaErr_NoErr) {
 		This->mmImageInterfacePointer = NULL;
 	}
 
-	err = This->pCallback->QueryInterface(&IID_IMoaDrMediaValue, (PPMoaVoid)&This->drMediaValueInterfacePointer);
+	err = This->pCallback->QueryInterface(
+		&IID_IMoaDrMediaValue, (PPMoaVoid)&This->drMediaValueInterfacePointer);
 
 	if (err != kMoaErr_NoErr) {
 		This->drMediaValueInterfacePointer = NULL;
@@ -644,7 +722,8 @@ STDMETHODIMP_(MoaError) MoaCreate_TStdXtra(TStdXtra* This) {
 	This->registryEntryVariantPointer = new Registry::Entry::VARIANT({});
 	ThrowNull(This->registryEntryVariantPointer);
 
-	Registry::Entry::VARIANT &registryEntryVariant = *This->registryEntryVariantPointer;
+	Registry::Entry::VARIANT &registryEntryVariant
+		= *This->registryEntryVariantPointer;
 
 	Registry::Entry &registryEntry = std::get<Registry::Entry>(registryEntryVariant);
 	registryEntry.classIDPointer = (MoaClassID*)&CLSID_TStdXtra;
@@ -704,7 +783,8 @@ STDMETHODIMP_(void) MoaDestroy_TStdXtra(TStdXtra* This) {
 	releaseInterface((PPMoaVoid)&This->agentServicesInterfacePointer);
 
 	if (This->registryEntryVariantPointer) {
-		Registry::Entry::VARIANT &registryEntryVariant = *This->registryEntryVariantPointer;
+		Registry::Entry::VARIANT &registryEntryVariant
+			= *This->registryEntryVariantPointer;
 
 		if (auto registryEntry = std::get_if<PIMoaRegistryEntryDict>(&registryEntryVariant)) {
 			releaseInterface((PPMoaVoid)&*registryEntry);
@@ -754,7 +834,10 @@ STD_INTERFACE_CREATE_DESTROY(TStdXtra, IMoaRegister)
 BEGIN_DEFINE_CLASS_INTERFACE(TStdXtra, IMoaRegister)
 END_DEFINE_CLASS_INTERFACE
 
-STDMETHODIMP TStdXtra_IMoaRegister::Register(PIMoaCache cacheInterfacePointer, PIMoaXtraEntryDict xtraEntryDictInterfacePointer) {
+STDMETHODIMP TStdXtra_IMoaRegister::Register(
+	PIMoaCache cacheInterfacePointer,
+	PIMoaXtraEntryDict xtraEntryDictInterfacePointer
+) {
 	PMoaVoid memoryStringPointer = NULL;
 
 	moa_try
@@ -777,7 +860,7 @@ STDMETHODIMP TStdXtra_IMoaRegister::Register(PIMoaCache cacheInterfacePointer, P
 
 		const char* VER_MAJORVERSION_STRING = "0";
 		const char* VER_MINORVERSION_STRING = "5";
-		const char* VER_BUGFIXVERSION_STRING = "5";
+		const char* VER_BUGFIXVERSION_STRING = "6";
 
 		const size_t VERSION_STRING_SIZE = min(256, kMoaMmMaxXtraMessageTable);
 		char versionString[VERSION_STRING_SIZE] = "";
@@ -788,12 +871,15 @@ STDMETHODIMP TStdXtra_IMoaRegister::Register(PIMoaCache cacheInterfacePointer, P
 		}
 
 		MoaUlong versionStringSize = stringSizeMax(versionString, VERSION_STRING_SIZE);
-		MoaUlong memoryStringSize = versionStringSize + strnlen_s(msgTable, kMoaMmMaxXtraMessageTable - versionStringSize);
+
+		MoaUlong memoryStringSize = versionStringSize
+			+ strnlen_s(msgTable, kMoaMmMaxXtraMessageTable - versionStringSize);
 
 		memoryStringPointer = pObj->pCalloc->NRAlloc(memoryStringSize);
 		ThrowNull(memoryStringPointer);
 
-		if (strncpy_s((char*)memoryStringPointer, memoryStringSize, versionString, versionStringSize)) {
+		if (strncpy_s((char*)memoryStringPointer, memoryStringSize,
+			versionString, versionStringSize)) {
 			Throw(kMoaErr_OutOfMem);
 		}
 
@@ -808,9 +894,15 @@ STDMETHODIMP TStdXtra_IMoaRegister::Register(PIMoaCache cacheInterfacePointer, P
 			kMoaDrDictKey_MessageTable
 		));
 
-		Registry::Entry::VARIANT &registryEntryVariant = *pObj->registryEntryVariantPointer;
+		Registry::Entry::VARIANT &registryEntryVariant
+			= *pObj->registryEntryVariantPointer;
+
 		registryEntryVariant = (PIMoaRegistryEntryDict)NULL;
-		setInterface((PPMoaVoid)&std::get<PIMoaRegistryEntryDict>(registryEntryVariant), registryEntryDictInterfacePointer);
+
+		setInterface(
+			(PPMoaVoid)&std::get<PIMoaRegistryEntryDict>(registryEntryVariant),
+			registryEntryDictInterfacePointer
+		);
 	}
 
 	moa_catch
@@ -912,7 +1004,11 @@ STDMETHODIMP TStdXtra_IMoaMmXScript::Call(PMoaDrCallInfo callPtr) {
 		ThrowErr(GetRegistryEntryDict(&registryEntryDictInterfacePointer));
 
 		MoaLong lastErrCode = HRESULT_CODE(err);
-		ThrowErr(Registry::Entry::setValueLong(kExportFileRegKey_LastErrCode, lastErrCode, registryEntryDictInterfacePointer));
+
+		ThrowErr(Registry::Entry::setValueLong(
+			kExportFileRegKey_LastErrCode, lastErrCode,
+			registryEntryDictInterfacePointer
+		));
 	}
 
 	moa_catch
@@ -931,9 +1027,14 @@ MoaError TStdXtra_IMoaMmXScript::ExportFileStatus(PMoaDrCallInfo callPtr) {
 		ThrowErr(GetRegistryEntryDict(&registryEntryDictInterfacePointer));
 
 		MoaLong lastErrCode = 0;
-		ThrowErr(Registry::Entry::getValueLong(kExportFileRegKey_LastErrCode, lastErrCode, registryEntryDictInterfacePointer));
 
-		ThrowErr(pObj->mmValueInterfacePointer->IntegerToValue(lastErrCode, &callPtr->resultValue));
+		ThrowErr(Registry::Entry::getValueLong(
+			kExportFileRegKey_LastErrCode, lastErrCode,
+			registryEntryDictInterfacePointer
+		));
+
+		ThrowErr(pObj->mmValueInterfacePointer->IntegerToValue(lastErrCode,
+			&callPtr->resultValue));
 	}
 
 	moa_catch
@@ -957,7 +1058,9 @@ MoaError TStdXtra_IMoaMmXScript::ExportFileOut(PMoaDrCallInfo callPtr) {
 	// this file interface will always point to the file we actually write
 	// the path of this file might later be changed to an incremented or temp file path
 	// which we write to instead
-	ThrowErr(pObj->pCallback->MoaCreateInstance(&CLSID_CMoaFile, &IID_IMoaFile, (PPMoaVoid)&fileInterfacePointer));
+	ThrowErr(pObj->pCallback->MoaCreateInstance(&CLSID_CMoaFile, &IID_IMoaFile,
+		(PPMoaVoid)&fileInterfacePointer));
+
 	ThrowNull(fileInterfacePointer);
 
 	ThrowErr(CreateContentFormat(&args, &directorMedia));
@@ -979,7 +1082,8 @@ MoaError TStdXtra_IMoaMmXScript::ExportFileOut(PMoaDrCallInfo callPtr) {
 	// we do not want to resolve this path
 	// (that is, check the searchPath and whatnot for an existing file with this name)
 	// the pathRelative variable is because some formats (mixers) can't use relative paths
-	if (!args.pathInfoOptional.value().getPath(path, content.formatPointer->pathRelative)) {
+	if (!args.pathInfoOptional.value().getPath(path,
+		content.formatPointer->pathRelative)) {
 		Throw(kMoaErr_BadParam);
 	}
 
@@ -995,13 +1099,16 @@ MoaError TStdXtra_IMoaMmXScript::ExportFileOut(PMoaDrCallInfo callPtr) {
 	// (what happens on Mac??)
 	MoaError err = fileInterfacePointer->CreateFile();
 
-	ThrowErr(fileErr(HandleCreateFileError(&args, &directorMedia, err, fileInterfacePointer)));
+	ThrowErr(fileErr(HandleCreateFileError(&args, &directorMedia, err,
+		fileInterfacePointer)));
 
 	err = WriteFile(&args, &directorMedia, fileInterfacePointer);
 
-	ThrowErr(fileErr(HandleWriteFileError(&args, &directorMedia, err, fileInterfacePointer)));
+	ThrowErr(fileErr(HandleWriteFileError(&args, &directorMedia, err,
+		fileInterfacePointer)));
 
-	ThrowErr(pObj->exportFileValueConverterPointer->toValue(args, callPtr->resultValue));
+	ThrowErr(pObj->exportFileValueConverterPointer->toValue(args,
+		callPtr->resultValue));
 
 	moa_catch
 	moa_catch_end
@@ -1031,7 +1138,8 @@ MoaError TStdXtra_IMoaMmXScript::TellExportFileMixerSaved(PMoaDrCallInfo callPtr
 		));
 	}
 
-	ThrowErr(pObj->mmValueInterfacePointer->IntegerToValue(mixerSavedCallHandler != FALSE, &callPtr->resultValue));
+	ThrowErr(pObj->mmValueInterfacePointer->IntegerToValue(
+		mixerSavedCallHandler != FALSE, &callPtr->resultValue));
 
 	moa_catch
 	moa_catch_end
@@ -1055,7 +1163,8 @@ MoaError TStdXtra_IMoaMmXScript::GetExportFileLabelList(PMoaDrCallInfo callPtr) 
 		Throw(kMoaErr_InternalError);
 	}
 
-	ThrowErr(pObj->exportFileValueConverterPointer->toValue(directorMedia.labelMappedVectorOptional.value(), callPtr->resultValue));
+	ThrowErr(pObj->exportFileValueConverterPointer->toValue(
+		directorMedia.labelMappedVectorOptional.value(), callPtr->resultValue));
 
 	moa_catch
 	moa_catch_end
@@ -1081,7 +1190,8 @@ MoaError TStdXtra_IMoaMmXScript::GetExportFileAgentPropList(PMoaDrCallInfo callP
 		Throw(kMoaErr_InternalError);
 	}
 
-	ThrowErr(pObj->exportFileValueConverterPointer->toValue(directorMedia.agentInfoMapOptional.value(), callPtr->resultValue));
+	ThrowErr(pObj->exportFileValueConverterPointer->toValue(
+		directorMedia.agentInfoMapOptional.value(), callPtr->resultValue));
 
 	moa_catch
 	moa_catch_end
@@ -1110,7 +1220,8 @@ MoaError TStdXtra_IMoaMmXScript::GetExportFileDefaultPath(PMoaDrCallInfo callPtr
 
 	if (args.infoOptional.has_value()
 	&& args.infoOptional.value()) {
-		ThrowErr(pObj->exportFileValueConverterPointer->toValue(args.pathInfoOptional.value(), callPtr->resultValue));
+		ThrowErr(pObj->exportFileValueConverterPointer->toValue(
+			args.pathInfoOptional.value(), callPtr->resultValue));
 	} else {
 		if (!args.pathInfoOptional.value().getPath(path)) {
 			Throw(kMoaErr_BadParam);
@@ -1120,7 +1231,8 @@ MoaError TStdXtra_IMoaMmXScript::GetExportFileDefaultPath(PMoaDrCallInfo callPtr
 			Throw(kMoaErr_InternalError);
 		}
 
-		ThrowErr(pObj->mmValueInterfacePointer->StringToValue(path.c_str(), &callPtr->resultValue));
+		ThrowErr(pObj->mmValueInterfacePointer->StringToValue(
+			path.c_str(), &callPtr->resultValue));
 	}
 
 	moa_catch
@@ -1145,7 +1257,8 @@ MoaError TStdXtra_IMoaMmXScript::GetExportFileDefaultLabel(PMoaDrCallInfo callPt
 		Throw(kMoaErr_InternalError);
 	}
 
-	ThrowErr(pObj->mmValueInterfacePointer->SymbolToValue(std::get<MoaMmSymbol>(args.labelSymbolVariant), &callPtr->resultValue));
+	ThrowErr(pObj->mmValueInterfacePointer->SymbolToValue(
+		std::get<MoaMmSymbol>(args.labelSymbolVariant), &callPtr->resultValue));
 
 	moa_catch
 	moa_catch_end
@@ -1166,7 +1279,8 @@ MoaError TStdXtra_IMoaMmXScript::GetExportFileDefaultAgent(PMoaDrCallInfo callPt
 	ThrowErr(GetArgAgentDefault(&args, &directorMedia));
 	ThrowErr(GetArgOptions(callPtr, &args, &directorMedia, 4));
 	
-	ThrowErr(pObj->mmValueInterfacePointer->StringToValue(args.agentStringOptional.value_or("").c_str(), &callPtr->resultValue));
+	ThrowErr(pObj->mmValueInterfacePointer->StringToValue(
+		args.agentStringOptional.value_or("").c_str(), &callPtr->resultValue));
 
 	moa_catch
 	moa_catch_end
@@ -1191,7 +1305,8 @@ MoaError TStdXtra_IMoaMmXScript::GetExportFileDefaultOptions(PMoaDrCallInfo call
 		args.optionsOptional.emplace(pObj->mmValueInterfacePointer);
 	}
 
-	ThrowErr(pObj->exportFileValueConverterPointer->toValue(args.optionsOptional.value(), callPtr->resultValue));
+	ThrowErr(pObj->exportFileValueConverterPointer->toValue(
+		args.optionsOptional.value(), callPtr->resultValue));
 
 	moa_catch
 	moa_catch_end
@@ -1253,7 +1368,8 @@ MoaError TStdXtra_IMoaMmXScript::GetExportFileDisplayName(PMoaDrCallInfo callPtr
 		displayName = directorMedia.agentInfoOptional.value().name;
 	}
 
-	ThrowErr(pObj->mmValueInterfacePointer->StringToValue(displayName.c_str(), &callPtr->resultValue));
+	ThrowErr(pObj->mmValueInterfacePointer->StringToValue(
+		displayName.c_str(), &callPtr->resultValue));
 
 	moa_catch
 	moa_catch_end
@@ -1276,8 +1392,11 @@ MoaError TStdXtra_IMoaMmXScript::GetExportFileTypePropList(PMoaDrCallInfo callPt
 	{
 		Registry::ExcludedTypeSymbolSet registryEntriesExcludedTypeSymbolSet = {};
 
-		registryEntriesExcludedTypeSymbolSet.mmValueInterfacePointer = pObj->mmValueInterfacePointer;
-		registryEntriesExcludedTypeSymbolSet.excludedTypeSymbolSetPointer = &excludedTypeSymbolSet;
+		registryEntriesExcludedTypeSymbolSet.mmValueInterfacePointer
+			= pObj->mmValueInterfacePointer;
+
+		registryEntriesExcludedTypeSymbolSet.excludedTypeSymbolSetPointer
+			= &excludedTypeSymbolSet;
 
 		ThrowFailed(
 			pObj->cacheInterfacePointer->EnumerateRegistryEntries(
@@ -1301,7 +1420,11 @@ MoaError TStdXtra_IMoaMmXScript::GetExportFileTypePropList(PMoaDrCallInfo callPt
 		}
 
 		ThrowErr(GetTypeDisplayName(typeSymbol, &typeDisplayName));
-		ThrowErr(pObj->exportFileValueConverterPointer->appendToPropList(typeSymbol, typeDisplayName.c_str(), callPtr->resultValue));
+
+		ThrowErr(pObj->exportFileValueConverterPointer->appendToPropList(
+			typeSymbol, typeDisplayName.c_str(),
+			callPtr->resultValue
+		));
 	}
 
 	moa_catch
@@ -1398,7 +1521,9 @@ MoaError TStdXtra_IMoaMmXScript::GetExportFileIconPropList(PMoaDrCallInfo callPt
 			ThrowErr(drCastMemInterfacePointer->GetProp(*subType, &subTypeValue));
 
 			MoaMmSymbol subTypeSymbol = 0;
-			ThrowErr(pObj->mmValueInterfacePointer->ValueToSymbol(&subTypeValue, &subTypeSymbol));
+
+			ThrowErr(pObj->mmValueInterfacePointer->ValueToSymbol(
+				&subTypeValue, &subTypeSymbol));
 
 			foundIconValues = assetInfo.iconValuesMap.find(subTypeSymbol);
 
@@ -1436,10 +1561,17 @@ MoaError TStdXtra_IMoaMmXScript::GetExportFileIconPropList(PMoaDrCallInfo callPt
 	}
 
 	if (auto iconValuesPointer = std::get_if<IconValues::POINTER>(&foundIconValues->second)) {
-		// intentional copy of icon values for Lingo so scripts can't modify a direct reference to our cached icons occurs HERE
-		// (so if you call getExportFileIconPropList once, modify the image, and call it again, you won't get the modified image)
-		IconValues iconValues = **iconValuesPointer; // removing this line causes the same image objects to be returned every time
-		ThrowErr(pObj->exportFileValueConverterPointer->toValue(iconValues.toIconValueMap(), callPtr->resultValue, drCastMemInterfacePointer));
+		// intentional copy of icon values for Lingo so scripts can't
+		// modify a direct reference to our cached icons occurs HERE
+		// so if you call getExportFileIconPropList once, modify the image,
+		// and call it again, you won't get the modified image
+		IconValues iconValues = **iconValuesPointer; // this line forces a copy, do not remove
+
+		ThrowErr(pObj->exportFileValueConverterPointer->toValue(
+			iconValues.toIconValueMap(),
+			callPtr->resultValue,
+			drCastMemInterfacePointer
+		));
 	} else {
 		// Mix Services missing
 		Throw(kMoaErr_BadClass);
@@ -1554,7 +1686,9 @@ MoaError TStdXtra_IMoaMmXScript::LoadMember(PIMoaDrCastMem drCastMemInterfacePoi
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::FindLabelInfo(Args* argsPointer, Media::DirectorMedia* directorMediaPointer) {
+MoaError TStdXtra_IMoaMmXScript::FindLabelInfo(
+	Args* argsPointer, Media::DirectorMedia* directorMediaPointer
+) {
 	moa_try
 
 	ThrowNull(argsPointer);
@@ -1567,7 +1701,8 @@ MoaError TStdXtra_IMoaMmXScript::FindLabelInfo(Args* argsPointer, Media::Directo
 
 		const Label::Info::MAP &labelInfoMap = pObj->labelsInfoPointer->get();
 
-		directorMediaPointer->labelInfoMapIterator = labelInfoMap.find(std::get<MoaMmSymbol>(argsPointer->labelSymbolVariant));
+		directorMediaPointer->labelInfoMapIterator = labelInfoMap.find(
+			std::get<MoaMmSymbol>(argsPointer->labelSymbolVariant));
 
 		if (directorMediaPointer->labelInfoMapIterator == LABEL_INFO_NOT_FOUND) {
 			Throw(kMoaDrErr_LabelNotFound);
@@ -1588,7 +1723,9 @@ MoaError TStdXtra_IMoaMmXScript::FindLabelInfo(Args* argsPointer, Media::Directo
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::FindAgentInfo(Args* argsPointer, Media::DirectorMedia* directorMediaPointer) {
+MoaError TStdXtra_IMoaMmXScript::FindAgentInfo(
+	Args* argsPointer, Media::DirectorMedia* directorMediaPointer
+) {
 	Agent::Info::MAP::const_iterator foundAgentMapInfo = {};
 
 	moa_try
@@ -1603,13 +1740,15 @@ MoaError TStdXtra_IMoaMmXScript::FindAgentInfo(Args* argsPointer, Media::Directo
 			Throw(kMoaErr_InternalError);
 		}
 
-		const Agent::Info::MAP &agentInfoMap = directorMediaPointer->agentInfoMapOptional.value();
+		const Agent::Info::MAP &agentInfoMap
+			= directorMediaPointer->agentInfoMapOptional.value();
 
 		if (!argsPointer->agentStringOptional.has_value()) {
 			Throw(kMoaErr_InternalError);
 		}
 
-		foundAgentMapInfo = agentInfoMap.find(argsPointer->agentStringOptional.value());
+		foundAgentMapInfo
+			= agentInfoMap.find(argsPointer->agentStringOptional.value());
 
 		if (foundAgentMapInfo == agentInfoMap.end()) {
 			Throw(kMoaMixErr_NoSuchAgent);
@@ -1629,7 +1768,9 @@ MoaError TStdXtra_IMoaMmXScript::FindAgentInfo(Args* argsPointer, Media::Directo
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::FindXtraAssetInfo(Args* argsPointer, Media::DirectorMedia* directorMediaPointer) {
+MoaError TStdXtra_IMoaMmXScript::FindXtraAssetInfo(
+	Args* argsPointer, Media::DirectorMedia* directorMediaPointer
+) {
 	PIMoaDrCastMem drCastMemInterfacePointer = NULL;
 
 	MoaMmValue typeValue = kVoidMoaMmValueInitializer;
@@ -1658,10 +1799,14 @@ MoaError TStdXtra_IMoaMmXScript::FindXtraAssetInfo(Args* argsPointer, Media::Dir
 		if (assetMoaIDsHash != pObj->assetMoaIDsHash) {
 			Registry::AssetInfoMap registryEntriesAssetInfoMap = {};
 
-			registryEntriesAssetInfoMap.mmValueInterfacePointer = pObj->mmValueInterfacePointer;
-			registryEntriesAssetInfoMap.callocInterfacePointer = pObj->pCalloc;
+			registryEntriesAssetInfoMap.mmValueInterfacePointer
+				= pObj->mmValueInterfacePointer;
 
-			registryEntriesAssetInfoMap.mmImageInterfacePointer = pObj->mmImageInterfacePointer;
+			registryEntriesAssetInfoMap.callocInterfacePointer
+				= pObj->pCalloc;
+
+			registryEntriesAssetInfoMap.mmImageInterfacePointer
+				= pObj->mmImageInterfacePointer;
 
 			// creating BitmapImporter is expensive, so for the sake of performance
 			// we create it here outside the loop, if applicable
@@ -1680,7 +1825,9 @@ MoaError TStdXtra_IMoaMmXScript::FindXtraAssetInfo(Args* argsPointer, Media::Dir
 				);
 			}
 
-			registryEntriesAssetInfoMap.bitmapImporterPointer = directorMediaPointer->bitmapImporterPointer.get();
+			registryEntriesAssetInfoMap.bitmapImporterPointer
+				= directorMediaPointer->bitmapImporterPointer.get();
+
 			registryEntriesAssetInfoMap.assetInfoMapPointer = &assetInfoMap;
 
 			ThrowFailed(
@@ -1732,7 +1879,9 @@ MoaError TStdXtra_IMoaMmXScript::FindXtraAssetInfo(Args* argsPointer, Media::Dir
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::CreateMixerThread(Args* argsPointer, Media::DirectorMedia* directorMediaPointer) {
+MoaError TStdXtra_IMoaMmXScript::CreateMixerThread(
+	Args* argsPointer, Media::DirectorMedia* directorMediaPointer
+) {
 	PIMoaDrCastMem drCastMemInterfacePointer = NULL;
 
 	Media::MixerMedia* mixerMediaPointer = 0;
@@ -1768,7 +1917,8 @@ MoaError TStdXtra_IMoaMmXScript::CreateMixerThread(Args* argsPointer, Media::Dir
 			Throw(kMoaErr_InternalError);
 		}
 
-		mixerMediaPointer->setRegistryEntryDictInterfacePointer(registryEntryDictInterfacePointer);
+		mixerMediaPointer->setRegistryEntryDictInterfacePointer(
+			registryEntryDictInterfacePointer);
 	}
 
 	ThrowErr(CreateContentFormat(argsPointer, directorMediaPointer));
@@ -1786,7 +1936,8 @@ MoaError TStdXtra_IMoaMmXScript::CreateMixerThread(Args* argsPointer, Media::Dir
 	mixerMediaPointer->formatPointer = content.formatPointer;
 
 	#ifdef WINDOWS
-	// this is a Windows trick to keep the DLL loaded for at least the duration this thread is running
+	// this is a Windows trick to keep the DLL loaded
+	// for at least the duration this thread is running
 	// I have no idea the way to do this on Mac
 	// http://devblogs.microsoft.com/oldnewthing/20131105-00/?p=2733
 	ThrowErr(
@@ -1827,7 +1978,9 @@ MoaError TStdXtra_IMoaMmXScript::CreateMixerThread(Args* argsPointer, Media::Dir
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::CreateContentFormat(Args* argsPointer, Media::DirectorMedia* directorMediaPointer) {
+MoaError TStdXtra_IMoaMmXScript::CreateContentFormat(
+	Args* argsPointer, Media::DirectorMedia* directorMediaPointer
+) {
 	PIMoaDrCastMem drCastMemInterfacePointer = NULL;
 	PIMoaMmXAsset mmXAssetInterfacePointer = NULL;
 
@@ -1842,7 +1995,8 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentFormat(Args* argsPointer, Media::D
 	ThrowNull(directorMediaPointer);
 
 	if (!directorMediaPointer->contentPointer) {
-		directorMediaPointer->contentPointer = std::make_shared<Media::DirectorMedia::Content>();
+		directorMediaPointer->contentPointer
+			= std::make_shared<Media::DirectorMedia::Content>();
 	}
 
 	Media::DirectorMedia::Content &content = *directorMediaPointer->contentPointer;
@@ -1856,9 +2010,11 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentFormat(Args* argsPointer, Media::D
 			Throw(kMoaErr_InternalError);
 		}
 
-		const Label::Info &labelInfo = directorMediaPointer->labelInfoMapIterator->second;
+		const Label::Info &labelInfo
+			= directorMediaPointer->labelInfoMapIterator->second;
 
-		drCastMemInterfacePointer = argsPointer->getDrCastMemInterfacePointer();
+		drCastMemInterfacePointer
+			= argsPointer->getDrCastMemInterfacePointer();
 
 		if (!drCastMemInterfacePointer) {
 			Throw(kMoaErr_InternalError);
@@ -1868,7 +2024,9 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentFormat(Args* argsPointer, Media::D
 			// must be loaded for StreamOutMedia to work
 			ThrowErr(LoadMember(drCastMemInterfacePointer));
 
-			ThrowErr(pObj->exportFileValueConverterPointer->toAsset(drCastMemInterfacePointer, mmXAssetInterfacePointer));
+			ThrowErr(pObj->exportFileValueConverterPointer->toAsset(
+				drCastMemInterfacePointer, mmXAssetInterfacePointer));
+
 			ThrowNull(mmXAssetInterfacePointer);
 
 			if (labelInfo.labelType & Label::TYPE_XTRA_MEDIA_MIXER_ASYNC) {
@@ -1909,20 +2067,27 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentFormat(Args* argsPointer, Media::D
 
 				if (labelSymbol == pObj->symbols.Sound) {
 					// test if its bit depth is 0 bits
-					// this prevents a crash in IML when converting sounds created with _movie.newMember(#sound)
-					// and replicates the Director 6.5 (before the crash was introduced) behaviour
-					ThrowErr(drCastMemInterfacePointer->GetProp(pObj->symbols.SampleSize, &sampleSizeValue));
+					// this prevents a crash in IML when converting sounds
+					// created with _movie.newMember(#sound)
+					// and replicates the behaviour of Director 6.5
+					// before the crash was introduced
+					ThrowErr(drCastMemInterfacePointer->GetProp(
+						pObj->symbols.SampleSize, &sampleSizeValue));
 
 					MoaLong sampleSize = 0;
-					ThrowErr(pObj->mmValueInterfacePointer->ValueToInteger(&sampleSizeValue, &sampleSize));
+
+					ThrowErr(pObj->mmValueInterfacePointer->ValueToInteger(
+						&sampleSizeValue, &sampleSize));
 
 					if (!sampleSize) {
 						Throw(kMoaDrErr_MediaDataNonexistant);
 					}
 				}
 
-				// note: we only need to call releaseMedia in the event of an error because
-				// the format takes ownership (and knows the native call to release this data)
+				// note: we only need to call releaseMedia
+				// in the event of an error because
+				// the format takes ownership
+				// (and it knows the native call to release this data)
 				ThrowErr(
 					pObj->drUtilsInterfacePointer->NewMediaInfo(
 						labelSymbol,
@@ -1938,10 +2103,13 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentFormat(Args* argsPointer, Media::D
 
 				if (labelSymbol == pObj->symbols.Image) {
 					// no point importing a bitmap to another bitmap
-					ThrowErr(drCastMemInterfacePointer->GetProp(pObj->symbols.Type, &typeValue));
+					ThrowErr(drCastMemInterfacePointer->GetProp(
+						pObj->symbols.Type, &typeValue));
 
 					MoaMmSymbol typeSymbol = 0;
-					ThrowErr(pObj->mmValueInterfacePointer->ValueToSymbol(&typeValue, &typeSymbol));
+
+					ThrowErr(pObj->mmValueInterfacePointer->ValueToSymbol(
+						&typeValue, &typeSymbol));
 
 					if (typeSymbol != pObj->symbols.Bitmap) {
 						// must be loaded otherwise the image may turn out blank
@@ -1960,7 +2128,8 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentFormat(Args* argsPointer, Media::D
 								pObj->mmImageInterfacePointer
 							);
 
-							err = bitmapImporter.getMedia(mediaInfo, drCastMemInterfacePointer);
+							err = bitmapImporter.getMedia(mediaInfo,
+								drCastMemInterfacePointer);
 
 							gotMedia = true;
 						}
@@ -1976,7 +2145,9 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentFormat(Args* argsPointer, Media::D
 				// if an error occured, toss out the media data before continuing
 				// (don't move this past moa_catch! It throws its own error on failure!)
 				if (err != kMoaErr_NoErr) {
-					ThrowErr(releaseMedia(mediaInfo, pObj->drUtilsInterfacePointer));
+					ThrowErr(releaseMedia(mediaInfo,
+						pObj->drUtilsInterfacePointer));
+
 					Throw(err);
 				}
 
@@ -1997,12 +2168,14 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentFormat(Args* argsPointer, Media::D
 
 				// if no format to own the media? must release it ourselves
 				if (!content.formatPointer) {
-					ThrowErr(releaseMedia(mediaInfo, pObj->drUtilsInterfacePointer));
+					ThrowErr(releaseMedia(mediaInfo,
+						pObj->drUtilsInterfacePointer));
 				}
 			} else if (labelInfo.labelType & Label::TYPE_MEMBER_PROPERTY) {
 				// needs to be GetPropA for the benefit of Text Agents, which don't expect wide strings
 				// (this is fine, it'll return out UTF-8 in Director 11 where Unicode is supported)
-				err = drCastMemInterfacePointer->GetPropA(formatSymbol, &memberPropertyValue);
+				err = drCastMemInterfacePointer->GetPropA(
+					formatSymbol, &memberPropertyValue);
 
 				if (formatSymbol == pObj->symbols.Picture
 					&& err != kMoaErr_NoErr) {
@@ -2017,7 +2190,8 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentFormat(Args* argsPointer, Media::D
 							pObj->mmImageInterfacePointer
 						);
 
-						err = bitmapImporter.getProp(memberPropertyValue, drCastMemInterfacePointer);
+						err = bitmapImporter.getProp(
+							memberPropertyValue, drCastMemInterfacePointer);
 					}
 				}
 
@@ -2066,7 +2240,9 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentFormat(Args* argsPointer, Media::D
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::CreateContentReader(Args* argsPointer, Media::DirectorMedia* directorMediaPointer) {
+MoaError TStdXtra_IMoaMmXScript::CreateContentReader(
+	Args* argsPointer, Media::DirectorMedia* directorMediaPointer
+) {
 	PIMoaReader readerInterfacePointer = NULL;
 	PIMoaRegistryEntryDict readerRegistryEntryDictInterfacePointer = NULL;
 
@@ -2076,7 +2252,8 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentReader(Args* argsPointer, Media::D
 	ThrowNull(directorMediaPointer);
 
 	if (!directorMediaPointer->contentPointer) {
-		directorMediaPointer->contentPointer = std::make_shared<Media::DirectorMedia::Content>();
+		directorMediaPointer->contentPointer
+			= std::make_shared<Media::DirectorMedia::Content>();
 	}
 
 	Media::DirectorMedia::Content &content = *directorMediaPointer->contentPointer;
@@ -2084,7 +2261,8 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentReader(Args* argsPointer, Media::D
 	readerInterfacePointer = content.getReaderInterfacePointer();
 
 	if (!readerInterfacePointer) {
-		MoaError err = GetContentReaderRegistryEntryDict(argsPointer, directorMediaPointer);
+		MoaError err = GetContentReaderRegistryEntryDict(
+			argsPointer, directorMediaPointer);
 
 		if (err != kMoaErr_NoErr) {
 			Throw(kMoaMixErr_NoSuchReader);
@@ -2092,7 +2270,8 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentReader(Args* argsPointer, Media::D
 
 		ThrowErr(err);
 
-		readerRegistryEntryDictInterfacePointer = content.getReaderRegistryEntryDictInterfacePointer();
+		readerRegistryEntryDictInterfacePointer
+			= content.getReaderRegistryEntryDictInterfacePointer();
 
 		if (!readerRegistryEntryDictInterfacePointer) {
 			Throw(kMoaErr_InternalError);
@@ -2126,7 +2305,9 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentReader(Args* argsPointer, Media::D
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::CreateContentDataObject(Args* argsPointer, Media::DirectorMedia* directorMediaPointer) {
+MoaError TStdXtra_IMoaMmXScript::CreateContentDataObject(
+	Args* argsPointer, Media::DirectorMedia* directorMediaPointer
+) {
 	PIMoaDataObject dataObjectInterfacePointer = NULL;
 	PIMoaStream streamInterfacePointer = NULL;
 
@@ -2138,7 +2319,8 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentDataObject(Args* argsPointer, Medi
 	ThrowNull(directorMediaPointer);
 
 	if (!directorMediaPointer->contentPointer) {
-		directorMediaPointer->contentPointer = std::make_shared<Media::DirectorMedia::Content>();
+		directorMediaPointer->contentPointer
+			= std::make_shared<Media::DirectorMedia::Content>();
 	}
 
 	Media::DirectorMedia::Content &content = *directorMediaPointer->contentPointer;
@@ -2152,29 +2334,38 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentDataObject(Args* argsPointer, Medi
 			Throw(kMoaErr_InternalError);
 		}
 
-		const Label::Info &labelInfo = directorMediaPointer->labelInfoMapIterator->second;
+		const Label::Info &labelInfo
+			= directorMediaPointer->labelInfoMapIterator->second;
 
 		if (labelInfo.agentFormatName.empty()) {
 			Throw(kMoaMixErr_BadDataSourceType);
 		}
 
 		if (!pObj->dataObjectServicesInterfacePointer) {
-			ThrowErr(GetIMoaDataObjectServices(pObj->pCallback, &pObj->dataObjectServicesInterfacePointer));
+			ThrowErr(GetIMoaDataObjectServices(pObj->pCallback,
+				&pObj->dataObjectServicesInterfacePointer));
+
 			ThrowNull(pObj->dataObjectServicesInterfacePointer);
 		}
 
 		// data object
-		ThrowErr(pObj->dataObjectServicesInterfacePointer->CreateEmptyDataObject(&dataObjectInterfacePointer));
+		ThrowErr(pObj->dataObjectServicesInterfacePointer->CreateEmptyDataObject(
+			&dataObjectInterfacePointer));
+
 		ThrowNull(dataObjectInterfacePointer);
 
 		if (!pObj->formatServicesInterfacePointer) {
-			ThrowErr(GetIMoaFormatServices(pObj->pCallback, &pObj->formatServicesInterfacePointer));
+			ThrowErr(GetIMoaFormatServices(pObj->pCallback,
+				&pObj->formatServicesInterfacePointer));
+
 			ThrowNull(pObj->formatServicesInterfacePointer);
 		}
 
 		// format etc.
 		MixFormat mixFormat = 0;
-		ThrowErr(pObj->formatServicesInterfacePointer->RegisterFormat(labelInfo.agentFormatName.c_str(), &mixFormat));
+
+		ThrowErr(pObj->formatServicesInterfacePointer->RegisterFormat(
+			labelInfo.agentFormatName.c_str(), &mixFormat));
 
 		SetMoaFormatEtc(&formatEtc, mixFormat, kMoaStorageMediumType_HGlobal);
 
@@ -2208,7 +2399,8 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentDataObject(Args* argsPointer, Medi
 		// so the format (and it's associated global handle)
 		// don't need to be kept alive after this
 		// THIS MUST BE PASSED AS AN OPEN STREAM!
-		// AddPtrToDataObject is evil: the result stream from DataObjectToMoaStream starts closed instead of open
+		// AddPtrToDataObject is evil: the result stream
+		// from DataObjectToMoaStream starts closed instead of open
 		// which the built in Readers/Writers don't expect
 		// it also errors on empty data
 		// we use AddMoaStreamToDataObject (which also AddRef's the stream) instead
@@ -2250,12 +2442,16 @@ MoaError TStdXtra_IMoaMmXScript::EnumWriter(
 	ThrowNull(agentHiddenReaderSetPointer);
 	ThrowNull(enumMixWriterInfoInterfacePointer);
 
-	ThrowErr(enumMixWriterInfoInterfacePointer->Next(1, &mixWriterInfoInterfacePointer, NULL));
+	ThrowErr(enumMixWriterInfoInterfacePointer->Next(
+		1, &mixWriterInfoInterfacePointer, NULL));
+
 	ThrowNull(mixWriterInfoInterfacePointer);
 
 	// format
 	MixFormat mixFormat = 0;
-	ThrowErr(mixWriterInfoInterfacePointer->GetAgentFormatInfo(&mixFormat, &mixFormatInfoInterfacePointer));
+	ThrowErr(mixWriterInfoInterfacePointer->GetAgentFormatInfo(
+		&mixFormat, &mixFormatInfoInterfacePointer));
+
 	ThrowNull(mixFormatInfoInterfacePointer);
 
 	ThrowErr(GetFormatName(mixFormat, &formatName));
@@ -2264,7 +2460,8 @@ MoaError TStdXtra_IMoaMmXScript::EnumWriter(
 	if (!formatName.empty()) {
 		// create the writer for later use, but don't set its reader yet
 		// for projectors: ignore the writer if it is missing
-		MoaError err = mixWriterInfoInterfacePointer->CreateWriter(NULL, &writerInterfacePointer);
+		MoaError err = mixWriterInfoInterfacePointer->CreateWriter(
+			NULL, &writerInterfacePointer);
 
 		if (err == kMoaErr_NoErr
 		&& writerInterfacePointer) {
@@ -2282,22 +2479,33 @@ MoaError TStdXtra_IMoaMmXScript::EnumWriter(
 				agentInfo = foundAgentInfo->second;
 			}
 
-			ThrowErr(mixWriterInfoInterfacePointer->GetAgentRegInfo(NULL, &writer.classID));
+			ThrowErr(mixWriterInfoInterfacePointer->GetAgentRegInfo(
+				NULL, &writer.classID));
 
 			// hidden
 			if (agentInfo.hidden || createdNew) {
 				// if the associated reader is hidden
 				// then don't show the writer either
-				ThrowErr(GetAgentInfoHidden(agentHiddenReaderSetPointer, &writer.classID, &agentInfo.hidden, mixWriterInfoInterfacePointer));
+				ThrowErr(GetAgentInfoHidden(
+					agentHiddenReaderSetPointer,
+					&writer.classID,
+					&agentInfo.hidden,
+					mixWriterInfoInterfacePointer
+				));
 
 				if (!agentInfo.hidden || createdNew) {
 					// name
-					ThrowErr(GetAgentInfoName(&agentInfo.name, mixWriterInfoInterfacePointer));
+					ThrowErr(GetAgentInfoName(
+						&agentInfo.name, mixWriterInfoInterfacePointer));
 				}
 			}
 
 			// extensions
-			ThrowErr(AddAgentInfoExtensions(agentInfo.name.c_str(), &agentInfo.pathExtensions, mixFormatInfoInterfacePointer));
+			ThrowErr(AddAgentInfoExtensions(
+				agentInfo.name.c_str(),
+				&agentInfo.pathExtensions,
+				mixFormatInfoInterfacePointer
+			));
 
 			// do these things last so we don't leak the writer interface pointer
 			// or save invalid agent info into the map
@@ -2363,7 +2571,8 @@ MoaError TStdXtra_IMoaMmXScript::HandleCreateFileError(
 				// so we never try substituting the number instead (which we do now)
 				// this could restart the cycle of duplicate spec/not found errors, so that's
 				// why we don't do this at the end
-				err2 = HandleDefaultCreateFileError(argsPointer, directorMediaPointer, err, fileInterfacePointer);
+				err2 = HandleDefaultCreateFileError(argsPointer, directorMediaPointer,
+					err, fileInterfacePointer);
 
 				// if it didn't fix it, give up now
 				if (err == err2) {
@@ -2379,20 +2588,34 @@ MoaError TStdXtra_IMoaMmXScript::HandleCreateFileError(
 				Throw(kMoaFileErr_IoError);
 				break;
 				case kMoaErr_FileNotFound:
-				err2 = HandleFileNotFound(argsPointer, directorMediaPointer, fileInterfacePointer);
+				err2 = HandleFileNotFound(
+					argsPointer,
+					directorMediaPointer,
+					fileInterfacePointer
+				);
 
 				defaultError = false;
 				break;
 				case kMoaFileErr_DuplicateSpec:
-				err2 = HandleDuplicateSpec(argsPointer, directorMediaPointer, fileInterfacePointer);
+				err2 = HandleDuplicateSpec(
+					argsPointer,
+					directorMediaPointer,
+					fileInterfacePointer
+				);
 
 				defaultError = false;
 				break;
 				default:
-				// don't run this error handler twice in a row, even if it returned a different error to the previous one
+				// don't run this error handler twice in a row, even if
+				// it returned a different error to the previous one
 				err2 = defaultError
 					? err
-					: HandleDefaultCreateFileError(argsPointer, directorMediaPointer, err, fileInterfacePointer);
+					: HandleDefaultCreateFileError(
+						argsPointer,
+						directorMediaPointer,
+						err,
+						fileInterfacePointer
+					);
 
 				defaultError = true;
 			}
@@ -2443,7 +2666,12 @@ MoaError TStdXtra_IMoaMmXScript::HandleFileNotFound(
 	// if one was made earlier by HandleDuplicateSpec
 	// (we pass kMoaErr_NoErr here to just get the path info as is)
 	// we always call this even if #newFolder is off for if incrementFilename throws
-	Throw(HandleDefaultCreateFileError(argsPointer, directorMediaPointer, kMoaErr_NoErr, fileInterfacePointer));
+	Throw(HandleDefaultCreateFileError(
+		argsPointer,
+		directorMediaPointer,
+		kMoaErr_NoErr,
+		fileInterfacePointer
+	));
 
 	moa_catch
 	moa_catch_end
@@ -2493,7 +2721,12 @@ MoaError TStdXtra_IMoaMmXScript::HandleDuplicateSpec(
 			// try creating the new file, and also
 			// handle for path being too long after incrementing the filename
 			// (we do this here instead of returning out to the switch to get more retries)
-			err = HandleDefaultCreateFileError(argsPointer, directorMediaPointer, err, fileInterfacePointer);
+			err = HandleDefaultCreateFileError(
+				argsPointer,
+				directorMediaPointer,
+				err,
+				fileInterfacePointer
+			);
 
 			if (err != kMoaFileErr_DuplicateSpec) {
 				break;
@@ -2548,7 +2781,8 @@ MoaError TStdXtra_IMoaMmXScript::HandleDefaultCreateFileError(
 	// file couldn't be created for some other reason
 	// if we're using the member's name as the basename
 	// try using it's number instead
-	// this is necessary for when the member's name is a reserved filename e.g. "con"
+	// this is necessary for when the member's name is
+	// a reserved filename e.g. "con"
 	ThrowErr(GetArgPathDefaultBasename(argsPointer, err));
 
 	ThrowErr(CreateContentFormat(argsPointer, directorMediaPointer));
@@ -2567,7 +2801,8 @@ MoaError TStdXtra_IMoaMmXScript::HandleDefaultCreateFileError(
 		Throw(kMoaErr_InternalError);
 	}
 
-	if (!argsPointer->pathInfoOptional.value().getPath(path, content.formatPointer->pathRelative)) {
+	if (!argsPointer->pathInfoOptional.value().getPath(path,
+		content.formatPointer->pathRelative)) {
 		Throw(kMoaErr_BadParam);
 	}
 
@@ -2638,7 +2873,10 @@ MoaError TStdXtra_IMoaMmXScript::HandleWriteFileError(
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::WriteFile(Args* argsPointer, Media::DirectorMedia* directorMediaPointer, PIMoaFile fileInterfacePointer) {
+MoaError TStdXtra_IMoaMmXScript::WriteFile(
+	Args* argsPointer, Media::DirectorMedia* directorMediaPointer,
+	PIMoaFile fileInterfacePointer
+) {
 	PIMoaReader readerInterfacePointer = NULL;
 	PIMoaDataObject dataObjectInterfacePointer = NULL;
 	
@@ -2681,7 +2919,8 @@ MoaError TStdXtra_IMoaMmXScript::WriteFile(Args* argsPointer, Media::DirectorMed
 			Throw(kMoaErr_InternalError);
 		}
 
-		const Agent::Info::WRITER_VECTOR &writerVector = directorMediaPointer->agentInfoOptional.value().writerVector;
+		const Agent::Info::WRITER_VECTOR &writerVector
+			= directorMediaPointer->agentInfoOptional.value().writerVector;
 
 		if (!argsPointer->optionsOptional.has_value()) {
 			Throw(kMoaErr_InternalError);
@@ -2717,13 +2956,22 @@ MoaError TStdXtra_IMoaMmXScript::WriteFile(Args* argsPointer, Media::DirectorMed
 
 		MoaLong size = 0;
 
-		for (writerVectorIterator = writerVector.begin(); writerVectorIterator != writerVector.end(); writerVectorIterator++) {
+		for (
+			writerVectorIterator = writerVector.begin();
+			writerVectorIterator != writerVector.end();
+			writerVectorIterator++
+		) {
 			if (options.writerClassID != IID_NULL
 			&& options.writerClassID != writerVectorIterator->classID) {
 				continue;
 			}
 		
-			writeFileAgentErr = WriteFileAgent(&*writerVectorIterator, &agentOptionsValue, fileInterfacePointer, readerInterfacePointer);
+			writeFileAgentErr = WriteFileAgent(
+				&*writerVectorIterator,
+				&agentOptionsValue,
+				fileInterfacePointer,
+				readerInterfacePointer
+			);
 
 			// this is done so that if we never export a non-empty file, then
 			// we return any error that occured, instead of silencing them
@@ -2789,17 +3037,22 @@ MoaError TStdXtra_IMoaMmXScript::WriteFileAgent(
 		Throw(kMoaErr_InternalError);
 	}
 
-	ThrowErr(writerInterfacePointer->SetWriterDataSource(readerInterfacePointer));
+	ThrowErr(writerInterfacePointer->SetWriterDataSource(
+		readerInterfacePointer));
 
-	MoaError err = writerInterfacePointer->GetDefaultWriterOptions(&dictInterfacePointer);
+	MoaError err = writerInterfacePointer->GetDefaultWriterOptions(
+		&dictInterfacePointer);
 
 	if (err == kMoaErr_NoErr
 		&& dictInterfacePointer) {
 		bool empty = true;
-		ThrowErr(pObj->exportFileValueConverterPointer->concatToDictInterfacePointer(*agentOptionsValuePointer, empty, dictInterfacePointer));
+
+		ThrowErr(pObj->exportFileValueConverterPointer->concatToDictInterfacePointer(
+			*agentOptionsValuePointer, empty, dictInterfacePointer));
 
 		// only set the writer options if they are not the defaults
-		// so that this doesn't ever error in the default case and prevent use of the writer altogether
+		// so that this doesn't ever error in the default case
+		// and prevent use of the writer altogether
 		if (!empty) {
 			ThrowErr(writerInterfacePointer->SetWriterOptions(dictInterfacePointer));
 		}
@@ -2810,7 +3063,9 @@ MoaError TStdXtra_IMoaMmXScript::WriteFileAgent(
 	// if writing to the stream failed, try writing to the file directly
 	//if (err != kMoaErr_NoErr) {
 	if (!pObj->agentServicesInterfacePointer) {
-		ThrowErr(GetIMoaAgentServices(pObj->pCallback, &pObj->agentServicesInterfacePointer));
+		ThrowErr(GetIMoaAgentServices(pObj->pCallback,
+			&pObj->agentServicesInterfacePointer));
+
 		ThrowNull(pObj->agentServicesInterfacePointer);
 	}
 
@@ -2820,9 +3075,12 @@ MoaError TStdXtra_IMoaMmXScript::WriteFileAgent(
 	ThrowErr(fileInterfacePointer->SetSize(0));
 
 	MoaChar pathnameSpec[MOA_MAX_PATHNAME] = "";
-	ThrowErr(fileInterfacePointer->GetPathnameSpec(pathnameSpec, MOA_MAX_PATHNAME));
 
-	ThrowErr(pObj->agentServicesInterfacePointer->WriteToFileSpec(writerInterfacePointer, pathnameSpec));
+	ThrowErr(fileInterfacePointer->GetPathnameSpec(
+		pathnameSpec, MOA_MAX_PATHNAME));
+
+	ThrowErr(pObj->agentServicesInterfacePointer->WriteToFileSpec(
+		writerInterfacePointer, pathnameSpec));
 	//}
 
 	moa_catch
@@ -2851,7 +3109,9 @@ MoaError TStdXtra_IMoaMmXScript::AddAgentInfoExtensions(
 
 	static constexpr MoaUlong FILTER_PATTERN_SIZE = 7;
 
-	MoaUlong fileExtListSize = stringSize(agentInfoNameStringPointer) + 1 + FILTER_PATTERN_SIZE + 1;
+	MoaUlong fileExtListSize
+		= stringSize(agentInfoNameStringPointer) + 1
+		+ FILTER_PATTERN_SIZE + 1;
 
 	MoaError err = kMoaErr_NoErr;
 
@@ -2865,7 +3125,8 @@ MoaError TStdXtra_IMoaMmXScript::AddAgentInfoExtensions(
 		fileExtListPointer = pObj->pCalloc->NRAlloc(fileExtListSize);
 		ThrowNull(fileExtListPointer);
 
-		err = mixFormatInfoInterfacePointer->GetFileExtList((MoaLong)fileExtListSize, (PMoaChar)fileExtListPointer);
+		err = mixFormatInfoInterfacePointer->GetFileExtList(
+			(MoaLong)fileExtListSize, (PMoaChar)fileExtListPointer);
 	} while (err == kMoaMixErr_BufferTooSmall
 		/*|| (err == kMoaErr_NoErr
 		&& stringTruncated(fileExtList.get(), fileExtListSize))*/);
@@ -2886,15 +3147,20 @@ MoaError TStdXtra_IMoaMmXScript::AddAgentInfoExtensions(
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::GetRegistryEntryDict(PIMoaRegistryEntryDict* registryEntryDictInterfacePointerPointer) {
+MoaError TStdXtra_IMoaMmXScript::GetRegistryEntryDict(
+	PIMoaRegistryEntryDict* registryEntryDictInterfacePointerPointer
+) {
 	moa_try
 
 	ThrowNull(registryEntryDictInterfacePointerPointer);
 
-	PIMoaRegistryEntryDict &registryEntryDictInterfacePointer = *registryEntryDictInterfacePointerPointer;
+	PIMoaRegistryEntryDict &registryEntryDictInterfacePointer
+		= *registryEntryDictInterfacePointerPointer;
+
 	registryEntryDictInterfacePointer = NULL;
 
-	Registry::Entry::VARIANT &registryEntryVariant = *pObj->registryEntryVariantPointer;
+	Registry::Entry::VARIANT &registryEntryVariant
+		= *pObj->registryEntryVariantPointer;
 
 	if (!std::holds_alternative<PIMoaRegistryEntryDict>(registryEntryVariant)) {
 		ThrowFailed(
@@ -2911,7 +3177,9 @@ MoaError TStdXtra_IMoaMmXScript::GetRegistryEntryDict(PIMoaRegistryEntryDict* re
 
 	{
 		// do NOT release this interface (it's owned by the Xtra and will be released by it)
-		registryEntryDictInterfacePointer = std::get<PIMoaRegistryEntryDict>(registryEntryVariant);
+		registryEntryDictInterfacePointer
+			= std::get<PIMoaRegistryEntryDict>(registryEntryVariant);
+
 		ThrowNull(registryEntryDictInterfacePointer);
 	}
 
@@ -2920,7 +3188,10 @@ MoaError TStdXtra_IMoaMmXScript::GetRegistryEntryDict(PIMoaRegistryEntryDict* re
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::GetArgs(PMoaDrCallInfo callPtr, Args* argsPointer, Media::DirectorMedia* directorMediaPointer) {
+MoaError TStdXtra_IMoaMmXScript::GetArgs(
+	PMoaDrCallInfo callPtr,
+	Args* argsPointer, Media::DirectorMedia* directorMediaPointer
+) {
 	moa_try
 
 	ThrowNull(callPtr);
@@ -2938,7 +3209,10 @@ MoaError TStdXtra_IMoaMmXScript::GetArgs(PMoaDrCallInfo callPtr, Args* argsPoint
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::GetArgLong(PMoaDrCallInfo callPtr, std::optional<MoaLong>* argOptionalPointer, MoaLong argIndex) {
+MoaError TStdXtra_IMoaMmXScript::GetArgLong(
+	PMoaDrCallInfo callPtr,
+	std::optional<MoaLong>* argOptionalPointer, MoaLong argIndex
+) {
 	moa_try
 
 	ThrowNull(callPtr);
@@ -2957,13 +3231,15 @@ MoaError TStdXtra_IMoaMmXScript::GetArgLong(PMoaDrCallInfo callPtr, std::optiona
 		if (!voidP) {
 			AccessArgByIndex(argIndex, &argumentValue);
 
-			ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(argumentValue, voidP));
+			ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(
+				argumentValue, voidP));
 		}
 
 		argOptional.emplace(0);
 
 		if (!voidP) {
-			ThrowErr(pObj->mmValueInterfacePointer->ValueToInteger(&argumentValue, &argOptional.value()));
+			ThrowErr(pObj->mmValueInterfacePointer->ValueToInteger(
+				&argumentValue, &argOptional.value()));
 		}
 	}
 
@@ -2977,7 +3253,10 @@ MoaError TStdXtra_IMoaMmXScript::GetArgLong(PMoaDrCallInfo callPtr, std::optiona
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::GetArgPropertyName(PMoaDrCallInfo callPtr, PMoaMmSymbol propertyNameSymbolPointer) {
+MoaError TStdXtra_IMoaMmXScript::GetArgPropertyName(
+	PMoaDrCallInfo callPtr,
+	PMoaMmSymbol propertyNameSymbolPointer
+) {
 	moa_try
 
 	ThrowNull(callPtr);
@@ -2989,7 +3268,8 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPropertyName(PMoaDrCallInfo callPtr, PMoa
 		MoaMmValue argumentValue = kVoidMoaMmValueInitializer;
 		AccessArgByIndex(PROPERTY_NAME_ARG_INDEX, &argumentValue);
 
-		ThrowErr(pObj->mmValueInterfacePointer->ValueToSymbol(&argumentValue, propertyNameSymbolPointer));
+		ThrowErr(pObj->mmValueInterfacePointer->ValueToSymbol(
+			&argumentValue, propertyNameSymbolPointer));
 	}
 
 	moa_catch
@@ -2997,7 +3277,10 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPropertyName(PMoaDrCallInfo callPtr, PMoa
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::GetArgMixerSavedCallHandler(PMoaDrCallInfo callPtr, PMoaLong mixerSavedCallHandlerPointer) {
+MoaError TStdXtra_IMoaMmXScript::GetArgMixerSavedCallHandler(
+	PMoaDrCallInfo callPtr,
+	PMoaLong mixerSavedCallHandlerPointer
+) {
 	moa_try
 
 	ThrowNull(callPtr);
@@ -3005,9 +3288,12 @@ MoaError TStdXtra_IMoaMmXScript::GetArgMixerSavedCallHandler(PMoaDrCallInfo call
 
 	{
 		MoaMmValue argumentValue = kVoidMoaMmValueInitializer;
-		AccessArgByIndex(pObj->argsBase + pObj->ARG_INDEX_MIXER_SAVED_CALL_HANDLER, &argumentValue);
 
-		ThrowErr(pObj->mmValueInterfacePointer->ValueToInteger(&argumentValue, mixerSavedCallHandlerPointer));
+		AccessArgByIndex(pObj->argsBase + pObj->ARG_INDEX_MIXER_SAVED_CALL_HANDLER,
+			&argumentValue);
+
+		ThrowErr(pObj->mmValueInterfacePointer->ValueToInteger(
+			&argumentValue, mixerSavedCallHandlerPointer));
 	}
 
 	moa_catch
@@ -3020,7 +3306,10 @@ MoaError TStdXtra_IMoaMmXScript::GetArgMixerSavedCallHandler(PMoaDrCallInfo call
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::GetArgMember(PMoaDrCallInfo callPtr, Args* argsPointer) {
+MoaError TStdXtra_IMoaMmXScript::GetArgMember(
+	PMoaDrCallInfo callPtr,
+	Args* argsPointer
+) {
 	PIMoaDrMovie drMovieInterfacePointer = NULL;
 	PIMoaDrCastMem drCastMemInterfacePointer = NULL;
 
@@ -3040,12 +3329,15 @@ MoaError TStdXtra_IMoaMmXScript::GetArgMember(PMoaDrCallInfo callPtr, Args* args
 		MoaMmValue argumentValue = kVoidMoaMmValueInitializer;
 		AccessArgByIndex(pObj->argsBase + pObj->ARG_INDEX_MEMBER, &argumentValue);
 
-		ThrowErr(pObj->drValueInterfacePointer->ValueToCMRef(&argumentValue, &cmRef));
+		ThrowErr(pObj->drValueInterfacePointer->ValueToCMRef(
+			&argumentValue, &cmRef));
 
 		ThrowErr(pObj->drPlayerInterfacePointer->GetActiveMovie(&drMovieInterfacePointer));
 		ThrowNull(drMovieInterfacePointer);
 
-		ThrowErr(drMovieInterfacePointer->GetCastMemFromCMRef(&cmRef, &drCastMemInterfacePointer));
+		ThrowErr(drMovieInterfacePointer->GetCastMemFromCMRef(
+			&cmRef, &drCastMemInterfacePointer));
+		
 		ThrowNull(drCastMemInterfacePointer);
 
 		argsPointer->setDrCastMemInterfacePointer(drCastMemInterfacePointer);
@@ -3060,7 +3352,10 @@ MoaError TStdXtra_IMoaMmXScript::GetArgMember(PMoaDrCallInfo callPtr, Args* args
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::GetArgPath(PMoaDrCallInfo callPtr, Args* argsPointer, Media::DirectorMedia* directorMediaPointer) {
+MoaError TStdXtra_IMoaMmXScript::GetArgPath(
+	PMoaDrCallInfo callPtr,
+	Args* argsPointer, Media::DirectorMedia* directorMediaPointer
+) {
 	MoaMmValue dirnameValue = kVoidMoaMmValueInitializer;
 	MoaMmValue basenameValue = kVoidMoaMmValueInitializer;
 	MoaMmValue extensionValue = kVoidMoaMmValueInitializer;
@@ -3084,17 +3379,20 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPath(PMoaDrCallInfo callPtr, Args* argsPo
 		if (!voidP) {
 			AccessArgByIndex(argIndex, &argumentValue);
 
-			ThrowErr(pObj->exportFileValueConverterPointer->getValueType(argumentValue, voidP, valueType));
+			ThrowErr(pObj->exportFileValueConverterPointer->getValueType(
+				argumentValue, voidP, valueType));
 		}
 
 		if (voidP) {
 			// we can't call GetArgPathDefault here because the label and agent haven't been found yet
 			// instead, it is deferred to GetArgOptions
-			argsPointer->pathInfoOptional.emplace(pObj->productVersionMajor, pObj->pCallback, pObj->pCalloc);
+			argsPointer->pathInfoOptional.emplace(
+				pObj->productVersionMajor, pObj->pCallback, pObj->pCalloc);
 		} else {
 			MoaChar pathnameSpec[MOA_MAX_PATHNAME] = "";
 
-			MoaError err = pObj->mmValueInterfacePointer->ValueToString(&argumentValue, pathnameSpec, MOA_MAX_PATHNAME);
+			MoaError err = pObj->mmValueInterfacePointer->ValueToString(
+				&argumentValue, pathnameSpec, MOA_MAX_PATHNAME);
 
 			if (err == kMoaMmErr_StringExpected) {
 				// must be a property list specifically, not just a list (getAProp doesn't distinguish)
@@ -3102,45 +3400,68 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPath(PMoaDrCallInfo callPtr, Args* argsPo
 					Throw(kMoaMmErr_ValueTypeMismatch);
 				}
 
-				argsPointer->pathInfoOptional.emplace(pObj->productVersionMajor, pObj->pCallback, pObj->pCalloc);
+				argsPointer->pathInfoOptional.emplace(
+					pObj->productVersionMajor, pObj->pCallback, pObj->pCalloc);
+
 				Path::Info &pathInfo = argsPointer->pathInfoOptional.value();
 
-				ThrowErr(pObj->exportFileValueConverterPointer->getAProp(argumentValue, pObj->symbols.Dirname, dirnameValue));
-				ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(dirnameValue, voidP));
+				ThrowErr(pObj->exportFileValueConverterPointer->getAProp(
+					argumentValue, pObj->symbols.Dirname, dirnameValue));
+
+				ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(
+					dirnameValue, voidP));
 
 				if (!voidP) {
-					ThrowErr(pObj->mmValueInterfacePointer->ValueToString(&dirnameValue, pathnameSpec, MOA_MAX_PATHNAME));
+					ThrowErr(pObj->mmValueInterfacePointer->ValueToString(
+						&dirnameValue, pathnameSpec, MOA_MAX_PATHNAME));
+
 					pathInfo.setDirnameOptional(pathnameSpec);
 				}
 
-				ThrowErr(pObj->exportFileValueConverterPointer->getAProp(argumentValue, pObj->symbols.Basename, basenameValue));
-				ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(basenameValue, voidP));
+				ThrowErr(pObj->exportFileValueConverterPointer->getAProp(
+					argumentValue, pObj->symbols.Basename, basenameValue));
+
+				ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(
+					basenameValue, voidP));
 
 				if (!voidP) {
-					ThrowErr(pObj->mmValueInterfacePointer->ValueToString(&basenameValue, pathnameSpec, MOA_MAX_PATHNAME));
+					ThrowErr(pObj->mmValueInterfacePointer->ValueToString(
+						&basenameValue, pathnameSpec, MOA_MAX_PATHNAME));
+
 					pathInfo.setBasenameOptional(pathnameSpec);
 				}
 
-				ThrowErr(pObj->exportFileValueConverterPointer->getAProp(argumentValue, pObj->symbols.Extension, extensionValue));
-				ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(extensionValue, voidP));
+				ThrowErr(pObj->exportFileValueConverterPointer->getAProp(
+					argumentValue, pObj->symbols.Extension, extensionValue));
+
+				ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(
+					extensionValue, voidP));
 
 				if (!voidP) {
-					ThrowErr(pObj->mmValueInterfacePointer->ValueToString(&extensionValue, pathnameSpec, MOA_MAX_PATHNAME));
+					ThrowErr(pObj->mmValueInterfacePointer->ValueToString(
+						&extensionValue, pathnameSpec, MOA_MAX_PATHNAME));
+
 					pathInfo.setExtensionOptional(pathnameSpec);
 				}
 
-				ThrowErr(pObj->exportFileValueConverterPointer->getAProp(argumentValue, pObj->symbols.Filename, filenameValue));
-				ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(filenameValue, voidP));
+				ThrowErr(pObj->exportFileValueConverterPointer->getAProp(
+					argumentValue, pObj->symbols.Filename, filenameValue));
+
+				ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(
+					filenameValue, voidP));
 
 				if (!voidP) {
-					ThrowErr(pObj->mmValueInterfacePointer->ValueToString(&filenameValue, pathnameSpec, MOA_MAX_PATHNAME));
+					ThrowErr(pObj->mmValueInterfacePointer->ValueToString(
+						&filenameValue, pathnameSpec, MOA_MAX_PATHNAME));
+
 					pathInfo.setFilenameOptional(pathnameSpec);
 				}
 			} else {
 				ThrowErr(err);
 
 				try {
-					argsPointer->pathInfoOptional.emplace(pathnameSpec, pObj->productVersionMajor, pObj->pCallback, pObj->pCalloc);
+					argsPointer->pathInfoOptional.emplace(pathnameSpec,
+						pObj->productVersionMajor, pObj->pCallback, pObj->pCalloc);
 				} catch (const Path::Info::Invalid&) {
 					Throw(kMoaErr_BadParam);
 				}
@@ -3164,7 +3485,9 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPath(PMoaDrCallInfo callPtr, Args* argsPo
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::GetArgPathDefault(Args* argsPointer, Media::DirectorMedia* directorMediaPointer) {
+MoaError TStdXtra_IMoaMmXScript::GetArgPathDefault(
+	Args* argsPointer, Media::DirectorMedia* directorMediaPointer
+) {
 	moa_try
 
 	ThrowNull(argsPointer);
@@ -3193,7 +3516,8 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultDirname(Args* argsPointer) {
 	ThrowNull(argsPointer);
 
 	if (!argsPointer->pathInfoOptional.has_value()) {
-		argsPointer->pathInfoOptional.emplace(pObj->productVersionMajor, pObj->pCallback, pObj->pCalloc);
+		argsPointer->pathInfoOptional.emplace(
+			pObj->productVersionMajor, pObj->pCallback, pObj->pCalloc);
 	}
 
 	Path::Info &pathInfo = argsPointer->pathInfoOptional.value();
@@ -3207,10 +3531,16 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultDirname(Args* argsPointer) {
 
 	// also turn it into an absolute path if it's relative
 	if (hasValue) {
-		ThrowErr(pObj->pCallback->MoaCreateInstance(&CLSID_CMoaPath, &IID_IMoaPathName, (PPMoaVoid)&pathNameInterfacePointer));
+		ThrowErr(pObj->pCallback->MoaCreateInstance(
+			&CLSID_CMoaPath, &IID_IMoaPathName,
+			(PPMoaVoid)&pathNameInterfacePointer)
+		);
+
 		ThrowNull(pathNameInterfacePointer);
 
-		ThrowErr(pathNameInterfacePointer->InitFromString(dirnameOptional.value().c_str(), kMoaPathDialect_LOCAL, FALSE, FALSE));
+		ThrowErr(pathNameInterfacePointer->InitFromString(
+			dirnameOptional.value().c_str(), kMoaPathDialect_LOCAL, FALSE, FALSE));
+
 		hasValue = (bool)pathNameInterfacePointer->IsAbsolute();
 	}
 
@@ -3259,7 +3589,8 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultDirname(Args* argsPointer) {
 			}
 			#endif
 			#ifdef WINDOWS
-			// we don't verify the folder, it'll get created as necessary if the #newFolder option was specified
+			// we don't verify the folder, it'll get created as necessary if
+			// the #newFolder option was specified
 			// verifying can also cause other problems
 			// http://forums.ivanti.com/s/article/Environment-Manager-Engineering-Setting-CreateSpecialPaths?language=en_US
 			int csidl = CSIDL_FLAG_DONT_VERIFY;
@@ -3321,7 +3652,9 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultDirname(Args* argsPointer) {
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultExtension(Args* argsPointer, Media::DirectorMedia* directorMediaPointer) {
+MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultExtension(
+	Args* argsPointer, Media::DirectorMedia* directorMediaPointer
+) {
 	std::optional<std::string> extensionOptional = std::nullopt;
 
 	moa_try
@@ -3330,7 +3663,8 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultExtension(Args* argsPointer, M
 	ThrowNull(directorMediaPointer);
 
 	if (!argsPointer->pathInfoOptional.has_value()) {
-		argsPointer->pathInfoOptional.emplace(pObj->productVersionMajor, pObj->pCallback, pObj->pCalloc);
+		argsPointer->pathInfoOptional.emplace(
+			pObj->productVersionMajor, pObj->pCallback, pObj->pCalloc);
 	}
 
 	Path::Info &pathInfo = argsPointer->pathInfoOptional.value();
@@ -3347,7 +3681,8 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultExtension(Args* argsPointer, M
 
 		const Options &options = argsPointer->optionsOptional.value();
 
-		// the agent can change after this, based on the extension, if the agent options are set
+		// the agent can change after this, based on
+		// the extension, if the agent options are set
 		if (argsPointer->agentStringOptional.value_or("").empty()) {
 			ThrowErr(FindLabelInfo(argsPointer, directorMediaPointer));
 
@@ -3355,7 +3690,8 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultExtension(Args* argsPointer, M
 				Throw(kMoaErr_InternalError);
 			}
 
-			const Label::Info &labelInfo = directorMediaPointer->labelInfoMapIterator->second;
+			const Label::Info &labelInfo
+				= directorMediaPointer->labelInfoMapIterator->second;
 
 			// this being empty signals to use Xtra Asset Info instead
 			if (labelInfo.pathExtensions.empty()) {
@@ -3365,7 +3701,8 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultExtension(Args* argsPointer, M
 					Throw(kMoaErr_InternalError);
 				}
 
-				const Asset::Info &assetInfo = directorMediaPointer->assetInfoOptional.value();
+				const Asset::Info &assetInfo
+					= directorMediaPointer->assetInfoOptional.value();
 
 				if (assetInfo.pathExtensions.empty()) {
 					pathInfo.setExtensionOptional("");
@@ -3374,14 +3711,16 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultExtension(Args* argsPointer, M
 						Throw(kMoaMmErr_ArgOutOfRange);
 					}
 
-					pathInfo.setExtensionOptional(assetInfo.pathExtensions[options.alternatePathExtension]);
+					pathInfo.setExtensionOptional(
+						assetInfo.pathExtensions[options.alternatePathExtension]);
 				}
 			} else {
 				if (options.alternatePathExtension >= labelInfo.pathExtensions.size()) {
 					Throw(kMoaMmErr_ArgOutOfRange);
 				}
 
-				pathInfo.setExtensionOptional(labelInfo.pathExtensions[options.alternatePathExtension]);
+				pathInfo.setExtensionOptional(
+					labelInfo.pathExtensions[options.alternatePathExtension]);
 			}
 		} else {
 			ThrowErr(FindAgentInfo(argsPointer, directorMediaPointer));
@@ -3390,7 +3729,8 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultExtension(Args* argsPointer, M
 				Throw(kMoaErr_InternalError);
 			}
 
-			const Agent::Info &agentInfo = directorMediaPointer->agentInfoOptional.value();
+			const Agent::Info &agentInfo
+				= directorMediaPointer->agentInfoOptional.value();
 
 			if (agentInfo.pathExtensions.empty()) {
 				pathInfo.setExtensionOptional("");
@@ -3399,7 +3739,8 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultExtension(Args* argsPointer, M
 					Throw(kMoaMmErr_ArgOutOfRange);
 				}
 
-				pathInfo.setExtensionOptional(agentInfo.pathExtensions[options.alternatePathExtension]);
+				pathInfo.setExtensionOptional(
+					agentInfo.pathExtensions[options.alternatePathExtension]);
 			}
 		}
 	}
@@ -3409,7 +3750,10 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultExtension(Args* argsPointer, M
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultBasename(Args* argsPointer, MoaError createFileErr) {
+MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultBasename(
+	Args* argsPointer,
+	MoaError createFileErr
+) {
 	PIMoaDrCastMem drCastMemInterfacePointer = NULL;
 
 	std::optional<std::string> basenameOptional = std::nullopt;
@@ -3423,7 +3767,8 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultBasename(Args* argsPointer, Mo
 	ThrowNull(argsPointer);
 
 	if (!argsPointer->pathInfoOptional.has_value()) {
-		argsPointer->pathInfoOptional.emplace(pObj->productVersionMajor, pObj->pCallback, pObj->pCalloc);
+		argsPointer->pathInfoOptional.emplace(
+			pObj->productVersionMajor, pObj->pCallback, pObj->pCalloc);
 	}
 
 	Path::Info &pathInfo = argsPointer->pathInfoOptional.value();
@@ -3442,16 +3787,19 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultBasename(Args* argsPointer, Mo
 				Throw(kMoaErr_InternalError);
 			}
 
-			ThrowErr(drCastMemInterfacePointer->GetProp(pObj->symbols.Name, &nameValue));
+			ThrowErr(drCastMemInterfacePointer->GetProp(
+				pObj->symbols.Name, &nameValue));
 
 			// always use the number if the name is empty
 			bool nameEmpty = true;
-			ThrowErr(pObj->exportFileValueConverterPointer->testStringValueEmpty(nameValue, nameEmpty));
+			ThrowErr(pObj->exportFileValueConverterPointer->testStringValueEmpty(
+				nameValue, nameEmpty));
 
 			valid = !nameEmpty;
 
 			if (valid) {
-				MoaError err = pObj->exportFileValueConverterPointer->toString(nameValue, basename);
+				MoaError err = pObj->exportFileValueConverterPointer->toString(
+					nameValue, basename);
 
 				valid = err == kMoaErr_NoErr;
 
@@ -3481,13 +3829,18 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultBasename(Args* argsPointer, Mo
 					// does Mac even have a path size limit outside of MOA's?
 					#endif
 					#ifdef WINDOWS
-					// subtle issue: MAX_PATH describes the length of a WinAPI string (ANSI or Unicode)
+					// subtle issue: MAX_PATH describes the length of
+					// a WinAPI string (ANSI or Unicode)
 					// but this path string is (potentially) UTF-8
-					// because characters in UTF-8 are variable length, there is a chance its size
-					// will be larger than if it were represented as a WinAPI string
+					// because characters in UTF-8 are variable length, there
+					// is a chance its size will be larger than if it were
+					// represented as a WinAPI string
 					// where characters are (almost) always a fixed size
 					// so to properly compare, we need to convert it first
-					valid = stringSizeWide(CA2W(path.c_str(), CP_DIRECTOR(pObj->productVersionMajor))) <= MAX_PATH;
+					valid = stringSizeWide(CA2W(
+						path.c_str(),
+						CP_DIRECTOR(pObj->productVersionMajor)
+					)) <= MAX_PATH;
 					#endif
 				}
 			}
@@ -3503,7 +3856,8 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultBasename(Args* argsPointer, Mo
 	// if the path is too long or invalid, use the member index instead
 	if (!valid) {
 		if (!drCastMemInterfacePointer) {
-			drCastMemInterfacePointer = argsPointer->getDrCastMemInterfacePointer();
+			drCastMemInterfacePointer
+				= argsPointer->getDrCastMemInterfacePointer();
 
 			if (!drCastMemInterfacePointer) {
 				Throw(kMoaErr_InternalError);
@@ -3527,7 +3881,10 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultBasename(Args* argsPointer, Mo
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::GetArgInfo(PMoaDrCallInfo callPtr, Args* argsPointer) {
+MoaError TStdXtra_IMoaMmXScript::GetArgInfo(
+	PMoaDrCallInfo callPtr,
+	Args* argsPointer
+) {
 	moa_try
 
 	ThrowNull(callPtr);
@@ -3545,7 +3902,10 @@ MoaError TStdXtra_IMoaMmXScript::GetArgInfo(PMoaDrCallInfo callPtr, Args* argsPo
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::GetArgLabel(PMoaDrCallInfo callPtr, Args* argsPointer, Media::DirectorMedia* directorMediaPointer) {
+MoaError TStdXtra_IMoaMmXScript::GetArgLabel(
+	PMoaDrCallInfo callPtr,
+	Args* argsPointer, Media::DirectorMedia* directorMediaPointer
+) {
 	moa_try
 
 	ThrowNull(callPtr);
@@ -3563,7 +3923,8 @@ MoaError TStdXtra_IMoaMmXScript::GetArgLabel(PMoaDrCallInfo callPtr, Args* argsP
 		if (!voidP) {
 			AccessArgByIndex(argIndex, &argumentValue);
 
-			ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(argumentValue, voidP));
+			ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(
+				argumentValue, voidP));
 		}
 
 		if (voidP) {
@@ -3573,7 +3934,10 @@ MoaError TStdXtra_IMoaMmXScript::GetArgLabel(PMoaDrCallInfo callPtr, Args* argsP
 			// in this case, don't get the specified label again
 			if (!std::holds_alternative<MoaMmSymbol>(argsPointer->labelSymbolVariant)) {
 				MoaMmSymbol labelSymbol = 0;
-				ThrowErr(pObj->mmValueInterfacePointer->ValueToSymbol(&argumentValue, &labelSymbol));
+
+				ThrowErr(pObj->mmValueInterfacePointer->ValueToSymbol(
+					&argumentValue, &labelSymbol));
+
 				argsPointer->labelSymbolVariant = labelSymbol;
 
 				// we call this just to vet that the label can actually be used for this member
@@ -3583,7 +3947,8 @@ MoaError TStdXtra_IMoaMmXScript::GetArgLabel(PMoaDrCallInfo callPtr, Args* argsP
 					Throw(kMoaErr_InternalError);
 				}
 
-				Label::MAPPED_VECTOR &labelMappedVector = directorMediaPointer->labelMappedVectorOptional.value();
+				Label::MAPPED_VECTOR &labelMappedVector
+					= directorMediaPointer->labelMappedVectorOptional.value();
 
 				if (!labelMappedVector.find(labelSymbol)) {
 					Throw(kMoaDrErr_LabelNotFound);
@@ -3623,11 +3988,13 @@ MoaError TStdXtra_IMoaMmXScript::GetArgLabelDefault(Args* argsPointer, Media::Di
 		}
 
 		if (!argsPointer->pathInfoOptional.has_value()) {
-			argsPointer->pathInfoOptional.emplace(pObj->productVersionMajor, pObj->pCallback, pObj->pCalloc);
+			argsPointer->pathInfoOptional.emplace(
+				pObj->productVersionMajor, pObj->pCallback, pObj->pCalloc);
 		}
 
 		// bad param happens here if bad path passed in
-		if (!argsPointer->pathInfoOptional.value().getExtensionOptional(extensionOptional, false)) {
+		if (!argsPointer->pathInfoOptional.value().getExtensionOptional(
+			extensionOptional, false)) {
 			Throw(kMoaErr_BadParam);
 		}
 
@@ -3637,7 +4004,8 @@ MoaError TStdXtra_IMoaMmXScript::GetArgLabelDefault(Args* argsPointer, Media::Di
 			Throw(kMoaErr_InternalError);
 		}
 
-		Label::MAPPED_VECTOR &labelMappedVector = directorMediaPointer->labelMappedVectorOptional.value();
+		Label::MAPPED_VECTOR &labelMappedVector
+			= directorMediaPointer->labelMappedVectorOptional.value();
 
 		if (labelMappedVector.empty()) {
 			Throw(kMoaDrErr_LabelNotFound);
@@ -3673,7 +4041,9 @@ MoaError TStdXtra_IMoaMmXScript::GetArgLabelDefault(Args* argsPointer, Media::Di
 					Throw(kMoaErr_InternalError);
 				}
 
-				const Label::Info &labelInfo = directorMediaPointer->labelInfoMapIterator->second;
+				const Label::Info &labelInfo
+					= directorMediaPointer->labelInfoMapIterator->second;
+
 				const std::string &extension = extensionOptional.value();
 
 				// consider Xtra Media extensions too
@@ -3688,7 +4058,8 @@ MoaError TStdXtra_IMoaMmXScript::GetArgLabelDefault(Args* argsPointer, Media::Di
 						Throw(kMoaErr_InternalError);
 					}
 
-					const Asset::Info &assetInfo = directorMediaPointer->assetInfoOptional.value();
+					const Asset::Info &assetInfo
+						= directorMediaPointer->assetInfoOptional.value();
 
 					if ((assetInfo.pathExtensions.empty() && extension.empty())
 						|| assetInfo.pathExtensions.find(extension)) {
@@ -3708,10 +4079,13 @@ MoaError TStdXtra_IMoaMmXScript::GetArgLabelDefault(Args* argsPointer, Media::Di
 			if (empty
 				&& argsPointer->optionsOptional.has_value()) {
 				argsPointer->optionsOptional.value().getAgentOptionsValue(agentOptionsValue);
-				ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(agentOptionsValue, empty, kMoaMmValueType_PropList));
+
+				ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(
+					agentOptionsValue, empty, kMoaMmValueType_PropList));
 
 				if (!empty) {
-					ThrowErr(pObj->exportFileValueConverterPointer->testListValueEmpty(agentOptionsValue, empty));
+					ThrowErr(pObj->exportFileValueConverterPointer->testListValueEmpty(
+						agentOptionsValue, empty));
 				}
 			}
 
@@ -3736,7 +4110,8 @@ MoaError TStdXtra_IMoaMmXScript::GetArgLabelDefault(Args* argsPointer, Media::Di
 					argsPointer->labelSymbolVariant = *labelMappedVectorIterator;
 					directorMediaPointer->labelInfoMapIterator = LABEL_INFO_NOT_FOUND;
 
-					if (!std::holds_alternative<MoaMmSymbol>(argsPointer->labelSymbolVariant)) {
+					if (!std::holds_alternative<MoaMmSymbol>(
+						argsPointer->labelSymbolVariant)) {
 						Throw(kMoaErr_InternalError);
 					}
 
@@ -3790,7 +4165,10 @@ MoaError TStdXtra_IMoaMmXScript::GetArgLabelDefault(Args* argsPointer, Media::Di
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::GetArgAgent(PMoaDrCallInfo callPtr, Args* argsPointer, Media::DirectorMedia* directorMediaPointer) {
+MoaError TStdXtra_IMoaMmXScript::GetArgAgent(
+	PMoaDrCallInfo callPtr,
+	Args* argsPointer, Media::DirectorMedia* directorMediaPointer
+) {
 	std::string agentString = "";
 
 	moa_try
@@ -3814,7 +4192,8 @@ MoaError TStdXtra_IMoaMmXScript::GetArgAgent(PMoaDrCallInfo callPtr, Args* argsP
 		if (!voidP) {
 			AccessArgByIndex(argIndex, &argumentValue);
 
-			ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(argumentValue, voidP));
+			ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(
+				argumentValue, voidP));
 		}
 
 		if (voidP) {
@@ -3823,7 +4202,9 @@ MoaError TStdXtra_IMoaMmXScript::GetArgAgent(PMoaDrCallInfo callPtr, Args* argsP
 			// we do NOT check if the agent is already set like we do for labels
 			// because it might have been set by GetArgLabelDefault already
 			// (but this takes precedence)
-			ThrowErr(pObj->exportFileValueConverterPointer->toString(argumentValue, agentString));
+			ThrowErr(pObj->exportFileValueConverterPointer->toString(
+				argumentValue, agentString));
+
 			argsPointer->agentStringOptional = agentString;
 
 			// if this was set, unset it, it's no longer valid
@@ -3847,7 +4228,9 @@ MoaError TStdXtra_IMoaMmXScript::GetArgAgent(PMoaDrCallInfo callPtr, Args* argsP
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::GetArgAgentDefault(Args* argsPointer, Media::DirectorMedia* directorMediaPointer) {
+MoaError TStdXtra_IMoaMmXScript::GetArgAgentDefault(
+	Args* argsPointer, Media::DirectorMedia* directorMediaPointer
+) {
 	std::optional<std::string> extensionOptional = std::nullopt;
 	Agent::Info::MAP::const_iterator agentInfoMapIterator = {};
 
@@ -3862,11 +4245,13 @@ MoaError TStdXtra_IMoaMmXScript::GetArgAgentDefault(Args* argsPointer, Media::Di
 	if (!argsPointer->agentStringOptional.has_value()
 		&& !directorMediaPointer->agentInfoMapOptional.has_value()) {
 		if (!argsPointer->pathInfoOptional.has_value()) {
-			argsPointer->pathInfoOptional.emplace(pObj->productVersionMajor, pObj->pCallback, pObj->pCalloc);
+			argsPointer->pathInfoOptional.emplace(
+				pObj->productVersionMajor, pObj->pCallback, pObj->pCalloc);
 		}
 
 		// bad param happens here if bad path passed in
-		if (!argsPointer->pathInfoOptional.value().getExtensionOptional(extensionOptional, false)) {
+		if (!argsPointer->pathInfoOptional.value().getExtensionOptional(
+			extensionOptional, false)) {
 			Throw(kMoaErr_BadParam);
 		}
 
@@ -3879,11 +4264,18 @@ MoaError TStdXtra_IMoaMmXScript::GetArgAgentDefault(Args* argsPointer, Media::Di
 				Throw(kMoaErr_InternalError);
 			}
 
-			const Agent::Info::MAP &agentInfoMap = directorMediaPointer->agentInfoMapOptional.value();
+			const Agent::Info::MAP &agentInfoMap
+				= directorMediaPointer->agentInfoMapOptional.value();
+
 			const std::string &extension = extensionOptional.value();
 
-			for (agentInfoMapIterator = agentInfoMap.begin(); agentInfoMapIterator != agentInfoMap.end(); agentInfoMapIterator++) {
-				const Path::EXTENSION_MAPPED_VECTOR &pathExtensions = agentInfoMapIterator->second.pathExtensions;
+			for (
+				agentInfoMapIterator = agentInfoMap.begin();
+				agentInfoMapIterator != agentInfoMap.end();
+				agentInfoMapIterator++
+			) {
+				const Path::EXTENSION_MAPPED_VECTOR &pathExtensions
+					= agentInfoMapIterator->second.pathExtensions;
 
 				if ((pathExtensions.empty() && extension.empty())
 					|| pathExtensions.find(extension)) {
@@ -3897,7 +4289,8 @@ MoaError TStdXtra_IMoaMmXScript::GetArgAgentDefault(Args* argsPointer, Media::Di
 				// this method only cares about the current label
 				// if the label changes later, setting the agent in advance will be wrong
 				// important to clear contentPointer because we didn't find an agent
-				// so we don't want an outdated reader, data object, etc. to be used under any circumstance
+				// so we don't want an outdated reader, data object, etc. to be
+				// used under any circumstance
 				directorMediaPointer->agentInfoMapOptional = std::nullopt;
 				directorMediaPointer->contentPointer = 0;
 			}
@@ -3949,7 +4342,8 @@ MoaError TStdXtra_IMoaMmXScript::GetArgOptions(
 		if (!voidP) {
 			AccessArgByIndex(argIndex, &argumentValue);
 
-			ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(argumentValue, voidP, kMoaMmValueType_PropList));
+			ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(
+				argumentValue, voidP, kMoaMmValueType_PropList));
 		}
 
 		argsPointer->optionsOptional.emplace(pObj->mmValueInterfacePointer);
@@ -3960,67 +4354,88 @@ MoaError TStdXtra_IMoaMmXScript::GetArgOptions(
 				argumentValue, pObj->symbols.IncrementFilename, incrementFilenameValue
 			));
 
-			ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(incrementFilenameValue, voidP));
+			ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(
+				incrementFilenameValue, voidP));
 
 			if (!voidP) {
-				ThrowErr(pObj->mmValueInterfacePointer->ValueToInteger(&incrementFilenameValue, &options.incrementFilename));
+				ThrowErr(pObj->mmValueInterfacePointer->ValueToInteger(
+					&incrementFilenameValue, &options.incrementFilename));
 			}
 
 			ThrowErr(pObj->exportFileValueConverterPointer->getAProp(
-				argumentValue, pObj->symbols.ReplaceExistingFile, replaceExistingFileValue
+				argumentValue,
+				pObj->symbols.ReplaceExistingFile,
+				replaceExistingFileValue
 			));
 
-			ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(replaceExistingFileValue, voidP));
+			ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(
+				replaceExistingFileValue, voidP));
 
 			if (!voidP) {
-				ThrowErr(pObj->mmValueInterfacePointer->ValueToInteger(&replaceExistingFileValue, &options.replaceExistingFile));
+				ThrowErr(pObj->mmValueInterfacePointer->ValueToInteger(
+					&replaceExistingFileValue, &options.replaceExistingFile));
 			}
 
 			ThrowErr(pObj->exportFileValueConverterPointer->getAProp(
 				argumentValue, pObj->symbols.NewFolder, newFolderValue
 			));
 
-			ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(newFolderValue, voidP));
+			ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(
+				newFolderValue, voidP));
 
 			if (!voidP) {
-				ThrowErr(pObj->mmValueInterfacePointer->ValueToInteger(&newFolderValue, &options.newFolder));
+				ThrowErr(pObj->mmValueInterfacePointer->ValueToInteger(
+					&newFolderValue, &options.newFolder));
 			}
 
 			ThrowErr(pObj->exportFileValueConverterPointer->getAProp(
-				argumentValue, pObj->symbols.AlternatePathExtension, alternatePathExtensionValue
+				argumentValue,
+				pObj->symbols.AlternatePathExtension,
+				alternatePathExtensionValue
 			));
 
-			ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(alternatePathExtensionValue, voidP));
+			ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(
+				alternatePathExtensionValue, voidP));
 
 			if (!voidP) {
-				ThrowErr(pObj->mmValueInterfacePointer->ValueToInteger(&alternatePathExtensionValue, (PMoaLong)&options.alternatePathExtension));
+				ThrowErr(pObj->mmValueInterfacePointer->ValueToInteger(
+					&alternatePathExtensionValue, (PMoaLong)&options.alternatePathExtension));
 			}
 
 			ThrowErr(pObj->exportFileValueConverterPointer->getAProp(
 				argumentValue, pObj->symbols.Location, locationValue
 			));
 
-			ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(locationValue, voidP));
+			ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(
+				locationValue, voidP));
 
 			if (!voidP) {
-				ThrowErr(pObj->mmValueInterfacePointer->ValueToSymbol(&locationValue, &options.locationSymbol));
+				ThrowErr(pObj->mmValueInterfacePointer->ValueToSymbol(
+					&locationValue, &options.locationSymbol));
 			}
 
 			ThrowErr(pObj->exportFileValueConverterPointer->getAProp(
-				argumentValue, pObj->symbols.WriterClassID, writerClassIDValue
+				argumentValue,
+				pObj->symbols.WriterClassID,
+				writerClassIDValue
 			));
 
-			ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(writerClassIDValue, voidP));
+			ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(
+				writerClassIDValue, voidP));
 
 			if (!voidP) {
-				ThrowErr(pObj->exportFileValueConverterPointer->toID(writerClassIDValue, options.writerClassID));
+				ThrowErr(pObj->exportFileValueConverterPointer->toID(
+					writerClassIDValue, options.writerClassID));
 			}
 
 			ThrowErr(pObj->exportFileValueConverterPointer->getAProp(
-				argumentValue, pObj->symbols.AgentOptions, agentOptionsValue
+				argumentValue,
+				pObj->symbols.AgentOptions,
+				agentOptionsValue
 			));
 
-			ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(agentOptionsValue, voidP));
+			ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(
+				agentOptionsValue, voidP));
 
 			if (!voidP) {
 				options.setAgentOptionsValue(agentOptionsValue);
@@ -4058,8 +4473,10 @@ MoaError TStdXtra_IMoaMmXScript::GetArgOptions(
 				directorMediaPointer->agentInfoMapOptional = std::nullopt;
 
 				// if the label was passed in, GetArgLabelDefault doesn't get called
-				// in that case, we force the agent for the path to be looked up too by calling GetArgAgentDefault
-				// it is fine to call directly because if the agent was user specified we wouldn't be here
+				// in that case, we force the agent for the path to be looked up too
+				// by calling GetArgAgentDefault
+				// it is fine to call directly because
+				// if the agent was user specified we wouldn't be here
 				// and it'll do nothing if the agent WAS found by GetArgLabel
 				ThrowErr(GetArgLabel(callPtr, argsPointer, directorMediaPointer));
 				ThrowErr(GetArgAgentDefault(argsPointer, directorMediaPointer));
@@ -4098,14 +4515,18 @@ MoaError TStdXtra_IMoaMmXScript::GetArgOptions(
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::GetArgOptionsDefault(Args* argsPointer, Media::DirectorMedia* directorMediaPointer, bool x) {
+MoaError TStdXtra_IMoaMmXScript::GetArgOptionsDefault(
+	Args* argsPointer, Media::DirectorMedia* directorMediaPointer,
+	bool x
+) {
 	moa_try
 
 	ThrowNull(argsPointer);
 	ThrowNull(directorMediaPointer);
 
 	// nothing else here yet, but eventually, maybe?
-	ThrowErr(GetArgOptionsDefaultAgentOptions(argsPointer, directorMediaPointer, x));
+	ThrowErr(GetArgOptionsDefaultAgentOptions(
+		argsPointer, directorMediaPointer, x));
 
 	moa_catch
 	moa_catch_end
@@ -4145,7 +4566,9 @@ MoaError TStdXtra_IMoaMmXScript::GetArgOptionsDefaultAgentOptions(Args* argsPoin
 		options.getAgentOptionsValue(agentOptionsValue);
 
 		bool _void = true;
-		ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(agentOptionsValue, _void));
+
+		ThrowErr(pObj->exportFileValueConverterPointer->testValueVoid(
+			agentOptionsValue, _void));
 
 		if (_void) {
 			ThrowErr(FindAgentInfo(argsPointer, directorMediaPointer));
@@ -4154,7 +4577,8 @@ MoaError TStdXtra_IMoaMmXScript::GetArgOptionsDefaultAgentOptions(Args* argsPoin
 				Throw(kMoaErr_InternalError);
 			}
 
-			Agent::Info::WRITER_VECTOR &writerVector = directorMediaPointer->agentInfoOptional.value().writerVector;
+			Agent::Info::WRITER_VECTOR &writerVector
+				= directorMediaPointer->agentInfoOptional.value().writerVector;
 
 			ThrowErr(CreateContentReader(argsPointer, directorMediaPointer));
 
@@ -4162,7 +4586,8 @@ MoaError TStdXtra_IMoaMmXScript::GetArgOptionsDefaultAgentOptions(Args* argsPoin
 				Throw(kMoaErr_InternalError);
 			}
 
-			Media::DirectorMedia::Content &content = *directorMediaPointer->contentPointer;
+			Media::DirectorMedia::Content &content
+				= *directorMediaPointer->contentPointer;
 
 			readerInterfacePointer = content.getReaderInterfacePointer();
 
@@ -4191,7 +4616,12 @@ MoaError TStdXtra_IMoaMmXScript::GetArgOptionsDefaultAgentOptions(Args* argsPoin
 			writerVectorIterator = writerVector.end();
 
 			while (writerVectorIterator != writerVector.begin()) {
-				err = GetArgOptionsDefaultAgentOptions(&propListValue, &*--writerVectorIterator, readerInterfacePointer, x);
+				err = GetArgOptionsDefaultAgentOptions(
+					&propListValue,
+					&*--writerVectorIterator,
+					readerInterfacePointer,
+					x
+				);
 
 				if (err != kMoaErr_NoErr) {
 					break;
@@ -4203,7 +4633,9 @@ MoaError TStdXtra_IMoaMmXScript::GetArgOptionsDefaultAgentOptions(Args* argsPoin
 			if (err == kMoaErr_NoErr) {
 				options.setAgentOptionsValue(propListValue);
 			} else {
-				ThrowErr(pObj->mmListInterfacePointer->NewPropListValue(&emptyPropListValue));
+				ThrowErr(pObj->mmListInterfacePointer->NewPropListValue(
+					&emptyPropListValue));
+
 				options.setAgentOptionsValue(emptyPropListValue);
 			}
 		}
@@ -4244,19 +4676,23 @@ MoaError TStdXtra_IMoaMmXScript::GetArgOptionsDefaultAgentOptions(
 	}
 
 	// the data source can influence the writer's default options
-	MoaError err = writerInterfacePointer->SetWriterDataSource(readerInterfacePointer);
+	MoaError err = writerInterfacePointer->SetWriterDataSource(
+		readerInterfacePointer);
 
 	if (err == kMoaErr_NoErr) {
-		err = writerInterfacePointer->GetDefaultWriterOptions(&dictInterfacePointer);
+		err = writerInterfacePointer->GetDefaultWriterOptions(
+			&dictInterfacePointer);
 
 		if (err == kMoaErr_NoErr
 			&& dictInterfacePointer) {
 			// hack: return a default value if the default options can't be set on the writer
 			// (this fixes a bug with TIFF, which considers its own defaults invalid)
-			ThrowErr(writerInterfacePointer->SetWriterOptions(dictInterfacePointer));
+			ThrowErr(writerInterfacePointer->SetWriterOptions(
+				dictInterfacePointer));
 
 			if (err == kMoaErr_NoErr) {
-				ThrowErr(pObj->exportFileValueConverterPointer->concatToPropList(*propListValuePointer, x, dictInterfacePointer));
+				ThrowErr(pObj->exportFileValueConverterPointer->concatToPropList(
+					*propListValuePointer, x, dictInterfacePointer));
 			}
 		}
 	}
@@ -4270,7 +4706,9 @@ MoaError TStdXtra_IMoaMmXScript::GetArgOptionsDefaultAgentOptions(
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::GetLoaded(PMoaLong loadedPointer, PIMoaDrCastMem drCastMemInterfacePointer) {
+MoaError TStdXtra_IMoaMmXScript::GetLoaded(
+	PMoaLong loadedPointer, PIMoaDrCastMem drCastMemInterfacePointer
+) {
 	MoaMmValue loadedValue = kVoidMoaMmValueInitializer;
 
 	moa_try
@@ -4294,7 +4732,9 @@ MoaError TStdXtra_IMoaMmXScript::GetLoaded(PMoaLong loadedPointer, PIMoaDrCastMe
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::GetTypeDisplayName(MoaMmSymbol typeSymbol, std::string* typeDisplayNamePointer) {
+MoaError TStdXtra_IMoaMmXScript::GetTypeDisplayName(
+	MoaMmSymbol typeSymbol, std::string* typeDisplayNamePointer
+) {
 	PMoaVoid typeDisplayNameStringPointer = NULL;
 
 	moa_try
@@ -4304,11 +4744,15 @@ MoaError TStdXtra_IMoaMmXScript::GetTypeDisplayName(MoaMmSymbol typeSymbol, std:
 	// kMoaMmMaxXtraDisplayName includes the null byte, we only add one
 	// so stringTruncated doesn't go off when it shouldn't
 	MoaUlong typeDisplayNameStringSize = kMoaMmMaxXtraDisplayName + 1;
-	typeDisplayNameStringPointer = pObj->pCalloc->NRAlloc(typeDisplayNameStringSize);
+
+	typeDisplayNameStringPointer
+		= pObj->pCalloc->NRAlloc(typeDisplayNameStringSize);
+
 	ThrowNull(typeDisplayNameStringPointer);
 
-	// this is a regular while loop instead of a do while like I normally use for this pattern
-	// (because otherwise, displayNameStringSize will be incorrectly incremented for every outer loop)
+	// this is a regular while loop instead of a do while like I
+	// would normally use for this pattern
+	// (otherwise, displayNameStringSize is wrongly incremented for every outer loop)
 	ThrowErr(pObj->drPlayerInterfacePointer->GetCastMemTypeDisplayName(
 		typeSymbol,
 		(PMoaChar)typeDisplayNameStringPointer,
@@ -4316,12 +4760,18 @@ MoaError TStdXtra_IMoaMmXScript::GetTypeDisplayName(MoaMmSymbol typeSymbol, std:
 	);
 
 	while (/*err == kMoaMixErr_BufferTooSmall
-		|| */stringTruncated((PMoaChar)typeDisplayNameStringPointer, typeDisplayNameStringSize)) {
+		|| */stringTruncated(
+			(PMoaChar)typeDisplayNameStringPointer,
+			typeDisplayNameStringSize
+		)
+	) {
 		typeDisplayNameStringSize += typeDisplayNameStringSize;
 
 		freeMemory(typeDisplayNameStringPointer, pObj->pCalloc);
 
-		typeDisplayNameStringPointer = pObj->pCalloc->NRAlloc(typeDisplayNameStringSize);
+		typeDisplayNameStringPointer
+			= pObj->pCalloc->NRAlloc(typeDisplayNameStringSize);
+
 		ThrowNull(typeDisplayNameStringPointer);
 
 		ThrowErr(pObj->drPlayerInterfacePointer->GetCastMemTypeDisplayName(
@@ -4348,7 +4798,9 @@ MoaError TStdXtra_IMoaMmXScript::GetTypeDisplayName(MoaMmSymbol typeSymbol, std:
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::GetLabelMappedVector(Args* argsPointer, Media::DirectorMedia* directorMediaPointer) {
+MoaError TStdXtra_IMoaMmXScript::GetLabelMappedVector(
+	Args* argsPointer, Media::DirectorMedia* directorMediaPointer
+) {
 	PIMoaDrCastMem drCastMemInterfacePointer = NULL;
 	PIMoaMmXAsset mmXAssetInterfacePointer = NULL;
 
@@ -4368,9 +4820,11 @@ MoaError TStdXtra_IMoaMmXScript::GetLabelMappedVector(Args* argsPointer, Media::
 	if (!directorMediaPointer->labelMappedVectorOptional.has_value()) {
 		directorMediaPointer->labelMappedVectorOptional.emplace();
 
-		Label::MAPPED_VECTOR &labelMappedVector = directorMediaPointer->labelMappedVectorOptional.value();
+		Label::MAPPED_VECTOR &labelMappedVector
+			= directorMediaPointer->labelMappedVectorOptional.value();
 
-		drCastMemInterfacePointer = argsPointer->getDrCastMemInterfacePointer();
+		drCastMemInterfacePointer
+			= argsPointer->getDrCastMemInterfacePointer();
 
 		if (!drCastMemInterfacePointer) {
 			Throw(kMoaErr_InternalError);
@@ -4391,25 +4845,32 @@ MoaError TStdXtra_IMoaMmXScript::GetLabelMappedVector(Args* argsPointer, Media::
 			bool memberScriptText = !script;
 
 			if (memberScriptText) {
-				ThrowErr(drCastMemInterfacePointer->GetProp(pObj->symbols.ScriptText, &scriptTextValue));
+				ThrowErr(drCastMemInterfacePointer->GetProp(
+					pObj->symbols.ScriptText, &scriptTextValue));
 
 				bool scriptTextEmpty = true;
-				ThrowErr(pObj->exportFileValueConverterPointer->testStringValueEmpty(scriptTextValue, scriptTextEmpty));
+
+				ThrowErr(pObj->exportFileValueConverterPointer->testStringValueEmpty(
+					scriptTextValue, scriptTextEmpty));
 
 				memberScriptText = !scriptTextEmpty;
 			}
 
 			MoaLong linked = 0;
-			ThrowErr(pObj->exportFileValueConverterPointer->testMemberLinked(linked, drCastMemInterfacePointer));
+
+			ThrowErr(pObj->exportFileValueConverterPointer->testMemberLinked(
+				linked, drCastMemInterfacePointer));
 
 			MoaError err = kMoaErr_NoErr;
 
-			// get the scriptSyntax of the member so we can return either #lingo or #javascript label correctly
+			// get the scriptSyntax of the member so we can
+			// return either #lingo or #javascript label correctly
 			MoaMmSymbol scriptSyntaxSymbol = 0;
 
 			// only get the property if we need it
 			if (memberScriptText || (script && !linked)) {
-				err = drCastMemInterfacePointer->GetProp(pObj->symbols.ScriptSyntax, &scriptSyntaxValue);
+				err = drCastMemInterfacePointer->GetProp(
+					pObj->symbols.ScriptSyntax, &scriptSyntaxValue);
 
 				if (err != kMoaMmErr_PropertyNotFound) {
 					ThrowErr(err);
@@ -4417,7 +4878,8 @@ MoaError TStdXtra_IMoaMmXScript::GetLabelMappedVector(Args* argsPointer, Media::
 
 				// manually check error here, default to #lingo (for pre-Director MX 2004)
 				if (err == kMoaErr_NoErr) {
-					ThrowErr(pObj->mmValueInterfacePointer->ValueToSymbol(&scriptSyntaxValue, &scriptSyntaxSymbol));
+					ThrowErr(pObj->mmValueInterfacePointer->ValueToSymbol(
+						&scriptSyntaxValue, &scriptSyntaxSymbol));
 				} else {
 					scriptSyntaxSymbol = pObj->symbols.Lingo;
 				}
@@ -4427,7 +4889,8 @@ MoaError TStdXtra_IMoaMmXScript::GetLabelMappedVector(Args* argsPointer, Media::
 				// for linked members, we don't add #composite or use type labels
 				if (memberScriptText) {
 					// if there's still script text on the member give the label for that
-					// unless the member type is script (meaning it's a linked script, which we don't export)
+					// unless the member type is script
+					// (meaning it's a linked script, which we don't export)
 					labelMappedVector = { scriptSyntaxSymbol };
 				}
 			} else {
@@ -4443,7 +4906,8 @@ MoaError TStdXtra_IMoaMmXScript::GetLabelMappedVector(Args* argsPointer, Media::
 				}
 
 				// interface property lookup for #xtraMedia
-				err = pObj->exportFileValueConverterPointer->toAsset(drCastMemInterfacePointer, mmXAssetInterfacePointer);
+				err = pObj->exportFileValueConverterPointer->toAsset(
+					drCastMemInterfacePointer, mmXAssetInterfacePointer);
 
 				if (err == kMoaErr_NoErr
 					&& mmXAssetInterfacePointer) {
@@ -4471,16 +4935,24 @@ MoaError TStdXtra_IMoaMmXScript::GetLabelMappedVector(Args* argsPointer, Media::
 					labelMappedVectorIterator != labelMappedVector.cend();
 					labelMappedVectorIterator++
 				) {
-					getLabelMappedVectorArgs.labelSymbolVariant = *labelMappedVectorIterator;
-					getLabelMappedVectorDirectorMedia.labelInfoMapIterator = LABEL_INFO_NOT_FOUND;
+					getLabelMappedVectorArgs.labelSymbolVariant
+						= *labelMappedVectorIterator;
 
-					ThrowErr(FindLabelInfo(&getLabelMappedVectorArgs, &getLabelMappedVectorDirectorMedia));
+					getLabelMappedVectorDirectorMedia.labelInfoMapIterator
+						= LABEL_INFO_NOT_FOUND;
 
-					if (getLabelMappedVectorDirectorMedia.labelInfoMapIterator == LABEL_INFO_NOT_FOUND) {
+					ThrowErr(FindLabelInfo(
+						&getLabelMappedVectorArgs,
+						&getLabelMappedVectorDirectorMedia
+					));
+
+					if (getLabelMappedVectorDirectorMedia.labelInfoMapIterator
+						== LABEL_INFO_NOT_FOUND) {
 						Throw(kMoaErr_InternalError);
 					}
 
-					const Label::Info &labelInfo = getLabelMappedVectorDirectorMedia.labelInfoMapIterator->second;
+					const Label::Info &labelInfo
+						= getLabelMappedVectorDirectorMedia.labelInfoMapIterator->second;
 
 					if (labelInfo.labelType & Label::TYPE_XTRA_MEDIA) {
 						//&& !mmXAssetInterfacePointer) {
@@ -4509,7 +4981,9 @@ MoaError TStdXtra_IMoaMmXScript::GetLabelMappedVector(Args* argsPointer, Media::
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::GetLabelAgentInfoMap(Args* argsPointer, Media::DirectorMedia* directorMediaPointer) {
+MoaError TStdXtra_IMoaMmXScript::GetLabelAgentInfoMap(
+	Args* argsPointer, Media::DirectorMedia* directorMediaPointer
+) {
 	Label::AGENT_INFO_MAP::iterator labelAgentInfoMapIterator = {};
 
 	moa_try
@@ -4522,13 +4996,15 @@ MoaError TStdXtra_IMoaMmXScript::GetLabelAgentInfoMap(Args* argsPointer, Media::
 			Throw(kMoaErr_InternalError);
 		}
 
-		MoaMmSymbol labelSymbol = std::get<MoaMmSymbol>(argsPointer->labelSymbolVariant);
+		MoaMmSymbol labelSymbol
+			= std::get<MoaMmSymbol>(argsPointer->labelSymbolVariant);
 
 		// so that we have agentMoaIDsHash
 		ThrowErr(GetAgentHiddenReaderSet(directorMediaPointer));
 
 		if (directorMediaPointer->agentMoaIDsHash == pObj->agentMoaIDsHash) {
-			labelAgentInfoMapIterator = pObj->labelAgentInfoMapPointer->find(labelSymbol);
+			labelAgentInfoMapIterator
+				= pObj->labelAgentInfoMapPointer->find(labelSymbol);
 		} else {
 			*pObj->labelAgentInfoMapPointer = {};
 			pObj->agentMoaIDsHash = directorMediaPointer->agentMoaIDsHash;
@@ -4546,14 +5022,18 @@ MoaError TStdXtra_IMoaMmXScript::GetLabelAgentInfoMap(Args* argsPointer, Media::
 				}
 			} else {
 				// error occured, map may be invalid, so empty it
-				// we don't throw this error because most likely, we just failed to get a reader
-				// precisely because this label can't be used with agents, so it should be an empty map
+				// we don't throw this error because
+				// most likely, we just failed to get a reader precisely because
+				// this label can't be used with agents, so
+				// it should be an empty map
 				directorMediaPointer->agentInfoMapOptional.emplace();
 			}
 
-			(*pObj->labelAgentInfoMapPointer)[labelSymbol] = directorMediaPointer->agentInfoMapOptional.value();
+			(*pObj->labelAgentInfoMapPointer)[labelSymbol]
+				= directorMediaPointer->agentInfoMapOptional.value();
 		} else {
-			directorMediaPointer->agentInfoMapOptional = labelAgentInfoMapIterator->second;
+			directorMediaPointer->agentInfoMapOptional
+				= labelAgentInfoMapIterator->second;
 		}
 	}
 
@@ -4562,7 +5042,9 @@ MoaError TStdXtra_IMoaMmXScript::GetLabelAgentInfoMap(Args* argsPointer, Media::
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::GetContentReaderRegistryEntryDict(Args* argsPointer, Media::DirectorMedia* directorMediaPointer) {
+MoaError TStdXtra_IMoaMmXScript::GetContentReaderRegistryEntryDict(
+	Args* argsPointer, Media::DirectorMedia* directorMediaPointer
+) {
 	PIMoaRegistryEntryDict readerRegistryEntryDictInterfacePointer = NULL;
 
 	Registry::Entry::VARIANT registryEntryVariant = {};
@@ -4573,12 +5055,14 @@ MoaError TStdXtra_IMoaMmXScript::GetContentReaderRegistryEntryDict(Args* argsPoi
 	ThrowNull(directorMediaPointer);
 
 	if (!directorMediaPointer->contentPointer) {
-		directorMediaPointer->contentPointer = std::make_shared<Media::DirectorMedia::Content>();
+		directorMediaPointer->contentPointer
+			= std::make_shared<Media::DirectorMedia::Content>();
 	}
 
 	Media::DirectorMedia::Content &content = *directorMediaPointer->contentPointer;
 
-	readerRegistryEntryDictInterfacePointer = content.getReaderRegistryEntryDictInterfacePointer();
+	readerRegistryEntryDictInterfacePointer
+		= content.getReaderRegistryEntryDictInterfacePointer();
 
 	if (!readerRegistryEntryDictInterfacePointer) {
 		ThrowErr(FindLabelInfo(argsPointer, directorMediaPointer));
@@ -4587,9 +5071,14 @@ MoaError TStdXtra_IMoaMmXScript::GetContentReaderRegistryEntryDict(Args* argsPoi
 			Throw(kMoaErr_InternalError);
 		}
 
-		Registry::Entry &registryEntry = std::get<Registry::Entry>(registryEntryVariant);
-		registryEntry.classIDPointer = (MoaClassID*)&directorMediaPointer->labelInfoMapIterator->second.agentReaderClassID;
-		registryEntry.interfaceIDPointer = (MoaInterfaceID*)&IID_IMoaReader;
+		Registry::Entry &registryEntry
+			= std::get<Registry::Entry>(registryEntryVariant);
+
+		registryEntry.classIDPointer
+			= (MoaClassID*)&directorMediaPointer->labelInfoMapIterator->second.agentReaderClassID;
+
+		registryEntry.interfaceIDPointer
+			= (MoaInterfaceID*)&IID_IMoaReader;
 
 		ThrowFailed(
 			pObj->cacheInterfacePointer->EnumerateRegistryEntries(
@@ -4602,10 +5091,13 @@ MoaError TStdXtra_IMoaMmXScript::GetContentReaderRegistryEntryDict(Args* argsPoi
 			Throw(kMoaErr_BadClass);
 		}
 
-		readerRegistryEntryDictInterfacePointer = std::get<PIMoaRegistryEntryDict>(registryEntryVariant);
+		readerRegistryEntryDictInterfacePointer
+			= std::get<PIMoaRegistryEntryDict>(registryEntryVariant);
+
 		ThrowNull(readerRegistryEntryDictInterfacePointer);
 
-		content.setReaderRegistryEntryDictInterfacePointer(readerRegistryEntryDictInterfacePointer);
+		content.setReaderRegistryEntryDictInterfacePointer(
+			readerRegistryEntryDictInterfacePointer);
 	}
 
 	moa_catch
@@ -4634,7 +5126,8 @@ MoaError TStdXtra_IMoaMmXScript::GetReceptorIDs(
 		Throw(kMoaErr_InternalError);
 	}
 
-	readerInterfacePointer = directorMediaPointer->contentPointer->getReaderInterfacePointer();
+	readerInterfacePointer
+		= directorMediaPointer->contentPointer->getReaderInterfacePointer();
 
 	if (!readerInterfacePointer) {
 		Throw(kMoaErr_InternalError);
@@ -4676,9 +5169,12 @@ MoaError TStdXtra_IMoaMmXScript::GetReceptorIDs(
 
 /*
 Please don't call me directly!
-Go through GetLabelAgentInfoMap instead, which caches the results of GetAgentInfoMapSLOW
+Go through GetLabelAgentInfoMap instead, which caches
+the results of GetAgentInfoMapSLOW
 */
-MoaError TStdXtra_IMoaMmXScript::GetAgentInfoMapSLOW(Args* argsPointer, Media::DirectorMedia* directorMediaPointer) {
+MoaError TStdXtra_IMoaMmXScript::GetAgentInfoMapSLOW(
+	Args* argsPointer, Media::DirectorMedia* directorMediaPointer
+) {
 	PIMoaEnumMixAgentInfo enumMixWriterInfoInterfacePointer = NULL;
 
 	PMoaVoid receptorIDsPointer = NULL;
@@ -4698,14 +5194,20 @@ MoaError TStdXtra_IMoaMmXScript::GetAgentInfoMapSLOW(Args* argsPointer, Media::D
 		}
 
 		MoaLong receptorCount = 0;
-		ThrowErr(GetReceptorIDs(argsPointer, directorMediaPointer, &receptorCount, &receptorIDsPointer));
+
+		ThrowErr(GetReceptorIDs(
+			argsPointer, directorMediaPointer,
+			&receptorCount, &receptorIDsPointer
+		));
 		
 		if (!receptorIDsPointer) {
 			Throw(kMoaErr_InternalError);
 		}
 
 		if (!pObj->agentServicesInterfacePointer) {
-			ThrowErr(GetIMoaAgentServices(pObj->pCallback, &pObj->agentServicesInterfacePointer));
+			ThrowErr(GetIMoaAgentServices(
+				pObj->pCallback, &pObj->agentServicesInterfacePointer));
+
 			ThrowNull(pObj->agentServicesInterfacePointer);
 		}
 
@@ -4744,7 +5246,9 @@ MoaError TStdXtra_IMoaMmXScript::GetAgentInfoMapSLOW(Args* argsPointer, Media::D
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::GetAgentHiddenReaderSet(Media::DirectorMedia* directorMediaPointer) {
+MoaError TStdXtra_IMoaMmXScript::GetAgentHiddenReaderSet(
+	Media::DirectorMedia* directorMediaPointer
+) {
 	moa_try
 
 	ThrowNull(directorMediaPointer);
@@ -4752,11 +5256,14 @@ MoaError TStdXtra_IMoaMmXScript::GetAgentHiddenReaderSet(Media::DirectorMedia* d
 	if (!directorMediaPointer->agentHiddenReaderSetPointer) {
 		Registry::AgentHiddenReaderSet registryEntriesAgentHiddenReaderSet = {};
 
-		registryEntriesAgentHiddenReaderSet.agentMoaIDsHashPointer = &directorMediaPointer->agentMoaIDsHash;
+		registryEntriesAgentHiddenReaderSet.agentMoaIDsHashPointer
+			= &directorMediaPointer->agentMoaIDsHash;
 
-		directorMediaPointer->agentHiddenReaderSetPointer = std::make_shared<Agent::HIDDEN_READER_SET>();
+		directorMediaPointer->agentHiddenReaderSetPointer
+			= std::make_shared<Agent::HIDDEN_READER_SET>();
 
-		registryEntriesAgentHiddenReaderSet.agentHiddenReaderSetPointer = directorMediaPointer->agentHiddenReaderSetPointer.get();
+		registryEntriesAgentHiddenReaderSet.agentHiddenReaderSetPointer
+			= directorMediaPointer->agentHiddenReaderSetPointer.get();
 
 		ThrowFailed(
 			pObj->cacheInterfacePointer->EnumerateRegistryEntries(
@@ -4777,7 +5284,9 @@ MoaError TStdXtra_IMoaMmXScript::GetAgentHiddenReaderSet(Media::DirectorMedia* d
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::GetFormatName(MixFormat mixFormat, std::string* formatNamePointer) {
+MoaError TStdXtra_IMoaMmXScript::GetFormatName(
+	MixFormat mixFormat, std::string* formatNamePointer
+) {
 	PMoaVoid formatNameStringPointer = NULL;
 
 	moa_try
@@ -4785,7 +5294,9 @@ MoaError TStdXtra_IMoaMmXScript::GetFormatName(MixFormat mixFormat, std::string*
 	ThrowNull(formatNamePointer);
 
 	if (!pObj->formatServicesInterfacePointer) {
-		ThrowErr(GetIMoaFormatServices(pObj->pCallback, &pObj->formatServicesInterfacePointer));
+		ThrowErr(GetIMoaFormatServices(
+			pObj->pCallback, &pObj->formatServicesInterfacePointer));
+
 		ThrowNull(pObj->formatServicesInterfacePointer);
 	}
 
@@ -4804,10 +5315,15 @@ MoaError TStdXtra_IMoaMmXScript::GetFormatName(MixFormat mixFormat, std::string*
 		formatNameStringPointer = pObj->pCalloc->NRAlloc(formatNameStringSize);
 		ThrowNull(formatNameStringPointer);
 
-		err = pObj->formatServicesInterfacePointer->GetFormatName(mixFormat, (MoaLong)formatNameStringSize, (PMoaChar)formatNameStringPointer);
+		err = pObj->formatServicesInterfacePointer->GetFormatName(mixFormat,
+			(MoaLong)formatNameStringSize, (PMoaChar)formatNameStringPointer);
 	} while (err == kMoaMixErr_BufferTooSmall
 		|| (err == kMoaErr_NoErr
-		&& stringTruncated((PMoaChar)formatNameStringPointer, formatNameStringSize)));
+		&& stringTruncated(
+			(PMoaChar)formatNameStringPointer,
+			formatNameStringSize
+		)
+	));
 
 	ThrowErr(err);
 
@@ -4841,24 +5357,38 @@ MoaError TStdXtra_IMoaMmXScript::GetAgentInfoHidden(
 	agentInfoHidden = (MoaBool)(flags & kMoaAgentInfoFlags_Hidden);
 
 	if (!agentInfoHidden) {
-		Agent::HIDDEN_READER_SET &agentHiddenReaderSet = *agentHiddenReaderSetPointer;
-		agentInfoHidden = agentHiddenReaderSet.find(*classIDPointer) != agentHiddenReaderSet.end();
+		Agent::HIDDEN_READER_SET &agentHiddenReaderSet
+			= *agentHiddenReaderSetPointer;
+
+		agentInfoHidden = agentHiddenReaderSet.find(*classIDPointer)
+			!= agentHiddenReaderSet.end();
 	}
 
 	// this doesn't work because it gets the agent's dictionary (not the reader's)
 	/*
-	err = mixWriterInfoInterfacePointer->GetAgentRegInfo(&writerRegistryEntryDictInterfacePointer, NULL);
+	err = mixWriterInfoInterfacePointer->GetAgentRegInfo(
+		&writerRegistryEntryDictInterfacePointer, NULL);
 
 	if (err == kMoaErr_NoErr
 		&& writerRegistryEntryDictInterfacePointer) {
-		err = writerRegistryEntryDictInterfacePointer->Get(kMoaDictType_Dict, &agentRegistryEntryDictInterfacePointer, sizeof(agentRegistryEntryDictInterfacePointer), kWriterRegKey_AgentRegDict);
+		err = writerRegistryEntryDictInterfacePointer->Get(
+			kMoaDictType_Dict,
+			&agentRegistryEntryDictInterfacePointer,
+			sizeof(agentRegistryEntryDictInterfacePointer),
+			kWriterRegKey_AgentRegDict
+		);
 
 		if (err == kMoaErr_NoErr
 			&& agentRegistryEntryDictInterfacePointer) {
 			agentInfoPointer->hidden = FALSE;
 
 			// do not error if this fails
-			agentRegistryEntryDictInterfacePointer->Get(kMoaDictType_Bool, &agentInfoPointer->hidden, sizeof(agentInfoPointer->hidden), kReaderRegKey_Hidden);
+			agentRegistryEntryDictInterfacePointer->Get(
+				kMoaDictType_Bool,
+				&agentInfoPointer->hidden,
+				sizeof(agentInfoPointer->hidden),
+				kReaderRegKey_Hidden
+			);
 		}
 	}
 	*/
@@ -4868,7 +5398,10 @@ MoaError TStdXtra_IMoaMmXScript::GetAgentInfoHidden(
 	moa_try_end
 }
 
-MoaError TStdXtra_IMoaMmXScript::GetAgentInfoName(std::string* agentInfoNamePointer, PIMoaMixAgentInfo mixWriterInfoInterfacePointer) {
+MoaError TStdXtra_IMoaMmXScript::GetAgentInfoName(
+	std::string* agentInfoNamePointer,
+	PIMoaMixAgentInfo mixWriterInfoInterfacePointer
+) {
 	PMoaVoid agentNameStringPointer = NULL;
 
 	moa_try
@@ -4890,7 +5423,8 @@ MoaError TStdXtra_IMoaMmXScript::GetAgentInfoName(std::string* agentInfoNamePoin
 		agentNameStringPointer = pObj->pCalloc->NRAlloc(agentNameStringSize);
 		ThrowNull(agentNameStringPointer);
 
-		err = mixWriterInfoInterfacePointer->GetAgentName((MoaLong)agentNameStringSize, (PMoaChar)agentNameStringPointer);
+		err = mixWriterInfoInterfacePointer->GetAgentName(
+			(MoaLong)agentNameStringSize, (PMoaChar)agentNameStringPointer);
 	} while (err == kMoaMixErr_BufferTooSmall
 		|| (err == kMoaErr_NoErr
 		&& stringTruncated((PMoaChar)agentNameStringPointer, agentNameStringSize)));

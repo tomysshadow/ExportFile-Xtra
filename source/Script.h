@@ -192,32 +192,50 @@ EXTERN_BEGIN_DEFINE_CLASS_INTERFACE(TStdXtra, IMoaMmXScript)
 
 	/* Enum */
 	// Agent
-	EXTERN_DEFINE_METHOD(MoaError, EnumWriter, (Agent::Info::MAP*, Agent::HIDDEN_READER_SET*, PIMoaEnumMixAgentInfo))
+	EXTERN_DEFINE_METHOD(MoaError, EnumWriter, (
+		Agent::Info::MAP*, Agent::HIDDEN_READER_SET*, PIMoaEnumMixAgentInfo))
 
 	/* Handle */
 	// File
-	EXTERN_DEFINE_METHOD(MoaError, HandleCreateFileError, (Args*, Media::DirectorMedia*, MoaError, PIMoaFile))
-	EXTERN_DEFINE_METHOD(MoaError, HandleFileNotFound, (Args*, Media::DirectorMedia*, PIMoaFile))
-	EXTERN_DEFINE_METHOD(MoaError, HandleDuplicateSpec, (Args*, Media::DirectorMedia*, PIMoaFile))
-	EXTERN_DEFINE_METHOD(MoaError, HandleDefaultCreateFileError, (Args*, Media::DirectorMedia*, MoaError, PIMoaFile))
-	EXTERN_DEFINE_METHOD(MoaError, HandleWriteFileError, (Args*, Media::DirectorMedia*, MoaError, PIMoaFile))
+	EXTERN_DEFINE_METHOD(MoaError, HandleCreateFileError, (
+		Args*, Media::DirectorMedia*, MoaError, PIMoaFile))
+
+	EXTERN_DEFINE_METHOD(MoaError, HandleFileNotFound, (
+		Args*, Media::DirectorMedia*, PIMoaFile))
+
+	EXTERN_DEFINE_METHOD(MoaError, HandleDuplicateSpec, (
+		Args*, Media::DirectorMedia*, PIMoaFile))
+
+	EXTERN_DEFINE_METHOD(MoaError, HandleDefaultCreateFileError, (
+		Args*, Media::DirectorMedia*, MoaError, PIMoaFile))
+
+	EXTERN_DEFINE_METHOD(MoaError, HandleWriteFileError, (
+		Args*, Media::DirectorMedia*, MoaError, PIMoaFile))
 
 	/* Write */
 	// File
-	EXTERN_DEFINE_METHOD(MoaError, WriteFile, (Args*, Media::DirectorMedia*, PIMoaFile))
-	EXTERN_DEFINE_METHOD(MoaError, WriteFileAgent, (const Agent::Info::Writer*, PMoaMmValue, PIMoaFile, PIMoaReader))
+	EXTERN_DEFINE_METHOD(MoaError, WriteFile, (
+		Args*, Media::DirectorMedia*, PIMoaFile))
+
+	EXTERN_DEFINE_METHOD(MoaError, WriteFileAgent, (
+		const Agent::Info::Writer*, PMoaMmValue, PIMoaFile, PIMoaReader))
 
 	/* Add */
 	// Agent
-	EXTERN_DEFINE_METHOD(MoaError, AddAgentInfoExtensions, (ConstPMoaChar, Path::EXTENSION_MAPPED_VECTOR*, PIMoaMixFormatInfo))
+	EXTERN_DEFINE_METHOD(MoaError, AddAgentInfoExtensions, (ConstPMoaChar,
+		Path::EXTENSION_MAPPED_VECTOR*, PIMoaMixFormatInfo))
 
 	/* Get */
 	// Registry
 	EXTERN_DEFINE_METHOD(MoaError, GetRegistryEntryDict, (PIMoaRegistryEntryDict*))
 
 	// Args
-	EXTERN_DEFINE_METHOD(MoaError, GetArgs, (PMoaDrCallInfo, Args*, Media::DirectorMedia*))
-	EXTERN_DEFINE_METHOD(MoaError, GetArgLong, (PMoaDrCallInfo, std::optional<MoaLong>*, MoaLong))
+	EXTERN_DEFINE_METHOD(MoaError, GetArgs, (
+		PMoaDrCallInfo, Args*, Media::DirectorMedia*))
+
+	EXTERN_DEFINE_METHOD(MoaError, GetArgLong, (
+		PMoaDrCallInfo, std::optional<MoaLong>*, MoaLong))
+
 	EXTERN_DEFINE_METHOD(MoaError, GetArgPropertyName, (PMoaDrCallInfo, PMoaMmSymbol))
 	EXTERN_DEFINE_METHOD(MoaError, GetArgMixerSavedCallHandler, (PMoaDrCallInfo, PMoaLong))
 	EXTERN_DEFINE_METHOD(MoaError, GetArgMember, (PMoaDrCallInfo, Args*))
@@ -231,10 +249,18 @@ EXTERN_BEGIN_DEFINE_CLASS_INTERFACE(TStdXtra, IMoaMmXScript)
 	EXTERN_DEFINE_METHOD(MoaError, GetArgLabelDefault, (Args*, Media::DirectorMedia*))
 	EXTERN_DEFINE_METHOD(MoaError, GetArgAgent, (PMoaDrCallInfo, Args*, Media::DirectorMedia*))
 	EXTERN_DEFINE_METHOD(MoaError, GetArgAgentDefault, (Args*, Media::DirectorMedia*))
-	EXTERN_DEFINE_METHOD(MoaError, GetArgOptions, (PMoaDrCallInfo, Args*, Media::DirectorMedia*, MoaLong))
-	EXTERN_DEFINE_METHOD(MoaError, GetArgOptionsDefault, (Args*, Media::DirectorMedia*, bool))
-	EXTERN_DEFINE_METHOD(MoaError, GetArgOptionsDefaultAgentOptions, (Args*, Media::DirectorMedia*, bool))
-	EXTERN_DEFINE_METHOD(MoaError, GetArgOptionsDefaultAgentOptions, (PMoaMmValue, Agent::Info::Writer*, PIMoaReader, bool))
+
+	EXTERN_DEFINE_METHOD(MoaError, GetArgOptions, (
+		PMoaDrCallInfo, Args*, Media::DirectorMedia*, MoaLong))
+
+	EXTERN_DEFINE_METHOD(MoaError, GetArgOptionsDefault, (
+		Args*, Media::DirectorMedia*, bool))
+
+	EXTERN_DEFINE_METHOD(MoaError, GetArgOptionsDefaultAgentOptions, (
+		Args*, Media::DirectorMedia*, bool))
+
+	EXTERN_DEFINE_METHOD(MoaError, GetArgOptionsDefaultAgentOptions, (
+		PMoaMmValue, Agent::Info::Writer*, PIMoaReader, bool))
 
 	// Member
 	EXTERN_DEFINE_METHOD(MoaError, GetLoaded, (PMoaLong, PIMoaDrCastMem))
@@ -245,13 +271,21 @@ EXTERN_BEGIN_DEFINE_CLASS_INTERFACE(TStdXtra, IMoaMmXScript)
 	EXTERN_DEFINE_METHOD(MoaError, GetLabelAgentInfoMap, (Args*, Media::DirectorMedia*))
 
 	// Agent
-	EXTERN_DEFINE_METHOD(MoaError, GetContentReaderRegistryEntryDict, (Args*, Media::DirectorMedia*))
-	EXTERN_DEFINE_METHOD(MoaError, GetReceptorIDs, (Args*, Media::DirectorMedia*, PMoaLong, PPMoaVoid))
+	EXTERN_DEFINE_METHOD(MoaError, GetContentReaderRegistryEntryDict, (
+		Args*, Media::DirectorMedia*))
+
+	EXTERN_DEFINE_METHOD(MoaError, GetReceptorIDs, (
+		Args*, Media::DirectorMedia*, PMoaLong, PPMoaVoid))
+
 	EXTERN_DEFINE_METHOD(MoaError, GetAgentInfoMapSLOW, (Args*, Media::DirectorMedia*))
 	EXTERN_DEFINE_METHOD(MoaError, GetAgentHiddenReaderSet, (Media::DirectorMedia*))
 	EXTERN_DEFINE_METHOD(MoaError, GetFormatName, (MixFormat, std::string*))
-	EXTERN_DEFINE_METHOD(MoaError, GetAgentInfoHidden, (Agent::HIDDEN_READER_SET*, MoaClassID*, MoaBool*, PIMoaMixAgentInfo))
-	EXTERN_DEFINE_METHOD(MoaError, GetAgentInfoName, (std::string*, PIMoaMixAgentInfo))
+
+	EXTERN_DEFINE_METHOD(MoaError, GetAgentInfoHidden, (
+		Agent::HIDDEN_READER_SET*, MoaClassID*, MoaBool*, PIMoaMixAgentInfo))
+
+	EXTERN_DEFINE_METHOD(MoaError, GetAgentInfoName, (
+		std::string*, PIMoaMixAgentInfo))
 EXTERN_END_DEFINE_CLASS_INTERFACE
 
 #define XTRA_VERSION_NUMBER XTRA_CLASS_VERSION
