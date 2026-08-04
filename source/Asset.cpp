@@ -80,7 +80,8 @@ namespace Asset {
 		}
 
 		if (auto index = std::get_if<MoaLong>(&iconValuesVariant)) {
-			IconValues::ICON_VALUE_MAP iconValueMap = iconValuesOptional.value().toIconValueMap();
+			IconValues::ICON_VALUE_MAP iconValueMap
+				= iconValuesOptional.value().toIconValueMap();
 
 			MoaRect rect = {};
 			rect.left = 24 * *index;
@@ -97,10 +98,12 @@ namespace Asset {
 			MoaError err = kMoaErr_NoErr;
 
 			MoaMmValue foundIconValue = kVoidMoaMmValueInitializer;
-			IconValues::POINTER foundIconValues = std::make_shared<IconValues>(mmValueInterfacePointer, mmImageInterfacePointer);
+
+			IconValues::POINTER foundIconValues = std::make_shared<IconValues>(
+				mmValueInterfacePointer, mmImageInterfacePointer);
 
 			for (
-				IconValues::ICON_VALUE_MAP::iterator iconValueMapIterator = iconValueMap.begin();
+				auto iconValueMapIterator = iconValueMap.begin();
 				iconValueMapIterator != iconValueMap.end();
 				iconValueMapIterator++
 			) {
@@ -122,10 +125,12 @@ namespace Asset {
 					};
 
 					// don't throw if this fails, value may be void
-					err = mmImageInterfacePointer->Crop(&iconValueMapIterator->second, &rectValue, &foundIconValue);
+					err = mmImageInterfacePointer->Crop(&iconValueMapIterator->second,
+						&rectValue, &foundIconValue);
 				}
 
-				RETURN_ERR(foundIconValues->setValue(iconValueMapIterator->first, foundIconValue));
+				RETURN_ERR(foundIconValues->setValue(
+					iconValueMapIterator->first, foundIconValue));
 			}
 
 			iconValuesVariant = foundIconValues;
@@ -140,8 +145,13 @@ namespace Asset {
 
 		static constexpr RESOURCE_ID ASSET_INFO_MAP_ICON_RESOURCES_COUNT = 6;
 
-		productVersionMajor = min(MAX_PRODUCT_VERSION_MAJOR, max(MIN_PRODUCT_VERSION_MAJOR, productVersionMajor));
-		return (RESOURCE_ID)((productVersionMajor - MIN_PRODUCT_VERSION_MAJOR) * ASSET_INFO_MAP_ICON_RESOURCES_COUNT);
+		productVersionMajor = min(
+			max(MIN_PRODUCT_VERSION_MAJOR, productVersionMajor),
+			MAX_PRODUCT_VERSION_MAJOR
+		);
+
+		return (RESOURCE_ID)((productVersionMajor - MIN_PRODUCT_VERSION_MAJOR)
+			* ASSET_INFO_MAP_ICON_RESOURCES_COUNT);
 	}
 
 	MoaError Assets::Info::getAssetInfoMapSymbols() {
@@ -150,16 +160,20 @@ namespace Asset {
 		SYMBOL_VARIANT symbolVariant = 0;
 
 		for (
-			Asset::Info::MAP::iterator assetInfoMapIterator = assetInfoMap.begin();
+			auto assetInfoMapIterator = assetInfoMap.begin();
 			assetInfoMapIterator != assetInfoMap.end();
 			assetInfoMapIterator++
 		) {
-			RETURN_ERR(getSymbol(assetInfoMapIterator->second.subType, mmValueInterfacePointer));
+			RETURN_ERR(getSymbol(
+				assetInfoMapIterator->second.subType,
+				mmValueInterfacePointer
+			));
 
-			IconValues::MAP &iconValuesMap = assetInfoMapIterator->second.iconValuesMap;
+			IconValues::MAP &iconValuesMap
+				= assetInfoMapIterator->second.iconValuesMap;
 
 			for (
-				IconValues::MAP::iterator iconValuesMapIterator = iconValuesMap.begin();
+				auto iconValuesMapIterator = iconValuesMap.begin();
 				iconValuesMapIterator != iconValuesMap.end();
 				iconValuesMapIterator++
 			) {
@@ -194,7 +208,9 @@ namespace Asset {
 
 		#ifdef MACINTOSH
 		// this has not been tested
-		GlobalHandleLock<>::GlobalHandle iconGlobalHandle = GetResource('PICT', baseResourceID);
+		GlobalHandleLock<>::GlobalHandle iconGlobalHandle
+			= GetResource('PICT', baseResourceID);
+
 		RETURN_ERR(osErr(iconGlobalHandle));
 
 		GlobalHandleLock<> iconGlobalHandleLock(iconGlobalHandle);
@@ -209,20 +225,32 @@ namespace Asset {
 		*/
 		#endif
 		#ifdef WINDOWS
-		HRSRC resourceHandle = FindResource((HINSTANCE)myCookie, MAKEINTRESOURCE(baseResourceID), RT_BITMAP);
+		HRSRC resourceHandle = FindResource(
+			(HINSTANCE)myCookie,
+			MAKEINTRESOURCE(baseResourceID),
+			RT_BITMAP
+		);
+
 		RETURN_ERR(osErr(resourceHandle));
 
-		GlobalHandleLock<> resourceGlobalHandleLock((HINSTANCE)myCookie, resourceHandle);
+		GlobalHandleLock<> resourceGlobalHandleLock(
+			(HINSTANCE)myCookie, resourceHandle);
+
 		SIZE_T resourceGlobalHandleLockSize = resourceGlobalHandleLock.size();
 
 		// the handle given to us by FindResource is only a pseudo-global handle
 		// so we need to copy it to a real one here
-		GlobalHandleLock<>::GlobalHandle iconGlobalHandle = GlobalAlloc(GMEM_MOVEABLE | GMEM_SHARE, resourceGlobalHandleLockSize);
+		GlobalHandleLock<>::GlobalHandle iconGlobalHandle = GlobalAlloc(
+			GMEM_MOVEABLE | GMEM_SHARE,
+			resourceGlobalHandleLockSize
+		);
+
 		RETURN_ERR(osErr(iconGlobalHandle));
 
 		GlobalHandleLock<> iconGlobalHandleLock(iconGlobalHandle);
 
-		if (memcpy_s(iconGlobalHandleLock.get(), iconGlobalHandleLock.size(), resourceGlobalHandleLock.get(), resourceGlobalHandleLockSize)) {
+		if (memcpy_s(iconGlobalHandleLock.get(), iconGlobalHandleLock.size(),
+			resourceGlobalHandleLock.get(), resourceGlobalHandleLockSize)) {
 			return kMoaErr_OutOfMem;
 		}
 
@@ -237,7 +265,11 @@ namespace Asset {
 		);
 		*/
 		#endif
-		return bitmapImporter.insertIntoIconValues(iconGlobalHandleLock.getGlobalHandle(), iconValues, resourceID);
+		return bitmapImporter.insertIntoIconValues(
+			iconGlobalHandleLock.getGlobalHandle(),
+			iconValues,
+			resourceID
+		);
 
 		/*
 		RETURN_NULL(formatPointer);
@@ -252,7 +284,8 @@ namespace Asset {
 
 		RETURN_NULL(data);
 
-		RETURN_ERR(createIconAssetStream(&streamOptional, data, size, callbackInterfacePointer));
+		RETURN_ERR(createIconAssetStream(
+			&streamOptional, data, size, callbackInterfacePointer));
 
 		if (!streamOptional.has_value()) {
 			return false;
@@ -271,7 +304,9 @@ namespace Asset {
 		};
 		*/
 
-		///*RETURN_ERR(*/mmImageInterfacePointer->NewImageFromStream(streamInterfacePointer, NULL, &iconValue)/*)*/;
+		///*RETURN_ERR(*/mmImageInterfacePointer->NewImageFromStream(
+		//	streamInterfacePointer, NULL, &iconValue)/*)*/;
+		//
 		//return kMoaErr_NoErr;
 	}
 
@@ -281,7 +316,8 @@ namespace Asset {
 	) {
 		RETURN_NULL(callbackInterfacePointer);
 
-		MoaError err = callbackInterfacePointer->QueryInterface(&IID_IMoaMmImage, (PPMoaVoid)&mmImageInterfacePointer);
+		MoaError err = callbackInterfacePointer->QueryInterface(
+			&IID_IMoaMmImage, (PPMoaVoid)&mmImageInterfacePointer);
 
 		// it is fine if this interface doesn't exist
 		// (pre-Director 8)
@@ -301,7 +337,9 @@ namespace Asset {
 		RESOURCE_ID baseResourceID = getBaseResourceID(productVersionMajor);
 
 		XtraResourceCookie saveCookie = NULL;
-		XtraResourceCookie myCookie = callbackInterfacePointer->MoaBeginUsingResources(gXtraFileRef, &saveCookie);
+
+		XtraResourceCookie myCookie = callbackInterfacePointer->MoaBeginUsingResources(
+			gXtraFileRef, &saveCookie);
 
 		SCOPE_EXIT {
 			endUsingResources(gXtraFileRef, saveCookie, callbackInterfacePointer);
@@ -316,7 +354,7 @@ namespace Asset {
 		*/
 
 		for (
-			IconValues::ICON_VALUE_MAP::iterator iconValueMapIterator = iconValueMap.begin();
+			auto iconValueMapIterator = iconValueMap.begin();
 			iconValueMapIterator != iconValueMap.end();
 			iconValueMapIterator++
 		) {
@@ -354,7 +392,11 @@ namespace Asset {
 			throw std::runtime_error("failed to get asset info map symbols");
 		}
 
-		err = getAssetInfoMapIcons(bitmapImporter, productVersionMajor, callbackInterfacePointer);
+		err = getAssetInfoMapIcons(
+			bitmapImporter,
+			productVersionMajor,
+			callbackInterfacePointer
+		);
 
 		if (err != kMoaErr_NoErr) {
 			throw std::runtime_error("failed to get asset info map icons");
@@ -379,7 +421,7 @@ namespace Asset {
 	}
 
 	std::optional<Info> Assets::Info::find(SYMBOL_VARIANT typeSymbol) {
-		Asset::Info::MAP::iterator foundAssetInfo = assetInfoMap.find(typeSymbol);
+		auto foundAssetInfo = assetInfoMap.find(typeSymbol);
 
 		if (foundAssetInfo == assetInfoMap.cend()) {
 			return std::nullopt;
@@ -388,7 +430,7 @@ namespace Asset {
 		MoaError err = kMoaErr_NoErr;
 
 		for (
-			IconValues::MAP::iterator iconValuesMapIterator = foundAssetInfo->second.iconValuesMap.begin();
+			auto iconValuesMapIterator = foundAssetInfo->second.iconValuesMap.begin();
 			iconValuesMapIterator != foundAssetInfo->second.iconValuesMap.end();
 			iconValuesMapIterator++
 		) {

@@ -20,8 +20,11 @@ void Stream::destroy() {
 
 /*
 void Stream::duplicate(const Stream &stream) {
-	setInterface((PPMoaVoid)&streamInterfacePointer, stream.streamInterfacePointer);
-	setInterface((PPMoaVoid)&fileInterfacePointer, stream.fileInterfacePointer);
+	setInterface((PPMoaVoid)&streamInterfacePointer,
+		stream.streamInterfacePointer);
+
+	setInterface((PPMoaVoid)&fileInterfacePointer,
+		stream.fileInterfacePointer);
 
 	temp = stream.temp;
 }
@@ -37,7 +40,8 @@ Stream::Stream(PIMoaCallback callbackInterfacePointer)
 	// but earlier Director versions don't have it
 	PIMoaTempStreamServices tempStreamServicesInterfacePointer = NULL;
 
-	MoaError err = GetIMoaTempStreamServices(callbackInterfacePointer, &tempStreamServicesInterfacePointer);
+	MoaError err = GetIMoaTempStreamServices(
+		callbackInterfacePointer, &tempStreamServicesInterfacePointer);
 
 	SCOPE_EXIT {
 		releaseInterface((PPMoaVoid)&tempStreamServicesInterfacePointer);
@@ -46,13 +50,15 @@ Stream::Stream(PIMoaCallback callbackInterfacePointer)
 	if (err == kMoaErr_NoErr
 		&& tempStreamServicesInterfacePointer) {
 		// if we have the temp stream services we can create a memory backed stream
-		err = tempStreamServicesInterfacePointer->CreateMemStream(NULL, TRUE, TRUE, TRUE, TRUE, &streamInterfacePointer);
+		err = tempStreamServicesInterfacePointer->CreateMemStream(
+			NULL, TRUE, TRUE, TRUE, TRUE, &streamInterfacePointer);
 	}
 
 	if (err != kMoaErr_NoErr
 		|| !streamInterfacePointer) {
 		// if we failed to create a memory stream fallback to creating a stream from a temporary file
-		err = callbackInterfacePointer->MoaCreateInstance(&CLSID_CMoaFile, &IID_IMoaFile, (PPMoaVoid)&fileInterfacePointer);
+		err = callbackInterfacePointer->MoaCreateInstance(&CLSID_CMoaFile, &IID_IMoaFile,
+			(PPMoaVoid)&fileInterfacePointer);
 
 		if (err != kMoaErr_NoErr) {
 			throw std::runtime_error("failed to create instance");
@@ -86,7 +92,10 @@ Stream::Stream(PIMoaCallback callbackInterfacePointer)
 	}
 }
 
-Stream::Stream(ConstPMoaChar pathStringPointer, bool replace, PIMoaCallback callbackInterfacePointer)
+Stream::Stream(
+	ConstPMoaChar pathStringPointer, bool replace,
+	PIMoaCallback callbackInterfacePointer
+)
 	: temp(false) {
 	if (!pathStringPointer) {
 		throw std::invalid_argument("pathStringPointer must not be NULL");
@@ -96,7 +105,10 @@ Stream::Stream(ConstPMoaChar pathStringPointer, bool replace, PIMoaCallback call
 		throw std::invalid_argument("callbackInterfacePointer must not be NULL");
 	}
 
-	MoaError err = callbackInterfacePointer->MoaCreateInstance(&CLSID_CMoaFile, &IID_IMoaFile, (PPMoaVoid)&fileInterfacePointer);
+	MoaError err = callbackInterfacePointer->MoaCreateInstance(
+		&CLSID_CMoaFile, &IID_IMoaFile,
+		(PPMoaVoid)&fileInterfacePointer
+	);
 
 	if (err != kMoaErr_NoErr) {
 		throw std::runtime_error("failed to create instance");
@@ -160,7 +172,9 @@ MoaError Stream::open() {
 	// close it if it was open before
 	// (so we can get read/write permission)
 	RETURN_ERR(close());
-	return openStream(kMoaStreamOpenAccess_ReadWrite, true, streamInterfacePointer);
+
+	return openStream(kMoaStreamOpenAccess_ReadWrite, true,
+		streamInterfacePointer);
 }
 
 MoaError Stream::close() {
@@ -200,14 +214,18 @@ MoaError Stream::copy(PIMoaStream writeStreamInterfacePointer, MoaUlong size) {
 
 	do {
 		numberOfBytesToRead = min(size, numberOfBytesToRead);
-		RETURN_ERR(readPartial((PMoaVoid)buffer, numberOfBytesToRead, numberOfBytesCopied));
+
+		RETURN_ERR(readPartial((PMoaVoid)buffer,
+			numberOfBytesToRead, numberOfBytesCopied));
 
 		if (!numberOfBytesCopied) {	
 			break;
 		}
 
 		numberOfBytesToWrite = numberOfBytesCopied;
-		RETURN_ERR(writeStreamInterfacePointer->Write((PMoaVoid)buffer, numberOfBytesToWrite, &numberOfBytesCopied));
+
+		RETURN_ERR(writeStreamInterfacePointer->Write((PMoaVoid)buffer,
+			numberOfBytesToWrite, &numberOfBytesCopied));
 
 		if (numberOfBytesToWrite != numberOfBytesCopied) {
 			return kMoaStreamErr_WrotePastEnd;
@@ -235,7 +253,8 @@ MoaError Stream::readSafe(PMoaVoid buffer, MoaStreamCount numberOfBytesToRead) {
 
 	MoaStreamCount numberOfBytesRead = 0;
 
-	MoaError err = streamInterfacePointer->Read(buffer, numberOfBytesToRead, &numberOfBytesRead);
+	MoaError err = streamInterfacePointer->Read(buffer,
+		numberOfBytesToRead, &numberOfBytesRead);
 
 	if (err != kMoaStreamErr_StreamNotOpen
 		&& err != kMoaStreamErr_BadAccessMode) {
@@ -253,7 +272,9 @@ MoaError Stream::readSafe(PMoaVoid buffer, MoaStreamCount numberOfBytesToRead) {
 
 		open();
 		RETURN_ERR(streamInterfacePointer->SetPosition(position));
-		RETURN_ERR(streamInterfacePointer->Read(buffer, numberOfBytesToRead, &numberOfBytesRead));
+
+		RETURN_ERR(streamInterfacePointer->Read(buffer,
+			numberOfBytesToRead, &numberOfBytesRead));
 	}
 
 	if (numberOfBytesToRead != numberOfBytesRead) {
@@ -285,7 +306,9 @@ MoaError Stream::writeSafe(PMoaVoid buffer, MoaStreamCount numberOfBytesToWrite)
 
 		open();
 		RETURN_ERR(streamInterfacePointer->SetPosition(position));
-		RETURN_ERR(streamInterfacePointer->Write(buffer, numberOfBytesToWrite, &numberOfBytesWritten));
+
+		RETURN_ERR(streamInterfacePointer->Write(buffer,
+			numberOfBytesToWrite, &numberOfBytesWritten));
 	}
 
 	if (numberOfBytesToWrite != numberOfBytesWritten) {
@@ -294,10 +317,12 @@ MoaError Stream::writeSafe(PMoaVoid buffer, MoaStreamCount numberOfBytesToWrite)
 	return kMoaErr_NoErr;
 }
 
-MoaError Stream::readPartial(PMoaVoid buffer, MoaStreamCount numberOfBytesToRead, MoaStreamCount &numberOfBytesRead) {
+MoaError Stream::readPartial(PMoaVoid buffer,
+	MoaStreamCount numberOfBytesToRead, MoaStreamCount &numberOfBytesRead) {
 	RETURN_NULL(buffer);
 
-	MoaError err = streamInterfacePointer->Read(buffer, numberOfBytesToRead, &numberOfBytesRead);
+	MoaError err = streamInterfacePointer->Read(buffer,
+		numberOfBytesToRead, &numberOfBytesRead);
 
 	if (err != kMoaStreamErr_StreamNotOpen
 		&& err != kMoaStreamErr_BadAccessMode
@@ -316,15 +341,19 @@ MoaError Stream::readPartial(PMoaVoid buffer, MoaStreamCount numberOfBytesToRead
 
 		open();
 		RETURN_ERR(streamInterfacePointer->SetPosition(position));
-		RETURN_ERR(streamInterfacePointer->Read(buffer, numberOfBytesToRead, &numberOfBytesRead));
+
+		RETURN_ERR(streamInterfacePointer->Read(buffer,
+			numberOfBytesToRead, &numberOfBytesRead));
 	}
 	return kMoaErr_NoErr;
 }
 
-MoaError Stream::writePartial(PMoaVoid buffer, MoaStreamCount numberOfBytesToWrite, MoaStreamCount &numberOfBytesWritten) {
+MoaError Stream::writePartial(PMoaVoid buffer,
+	MoaStreamCount numberOfBytesToWrite, MoaStreamCount &numberOfBytesWritten) {
 	RETURN_NULL(buffer);
 
-	MoaError err = streamInterfacePointer->Write(buffer, numberOfBytesToWrite, &numberOfBytesWritten);
+	MoaError err = streamInterfacePointer->Write(buffer,
+		numberOfBytesToWrite, &numberOfBytesWritten);
 
 	if (err != kMoaStreamErr_StreamNotOpen
 		&& err != kMoaStreamErr_BadAccessMode
@@ -343,7 +372,9 @@ MoaError Stream::writePartial(PMoaVoid buffer, MoaStreamCount numberOfBytesToWri
 
 		open();
 		RETURN_ERR(streamInterfacePointer->SetPosition(position));
-		RETURN_ERR(streamInterfacePointer->Write(buffer, numberOfBytesToWrite, &numberOfBytesWritten));
+
+		RETURN_ERR(streamInterfacePointer->Write(buffer,
+			numberOfBytesToWrite, &numberOfBytesWritten));
 	}
 	return kMoaErr_NoErr;
 }

@@ -232,7 +232,7 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 			throw std::invalid_argument("endIndex must not be greater than size");
 		}
 
-		CONST_ITERATOR beginIterator = _vector.cbegin();
+		auto beginIterator = _vector.cbegin();
 		eraseIterator(beginIterator + beginIndex, beginIterator + endIndex);
 		return *this;
 	}
@@ -260,7 +260,7 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 		}
 
 		for (
-			CONST_ITERATOR vectorIterator = _vector.erase(_vector.cbegin() + mapIterator->second);
+			auto vectorIterator = _vector.erase(_vector.cbegin() + mapIterator->second);
 			vectorIterator != _vector.cend();
 			vectorIterator++
 		) {
@@ -276,7 +276,7 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 		_vector.reserve(_vector.size() + concatVector.size());
 		
 		for (
-			CONST_ITERATOR concatVectorIterator = concatVector.cbegin();
+			auto concatVectorIterator = concatVector.cbegin();
 			concatVectorIterator != concatVector.cend();
 			concatVectorIterator++
 		) {
@@ -295,7 +295,7 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 
 	MappedVector &difference(const VECTOR &differenceVector) {
 		for (
-			CONST_ITERATOR differenceVectorIterator = differenceVector.cbegin();
+			auto differenceVectorIterator = differenceVector.cbegin();
 			differenceVectorIterator != differenceVector.cend();
 			differenceVectorIterator++
 		) {

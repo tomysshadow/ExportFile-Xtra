@@ -8,7 +8,10 @@
 #endif
 
 namespace Path {
-	bool filterPatternExtensions(std::string filterPattern, EXTENSION_MAPPED_VECTOR &extensions) {
+	bool filterPatternExtensions(
+		std::string filterPattern,
+		EXTENSION_MAPPED_VECTOR &extensions
+	) {
 		// clear because we want to pass out a new mapped vector instead of appending
 		extensions.clear();
 
@@ -34,7 +37,10 @@ namespace Path {
 		return filterPattern.empty();
 	}
 
-	bool filterExtensions(ConstPMoaChar filterPointer, EXTENSION_MAPPED_VECTOR &extensions) {
+	bool filterExtensions(
+		ConstPMoaChar filterPointer,
+		EXTENSION_MAPPED_VECTOR &extensions
+	) {
 		extensions.clear();
 
 		RETURN_NULL_BOOL(filterPointer);
@@ -58,7 +64,9 @@ namespace Path {
 	}
 
 	// chars that are invalid in a name, taken from the output of Path.GetInvalidFileNameChars in C#
-	static const char INVALID_NAME_CHARS[] = "\\/:*?\"<>|\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F";
+	static const char INVALID_NAME_CHARS[]
+		= "\\/:*?\"<>|\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r"
+		"\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F";
 
 	bool testValidName(const std::string &name) {
 		return name.find_first_of(INVALID_NAME_CHARS) == std::string::npos;
@@ -69,7 +77,8 @@ namespace Path {
 	// so now it uses underscores, which is the next best thing
 	std::string getValidName(const std::string &name) {
 		// don't use testValidName here so we retain this index
-		std::string::size_type foundFirstOfIndex = name.find_first_of(INVALID_NAME_CHARS);
+		std::string::size_type foundFirstOfIndex
+			= name.find_first_of(INVALID_NAME_CHARS);
 
 		// immediately return if none found (most common, best case scenario)
 		if (foundFirstOfIndex == std::string::npos) {
@@ -84,15 +93,20 @@ namespace Path {
 
 		do {
 			// if multiple invalid characters in a row, collapse to a single underscore
-			foundFirstNotOfIndex = name.find_first_not_of(INVALID_NAME_CHARS, foundFirstOfIndex);
+			foundFirstNotOfIndex
+				= name.find_first_not_of(INVALID_NAME_CHARS, foundFirstOfIndex);
+
 			validName.append("_");
 
 			if (foundFirstNotOfIndex == std::string::npos) {
 				return validName;
 			}
 
-			foundFirstOfIndex = name.find_first_of(INVALID_NAME_CHARS, foundFirstNotOfIndex);
-			validName.append(name, foundFirstNotOfIndex, foundFirstOfIndex - foundFirstNotOfIndex);
+			foundFirstOfIndex
+				= name.find_first_of(INVALID_NAME_CHARS, foundFirstNotOfIndex);
+
+			validName.append(name,
+				foundFirstNotOfIndex, foundFirstOfIndex - foundFirstNotOfIndex);
 		} while (foundFirstOfIndex != std::string::npos);
 		return validName;
 	}
@@ -107,7 +121,7 @@ namespace Path {
 		MoaError err = kMoaErr_NoErr;
 
 		for (
-			HANDLE_VECTOR::iterator findVectorIterator = findVector.begin();
+			auto findVectorIterator = findVector.begin();
 			findVectorIterator != findVector.end();
 			findVectorIterator++
 		) {
@@ -121,10 +135,14 @@ namespace Path {
 	}
 
 	void Info::duplicate(const Info &info) {
-		setInterface((PPMoaVoid)&callbackInterfacePointer, info.callbackInterfacePointer);
-		setInterface((PPMoaVoid)&callocInterfacePointer, info.callocInterfacePointer);
+		setInterface((PPMoaVoid)&callbackInterfacePointer,
+			info.callbackInterfacePointer);
+
+		setInterface((PPMoaVoid)&callocInterfacePointer,
+			info.callocInterfacePointer);
 	
-		MoaError err = clonePathName(pathNameInterfacePointer, info.pathNameInterfacePointer);
+		MoaError err = clonePathName(pathNameInterfacePointer,
+			info.pathNameInterfacePointer);
 
 		// we can just recreate this anyway
 		if (err != kMoaErr_NoErr) {
@@ -149,8 +167,10 @@ namespace Path {
 	// avoid calling me directly!
 	// go through makePathNameInterfacePointer instead if possible
 	// (the constructor is exempt from this)
-	// note that this method only validates the optionals on the object and that they form a valid state together
-	// it does not validate the element optionals returned by getDirnameOptional, getFilenameOptional, etc.
+	// note that this method only validates the optionals on the object
+	// and that they form a valid state together
+	// it does not validate the element optionals
+	// returned by getDirnameOptional, getFilenameOptional, etc.
 	// (they perform that validation on their own)
 	void Info::validate() {
 		MoaError err = makePathNameInterfacePointer();
@@ -207,8 +227,12 @@ namespace Path {
 				// if the extension is empty but the basename has a period in it
 				// then after the period should be interpreted as the extension
 				if (!basenameEquals(toBasename(basename), filename)) {
-					// potentially: extension empty, basename does not have extension, but filename does
-					// in this case, we should not call toBasename or toExtension on the basename and 
+					// potentially:
+					// -extension empty
+					// - basename does not have extension
+					// - but filename does
+					// in this case, we should not
+					// call toBasename or toExtension on the basename and 
 					// should treat the basename and extension like normal
 					// so test equality again in the if statement below
 					empty = false;
@@ -258,7 +282,9 @@ namespace Path {
 			releaseInterface((PPMoaVoid)&pathNameInterfacePointer);
 		};
 
-		RETURN_ERR(callbackInterfacePointer->MoaCreateInstance(&CLSID_CMoaPath, &IID_IMoaPathName, (PPMoaVoid)&pathNameInterfacePointer));
+		RETURN_ERR(callbackInterfacePointer->MoaCreateInstance(&CLSID_CMoaPath, &IID_IMoaPathName,
+			(PPMoaVoid)&pathNameInterfacePointer));
+
 		RETURN_NULL(pathNameInterfacePointer);
 
 		std::optional<std::string> elementOptional = std::nullopt;
@@ -269,7 +295,8 @@ namespace Path {
 
 		// initialize the path, don't resolve to an absolute path if it's relative
 		// (so we can tell whether the dirname is there)
-		RETURN_ERR(pathNameInterfacePointer->InitFromString(elementOrEmpty(elementOptional).c_str(), kMoaPathDialect_LOCAL, FALSE, FALSE));
+		RETURN_ERR(pathNameInterfacePointer->InitFromString(
+			elementOrEmpty(elementOptional).c_str(), kMoaPathDialect_LOCAL, FALSE, FALSE));
 
 		if (!getFilenameOptional(elementOptional)) {
 			return kMoaErr_BadParam;
@@ -303,7 +330,8 @@ namespace Path {
 		MoaLong pathStringSize = 0;
 		RETURN_ERR_BOOL(pathNameInterfacePointer->GetPathSize(&pathStringSize));
 
-		PMoaVoid pathStringPointer = callocInterfacePointer->NRAlloc((MoaUlong)pathStringSize);
+		PMoaVoid pathStringPointer
+			= callocInterfacePointer->NRAlloc((MoaUlong)pathStringSize);
 
 		SCOPE_EXIT {
 			freeMemory(pathStringPointer, callocInterfacePointer);
@@ -311,13 +339,16 @@ namespace Path {
 
 		RETURN_NULL_BOOL(pathStringPointer);
 
-		RETURN_ERR_BOOL(pathNameInterfacePointer->GetPath((PMoaChar)pathStringPointer, pathStringSize));
+		RETURN_ERR_BOOL(pathNameInterfacePointer->GetPath(
+			(PMoaChar)pathStringPointer, pathStringSize));
 
 		path = (PMoaChar)pathStringPointer;
 		return kMoaErr_NoErr;
 	}
 
-	std::string Info::toRelativePath(const std::string &path, unsigned long productVersionMajor) {
+	std::string Info::toRelativePath(
+		const std::string &path, unsigned long productVersionMajor
+	) {
 		if (path.empty()) {
 			return path;
 		}
@@ -339,7 +370,8 @@ namespace Path {
 
 		// only use it if it's not periods or whitespace (the path can be expressed relatively)
 		// and the length is shorter (so it's beneficial to use)
-		if (!elementPeriodsOrWhitespace(relativePath) && relativePath.length() < path.length()) {
+		if (!elementPeriodsOrWhitespace(relativePath)
+			&& relativePath.length() < path.length()) {
 			return relativePath;
 		}
 
@@ -351,12 +383,16 @@ namespace Path {
 			releaseInterface((PPMoaVoid)&workingDirectoryPathNameInterfacePointer);
 		};
 
-		RETURN_ERR(pathNameInterfacePointer->GetWorkingDirectory(&workingDirectoryPathNameInterfacePointer));
+		RETURN_ERR(pathNameInterfacePointer->GetWorkingDirectory(
+			&workingDirectoryPathNameInterfacePointer));
 
 		MoaLong workingDirectoryPathStringSize = 0;
-		RETURN_ERR(workingDirectoryPathNameInterfacePointer->GetPathSize(&workingDirectoryPathStringSize));
 
-		PMoaVoid workingDirectoryPathStringPointer = callocInterfacePointer->NRAlloc(workingDirectoryPathStringSize);
+		RETURN_ERR(workingDirectoryPathNameInterfacePointer->GetPathSize(
+			&workingDirectoryPathStringSize));
+
+		PMoaVoid workingDirectoryPathStringPointer
+			= callocInterfacePointer->NRAlloc(workingDirectoryPathStringSize);
 
 		SCOPE_EXIT {
 			freeMemory(workingDirectoryPathStringPointer, callocInterfacePointer);
@@ -364,12 +400,15 @@ namespace Path {
 
 		RETURN_NULL(workingDirectoryPathStringPointer);
 
-		RETURN_ERR(workingDirectoryPathNameInterfacePointer->GetPath((PMoaChar)workingDirectoryPathStringPointer, workingDirectoryPathStringSize));
+		RETURN_ERR(workingDirectoryPathNameInterfacePointer->GetPath(
+			(PMoaChar)workingDirectoryPathStringPointer, workingDirectoryPathStringSize));
 		*/
 		return path;
 	}
 
-	std::string Info::toBasename(const std::string &filename) {
+	std::string Info::toBasename(
+		const std::string &filename
+	) {
 		// here we don't use std::filesystem::path
 		// because we want the "dumb" logic of, if there's a period
 		// then there is an extension
@@ -385,7 +424,9 @@ namespace Path {
 		);
 	}
 
-	std::string Info::toExtension(const std::string &filename) {
+	std::string Info::toExtension(
+		const std::string &filename
+	) {
 		std::string::size_type periodIndex = filename.rfind(PERIOD);
 
 		return periodIndex == std::string::npos
@@ -397,7 +438,9 @@ namespace Path {
 		);
 	}
 
-	std::string Info::toFilename(const std::string &basename, const std::string &extension) {
+	std::string Info::toFilename(
+		const std::string &basename, const std::string &extension
+	) {
 		if (extension.empty()) {
 			return basename;
 		}
@@ -409,33 +452,49 @@ namespace Path {
 	}
 
 	bool Info::elementPeriodsOrWhitespace(const std::string &element) {
-		for (std::string::const_iterator elementIterator = element.begin(); elementIterator != element.end(); elementIterator++) {
+		for (
+			auto elementIterator = element.begin();
+			elementIterator != element.end();
+			elementIterator++
+		) {
 			const char &periodOrSpace = *elementIterator;
 
-			if (periodOrSpace != PERIOD && !isspace((unsigned char)periodOrSpace)) {
+			if (periodOrSpace != PERIOD
+				&& !isspace((unsigned char)periodOrSpace)) {
 				return false;
 			}
 		}
 		return true;
 	}
 
-	bool Info::basenameEquals(const std::string &basename, const std::string &filename) {
+	bool Info::basenameEquals(
+		const std::string &basename, const std::string &filename
+	) {
 		// we can't use the actual filesystem path compare method here because it's not case-insensitive
 		// we shouldn't need to make these lexically normal
 		// if the basename isn't, they won't match anyway
-		return stringEqualsCaseInsensitive(basename.c_str(), toBasename(filename).c_str());
+		return stringEqualsCaseInsensitive(
+			basename.c_str(), toBasename(filename).c_str());
 	}
 
-	bool Info::extensionEquals(const std::string &extension, const std::string &filename) {
-		return stringEqualsCaseInsensitive(extension.c_str(), toExtension(filename).c_str());
+	bool Info::extensionEquals(
+		const std::string &extension, const std::string &filename
+	) {
+		return stringEqualsCaseInsensitive(
+			extension.c_str(), toExtension(filename).c_str());
 	}
 
-	std::string Info::elementOrEmpty(const std::optional<std::string> &elementOptional) {
+	std::string Info::elementOrEmpty(
+		const std::optional<std::string> &elementOptional
+	) {
 		return elementOptional.value_or("");
 	}
 
-	Info::Info(unsigned long productVersionMajor, PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer)
-		: callbackInterfacePointer(callbackInterfacePointer),
+	Info::Info(
+		unsigned long productVersionMajor,
+		PIMoaCallback callbackInterfacePointer,
+		PIMoaCalloc callocInterfacePointer
+	) : callbackInterfacePointer(callbackInterfacePointer),
 		callocInterfacePointer(callocInterfacePointer),
 		productVersionMajor(productVersionMajor) {
 		if (!callbackInterfacePointer) {
@@ -450,8 +509,12 @@ namespace Path {
 		callocInterfacePointer->AddRef();
 	}
 
-	Info::Info(const std::string &path, unsigned long productVersionMajor, PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer)
-		: callbackInterfacePointer(callbackInterfacePointer),
+	Info::Info(
+		const std::string &path,
+		unsigned long productVersionMajor,
+		PIMoaCallback callbackInterfacePointer,
+		PIMoaCalloc callocInterfacePointer
+	) : callbackInterfacePointer(callbackInterfacePointer),
 		callocInterfacePointer(callocInterfacePointer),
 		productVersionMajor(productVersionMajor) {
 		if (!callbackInterfacePointer) {
@@ -495,15 +558,22 @@ namespace Path {
 		typedef std::vector<PIMoaFile> FILE_INTERFACE_POINTER_VECTOR;
 
 		FILE_INTERFACE_POINTER_VECTOR fileInterfacePointerVector = { NULL };
-		FILE_INTERFACE_POINTER_VECTOR::iterator fileInterfacePointerVectorIterator = fileInterfacePointerVector.begin();
+
+		auto fileInterfacePointerVectorIterator
+			= fileInterfacePointerVector.begin();
 
 		SCOPE_EXIT {
-			for (fileInterfacePointerVectorIterator = fileInterfacePointerVector.begin(); fileInterfacePointerVectorIterator != fileInterfacePointerVector.end(); fileInterfacePointerVectorIterator++) {
+			for (
+				fileInterfacePointerVectorIterator = fileInterfacePointerVector.begin();
+				fileInterfacePointerVectorIterator != fileInterfacePointerVector.end();
+				fileInterfacePointerVectorIterator++
+			) {
 				releaseInterface((PPMoaVoid)&*fileInterfacePointerVectorIterator);
 			}
 		};
 
-		RETURN_ERR(callbackInterfacePointer->MoaCreateInstance(&CLSID_CMoaFile, &IID_IMoaFile, (PPMoaVoid)&*fileInterfacePointerVectorIterator));
+		RETURN_ERR(callbackInterfacePointer->MoaCreateInstance(&CLSID_CMoaFile, &IID_IMoaFile,
+			(PPMoaVoid)&*fileInterfacePointerVectorIterator));
 	
 		PIMoaFile fileInterfacePointer = *fileInterfacePointerVectorIterator;
 		RETURN_NULL(fileInterfacePointer);
@@ -531,7 +601,8 @@ namespace Path {
 		}
 
 		// tried to create directory and it already exists? Proceed as normal
-		// this may also happen if there's a file with the name of the directory we want to create
+		// this may also happen if there's a file with the name of
+		// the directory we want to create
 		// but in that case, it is CreateFile's responsibility to fail, not this function's
 		// for any other error, give up here
 		if (err != kMoaErr_NoErr && err != kMoaFileErr_DuplicateSpec) {
@@ -672,7 +743,9 @@ namespace Path {
 		// only care about the filename, not the entire path
 		// (and this also avoids problems if we lack permissions to the parent directories)
 		WIN32_FIND_DATAW win32FindDataWide = {};
-		HANDLE find = FindFirstFileW(CA2W(relativePath.c_str(), codePage), &win32FindDataWide);
+
+		HANDLE find = FindFirstFileW(
+			CA2W(relativePath.c_str(), codePage), &win32FindDataWide);
 
 		SCOPE_EXIT {
 			if (!closeFind(find)) {
@@ -686,7 +759,8 @@ namespace Path {
 			return kMoaErr_FileNotFound;
 		}
 
-		// the alternate file name here may be empty if there is none, which is fine. This is not a bug
+		// the alternate file name here may be empty if there is none, which is fine
+		// this is not a bug
 		if (
 				!PathYetAnotherMakeUniqueName(
 					uniqueName,
@@ -704,7 +778,8 @@ namespace Path {
 		}
 		#else
 		// the old beautiful version that works on Windows but not Wine, so I can't use it
-		if (!PathYetAnotherMakeUniqueName(uniqueName, CA2W(path.c_str(), codePage), NULL, NULL)) {
+		if (!PathYetAnotherMakeUniqueName(
+			uniqueName, CA2W(path.c_str(), codePage), NULL, NULL)) {
 			return kMoaFileErr_BadFileSpec;
 		}
 		#endif
@@ -723,12 +798,18 @@ namespace Path {
 			return false;
 		}
 
-		path = relative ? toRelativePath(this->path, productVersionMajor) : this->path;
+		path = relative
+			? toRelativePath(this->path, productVersionMajor)
+			: this->path;
+
 		return true;
 	}
 
 	bool Info::getElementsOrEmpty(
-		std::string &dirname, std::string &basename, std::string &extension, std::string &filename,
+		std::string &dirname,
+		std::string &basename,
+		std::string &extension,
+		std::string &filename,
 		std::string &path,
 		bool relative
 	) {
@@ -761,7 +842,10 @@ namespace Path {
 	}
 
 	bool Info::getElementsOrEmpty(
-		std::string &dirname, std::string &basename, std::string &extension, std::string &filename
+		std::string &dirname,
+		std::string &basename,
+		std::string &extension,
+		std::string &filename
 	) {
 		std::string path = "";
 		return getElementsOrEmpty(dirname, basename, extension, filename, path);
@@ -844,10 +928,19 @@ namespace Path {
 		std::optional<std::string> &filenameOptional
 	) {
 		std::string path = "";
-		return getElementOptionals(dirnameOptional, basenameOptional, extensionOptional, filenameOptional, path);
+
+		return getElementOptionals(
+			dirnameOptional,
+			basenameOptional,
+			extensionOptional,
+			filenameOptional,
+			path
+		);
 	}
 
-	bool Info::getDirnameOptional(std::optional<std::string> &dirnameOptional) {
+	bool Info::getDirnameOptional(
+		std::optional<std::string> &dirnameOptional
+	) {
 		MoaError err = makePathNameInterfacePointer();
 
 		if (err != kMoaErr_NoErr) {
@@ -876,7 +969,8 @@ namespace Path {
 			}
 
 			// add a trailing slash
-			// (this only works correctly if the path has the preferred seperator! lexically normal should've fixed this for us)
+			// this only works correctly if the path has the preferred seperator!
+			// lexically normal should've fixed this for us
 			if (dirname.back() != std::filesystem::path::preferred_separator) {
 				dirname += std::filesystem::path::preferred_separator;
 			}
@@ -886,7 +980,9 @@ namespace Path {
 		return true;
 	}
 
-	bool Info::getBasenameOptional(std::optional<std::string> &basenameOptional) {
+	bool Info::getBasenameOptional(
+		std::optional<std::string> &basenameOptional
+	) {
 		MoaError err = makePathNameInterfacePointer();
 
 		if (err != kMoaErr_NoErr) {
@@ -922,7 +1018,8 @@ namespace Path {
 
 			// should be ensured by validate (when it calls getValidFileName on this)
 			/*
-			if (FILESYSTEM_DIRECTOR_PATH(basenameOptional.value(), productVersionMajor).has_parent_path()) {
+			if (FILESYSTEM_DIRECTOR_PATH(
+				basenameOptional.value(), productVersionMajor).has_parent_path()) {
 				return false;
 			}
 			*/
@@ -930,7 +1027,9 @@ namespace Path {
 		return true;
 	}
 
-	bool Info::getExtensionOptional(std::optional<std::string> &extensionOptional, bool fromBasename) {
+	bool Info::getExtensionOptional(
+		std::optional<std::string> &extensionOptional, bool fromBasename
+	) {
 		MoaError err = makePathNameInterfacePointer();
 
 		if (err != kMoaErr_NoErr) {
@@ -941,18 +1040,25 @@ namespace Path {
 		bool filenameOptionalHasValue = this->filenameOptional.has_value();
 		bool basenameOptionalHasValue = this->basenameOptional.has_value();
 
-		// if first.second.txt is both the filename and the basename, and the extension is unspecified
+		// if first.second.txt is both the filename and the basename
+		// and the extension is unspecified
 		// if the #text label is used, then the
-		// #text label appends its own txt extension, so the filename should be interpreted
+		// #text label appends its own txt extension
+		// so the filename should be interpreted
 		// as first.second.txt.txt (invalid, filename mismatch)
 		// if on the other hand the #composite label is used, then the
 		// so the filename should be reinterpreted as first.second.txt (valid)
-		// so this should return the unspecified extension so the user of this class sets the extension
+		// so this should return the unspecified extension
+		// so the user of this class sets the extension
 		if (
 			filenameOptionalHasValue
 			&& basenameOptionalHasValue
 			&& !this->extensionOptional.has_value()
-			&& stringEqualsCaseInsensitive(this->filenameOptional.value().c_str(), this->basenameOptional.value().c_str())
+
+			&& stringEqualsCaseInsensitive(
+				this->filenameOptional.value().c_str(),
+				this->basenameOptional.value().c_str()
+			)
 		) {
 			extensionOptional = this->extensionOptional;
 			return true;
@@ -976,7 +1082,8 @@ namespace Path {
 
 			// never allow an empty extension to materialize from toExtension here
 			// empty extensions are valid but MUST be specified explicitly
-			// (the extension from the filename counts as specifying the extension explicitly, but not the basename)
+			// the extension from the filename counts as specifying
+			// the extension explicitly, but not the basename
 			if (extensionOptional.value().empty()) {
 				extensionOptional = this->extensionOptional;
 			}
@@ -987,7 +1094,8 @@ namespace Path {
 		if (extensionOptional.has_value()) {
 			// should be ensured by validate
 			/*
-			if (FILESYSTEM_DIRECTOR_PATH(EXTENSION, productVersionMajor).has_parent_path()) {
+			if (FILESYSTEM_DIRECTOR_PATH(
+				EXTENSION, productVersionMajor).has_parent_path()) {
 				return false;
 			}
 			*/
@@ -1000,7 +1108,9 @@ namespace Path {
 		return true;
 	}
 
-	bool Info::getFilenameOptional(std::optional<std::string> &filenameOptional) {
+	bool Info::getFilenameOptional(
+		std::optional<std::string> &filenameOptional
+	) {
 		MoaError err = makePathNameInterfacePointer();
 
 		if (err != kMoaErr_NoErr) {
@@ -1011,7 +1121,8 @@ namespace Path {
 		if (this->filenameOptional.has_value()) {
 			filenameOptional = this->filenameOptional;
 		} else {
-			if (!this->basenameOptional.has_value() || !this->extensionOptional.has_value()) {
+			if (!this->basenameOptional.has_value()
+				|| !this->extensionOptional.has_value()) {
 				filenameOptional = this->filenameOptional;
 				return true;
 			}
@@ -1036,14 +1147,19 @@ namespace Path {
 			releaseInterface((PPMoaVoid)&setPathNameInterfacePointer);
 		};
 
-		RETURN_ERR(callbackInterfacePointer->MoaCreateInstance(&CLSID_CMoaPath, &IID_IMoaPathName, (PPMoaVoid)&setPathNameInterfacePointer));
+		RETURN_ERR(callbackInterfacePointer->MoaCreateInstance(
+			&CLSID_CMoaPath, &IID_IMoaPathName,
+			(PPMoaVoid)&setPathNameInterfacePointer)
+		);
+
 		RETURN_NULL(setPathNameInterfacePointer);
 
 		// initialize the path, don't resolve to an absolute path if it's relative
 		// (so we can tell whether the dirname is there)
 		// this must be normalized for it to be interpreted correctly without resolving
-		// (lexically normal so Add/RemoveFinal isn't tripped up by .., and because forward slashes/colons not recognized here)
-		// the filename is trimmed here so if it ends in . the filename and extension don't mismatch
+		// (lexically normal because forward slashes/colons not recognized here)
+		// the filename is trimmed here so
+		// if it ends in . the filename and extension don't mismatch
 		RETURN_ERR(
 			setPathNameInterfacePointer->InitFromString(
 				FILESYSTEM_DIRECTOR_STRING(
@@ -1066,7 +1182,8 @@ namespace Path {
 		MoaLong elementStringSize = 0;
 		RETURN_ERR(setPathNameInterfacePointer->GetPathSize(&elementStringSize));
 
-		PMoaVoid elementStringPointer = callocInterfacePointer->NRAlloc((MoaUlong)elementStringSize);
+		PMoaVoid elementStringPointer
+			= callocInterfacePointer->NRAlloc((MoaUlong)elementStringSize);
 
 		SCOPE_EXIT {
 			freeMemory(elementStringPointer, callocInterfacePointer);
@@ -1079,14 +1196,16 @@ namespace Path {
 
 		this->path.clear();
 
-		MoaError err = setPathNameInterfacePointer->GetDisplayFileName((PMoaChar)elementStringPointer, elementStringSize, TRUE);
+		MoaError err = setPathNameInterfacePointer->GetDisplayFileName(
+			(PMoaChar)elementStringPointer, elementStringSize, TRUE);
 
 		// filename
 		filenameOptional = err == kMoaErr_NoErr
 		? (PMoaChar)elementStringPointer
 		: "";
 
-		err = setPathNameInterfacePointer->GetExtension((PMoaChar)elementStringPointer, elementStringSize);
+		err = setPathNameInterfacePointer->GetExtension(
+			(PMoaChar)elementStringPointer, elementStringSize);
 
 		// extension
 		PMoaChar extensionStringPointer = err == kMoaErr_NoErr
@@ -1104,7 +1223,8 @@ namespace Path {
 		// basename
 		// this sometimes gets the name with the extension so can't be used
 		/*
-		err = setPathNameInterfacePointer->GetDisplayFileName((PMoaChar)elementStringPointer, elementStringSize, FALSE);
+		err = setPathNameInterfacePointer->GetDisplayFileName(
+			(PMoaChar)elementStringPointer, elementStringSize, FALSE);
 
 		basenameOptional = err == kMoaErr_NoErr
 			? (PMoaChar)elementStringPointer
@@ -1115,13 +1235,15 @@ namespace Path {
 
 		// dirname
 		if (stringWhitespace(path.c_str())) {
-			// whitespace paths should be treated as invalid, because the dirname is whitespace
+			// whitespace paths should be treated as invalid
+			// because the dirname is whitespace
 			dirnameOptional = path;
 		} else {
 			err = setPathNameInterfacePointer->RemoveFinal();
 
 			if (err == kMoaErr_NoErr) {
-				err = setPathNameInterfacePointer->GetPath((PMoaChar)elementStringPointer, elementStringSize);
+				err = setPathNameInterfacePointer->GetPath(
+					(PMoaChar)elementStringPointer, elementStringSize);
 			}
 
 			if (err == kMoaErr_NoErr) {

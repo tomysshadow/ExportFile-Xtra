@@ -14,10 +14,17 @@ void ValueConverter::destroy() {
 }
 
 void ValueConverter::duplicate(const ValueConverter &valueConverter) {
-	setInterface((PPMoaVoid)&drPlayerInterfacePointer, valueConverter.drPlayerInterfacePointer);
-	setInterface((PPMoaVoid)&mmValueInterfacePointer, valueConverter.mmValueInterfacePointer);
-	setInterface((PPMoaVoid)&mmListInterfacePointer, valueConverter.mmListInterfacePointer);
-	setInterface((PPMoaVoid)&callocInterfacePointer, valueConverter.callocInterfacePointer);
+	setInterface((PPMoaVoid)&drPlayerInterfacePointer,
+		valueConverter.drPlayerInterfacePointer);
+
+	setInterface((PPMoaVoid)&mmValueInterfacePointer,
+		valueConverter.mmValueInterfacePointer);
+
+	setInterface((PPMoaVoid)&mmListInterfacePointer,
+		valueConverter.mmListInterfacePointer);
+
+	setInterface((PPMoaVoid)&callocInterfacePointer,
+		valueConverter.callocInterfacePointer);
 
 	symbols = valueConverter.symbols;
 }
@@ -48,7 +55,13 @@ static const VALUE_SIZE_MAP DICT_TYPE_ID_VALUE_SIZE_MAP = {
 	{kMoaDictType_MoaRect, sizeof(MoaRect)}
 };
 
-MoaError ValueConverter::appendToDictInterfacePointer(const MoaMmValue &propListValue, PROP_LIST_DICT_VALUE_MAP &propListDictValueMap, MoaDictTypeID dictTypeID, ConstPMoaChar keyStringPointer, PIMoaDict dictInterfacePointer) {
+MoaError ValueConverter::appendToDictInterfacePointer(
+	const MoaMmValue &propListValue,
+	PROP_LIST_DICT_VALUE_MAP &propListDictValueMap,
+	MoaDictTypeID dictTypeID,
+	ConstPMoaChar keyStringPointer,
+	PIMoaDict dictInterfacePointer
+) {
 	RETURN_NULL(keyStringPointer);
 	RETURN_NULL(dictInterfacePointer);
 
@@ -59,7 +72,8 @@ MoaError ValueConverter::appendToDictInterfacePointer(const MoaMmValue &propList
 		freeMemory(valueBuffer, callocInterfacePointer);
 	};
 
-	VALUE_SIZE_MAP::const_iterator dictTypeIDValueSizeMapIterator = DICT_TYPE_ID_VALUE_SIZE_MAP.find(dictTypeID);
+	VALUE_SIZE_MAP::const_iterator dictTypeIDValueSizeMapIterator
+		= DICT_TYPE_ID_VALUE_SIZE_MAP.find(dictTypeID);
 
 	if (dictTypeIDValueSizeMapIterator != DICT_TYPE_ID_VALUE_SIZE_MAP.end()) {
 		valueSize = dictTypeIDValueSizeMapIterator->second;
@@ -87,13 +101,18 @@ MoaError ValueConverter::appendToDictInterfacePointer(const MoaMmValue &propList
 	switch (dictTypeID) {
 		case kMoaDictType_Dict:
 		{
-			PROP_LIST_DICT_VALUE_MAP::iterator propListDictValueMapIterator = propListDictValueMap.find((const PMoaMmValue)&value);
+			auto propListDictValueMapIterator
+				= propListDictValueMap.find((const PMoaMmValue)&value);
 
 			if (propListDictValueMapIterator == propListDictValueMap.end()) {
 				// this interface does not need to be released
 				PIMoaDict valueDictInterfacePointer = NULL;
-				RETURN_ERR(dictInterfacePointer->MakeDict(&valueDictInterfacePointer, keyStringPointer));
-				return concatToDictInterfacePointer(value, propListDictValueMap, valueDictInterfacePointer);
+
+				RETURN_ERR(dictInterfacePointer->MakeDict(
+					&valueDictInterfacePointer, keyStringPointer));
+
+				return concatToDictInterfacePointer(value,
+					propListDictValueMap, valueDictInterfacePointer);
 			} else {
 				RETURN_NULL(propListDictValueMapIterator->second);
 				*(PIMoaDict)valueBuffer = *propListDictValueMapIterator->second;
@@ -104,12 +123,16 @@ MoaError ValueConverter::appendToDictInterfacePointer(const MoaMmValue &propList
 		case kMoaDictType_Long:
 		// it is fine to treat PIMoaUnknown as a standard integer here
 		// (we intentionally do not null check it)
-		RETURN_ERR(mmValueInterfacePointer->ValueToInteger(&value, (PMoaLong)valueBuffer));
+		RETURN_ERR(mmValueInterfacePointer->ValueToInteger(
+			&value, (PMoaLong)valueBuffer));
 		break;
 		case kMoaDictType_Float:
 		{
 			MoaDouble valueDouble = 0;
-			RETURN_ERR(mmValueInterfacePointer->ValueToFloat(&value, &valueDouble));
+
+			RETURN_ERR(mmValueInterfacePointer->ValueToFloat(
+				&value, &valueDouble));
+
 			*(MoaFloat*)valueBuffer = (MoaFloat)valueDouble;
 		}
 		break;
@@ -119,7 +142,10 @@ MoaError ValueConverter::appendToDictInterfacePointer(const MoaMmValue &propList
 		case kMoaDictType_Bool:
 		{
 			MoaLong valueInteger = 0;
-			RETURN_ERR(mmValueInterfacePointer->ValueToInteger(&value, &valueInteger));
+
+			RETURN_ERR(mmValueInterfacePointer->ValueToInteger(
+				&value, &valueInteger));
+
 			*(MoaBool*)valueBuffer = (MoaBool)valueInteger;
 		}
 		break;
@@ -133,45 +159,71 @@ MoaError ValueConverter::appendToDictInterfacePointer(const MoaMmValue &propList
 		}
 		break;
 		case kMoaDictType_CString:
-		RETURN_ERR(mmValueInterfacePointer->ValueStringLength(&value, &valueSize));
+		RETURN_ERR(mmValueInterfacePointer->ValueStringLength(
+			&value, &valueSize));
+
 		valueSize++;
 
-		valueBuffer = callocInterfacePointer->NRAlloc((MoaUlong)valueSize);
+		valueBuffer
+			= callocInterfacePointer->NRAlloc((MoaUlong)valueSize);
+
 		RETURN_NULL(valueBuffer);
 
-		RETURN_ERR(mmValueInterfacePointer->ValueToString(&value, (PMoaChar)valueBuffer, valueSize));
+		RETURN_ERR(mmValueInterfacePointer->ValueToString(
+			&value, (PMoaChar)valueBuffer, valueSize));
+
 		break;
 		case kMoaDictType_Double:
-		RETURN_ERR(mmValueInterfacePointer->ValueToFloat(&value, (MoaDouble*)valueBuffer));
+		RETURN_ERR(mmValueInterfacePointer->ValueToFloat(
+			&value, (MoaDouble*)valueBuffer));
+
 		break;
 		case kMoaDictType_MoaPoint:
-		RETURN_ERR(mmValueInterfacePointer->ValueToPoint(&value, (PMoaPoint)valueBuffer));
+		RETURN_ERR(mmValueInterfacePointer->ValueToPoint(
+			&value, (PMoaPoint)valueBuffer));
+
 		break;
 		case kMoaDictType_MoaRect:
-		RETURN_ERR(mmValueInterfacePointer->ValueToRect(&value, (PMoaRect)valueBuffer));
+		RETURN_ERR(mmValueInterfacePointer->ValueToRect(
+			&value, (PMoaRect)valueBuffer));
+
+		break;
 	}
-	return dictInterfacePointer->Put(dictTypeID, valueBuffer, valueSize, keyStringPointer);
+	return dictInterfacePointer->Put(dictTypeID,
+		valueBuffer, valueSize, keyStringPointer);
 }
 
-MoaError ValueConverter::appendToPropList(MoaMmValue &propListValue, bool appendInterfaceValue, DICT_VALUE_PROP_LIST_MAP &dictValuePropListMap, MoaDictTypeID dictTypeID, MoaLong valueSize, ConstPMoaChar keyStringPointer, PIMoaDict dictInterfacePointer) {
+MoaError ValueConverter::appendToPropList(
+	MoaMmValue &propListValue,
+	bool appendInterfaceValue,
+	DICT_VALUE_PROP_LIST_MAP &dictValuePropListMap,
+	MoaDictTypeID dictTypeID,
+	MoaLong valueSize,
+	ConstPMoaChar keyStringPointer,
+	PIMoaDict dictInterfacePointer
+) {
 	RETURN_NULL(keyStringPointer);
 	RETURN_NULL(dictInterfacePointer);
 
-	VALUE_SIZE_MAP::const_iterator dictTypeIDValueSizeMapIterator = DICT_TYPE_ID_VALUE_SIZE_MAP.find(dictTypeID);
+	VALUE_SIZE_MAP::const_iterator dictTypeIDValueSizeMapIterator
+		= DICT_TYPE_ID_VALUE_SIZE_MAP.find(dictTypeID);
 
 	if (dictTypeIDValueSizeMapIterator != DICT_TYPE_ID_VALUE_SIZE_MAP.end()
 		&& dictTypeIDValueSizeMapIterator->second < valueSize) {
 		return kMoaDictErr_BufferTooSmall;
 	}
 
-	PMoaVoid valueBuffer = callocInterfacePointer->NRAlloc((MoaUlong)valueSize);
+	PMoaVoid valueBuffer
+		= callocInterfacePointer->NRAlloc((MoaUlong)valueSize);
 
 	SCOPE_EXIT {
 		freeMemory(valueBuffer, callocInterfacePointer);
 	};
 
 	RETURN_NULL(valueBuffer);
-	RETURN_ERR(dictInterfacePointer->Get(dictTypeID, valueBuffer, valueSize, keyStringPointer));
+
+	RETURN_ERR(dictInterfacePointer->Get(dictTypeID,
+		valueBuffer, valueSize, keyStringPointer));
 
 	MoaMmValue value = kVoidMoaMmValueInitializer;
 
@@ -189,11 +241,14 @@ MoaError ValueConverter::appendToPropList(MoaMmValue &propListValue, bool append
 			if (valueDictInterfacePointer) {
 				// handle for self referential list
 				// (must add a ref in that case because we release it below)
-				DICT_VALUE_PROP_LIST_MAP::iterator dictValuePropListMapIterator = dictValuePropListMap.find(valueDictInterfacePointer);
+				auto dictValuePropListMapIterator
+					= dictValuePropListMap.find(valueDictInterfacePointer);
 
 				if (dictValuePropListMapIterator == dictValuePropListMap.end()) {
 					RETURN_ERR(mmListInterfacePointer->NewPropListValue(&value));
-					RETURN_ERR(concatToPropList(value, appendInterfaceValue, valueDictInterfacePointer));
+
+					RETURN_ERR(concatToPropList(value,
+						appendInterfaceValue, valueDictInterfacePointer));
 				} else {
 					RETURN_NULL(dictValuePropListMapIterator->second);
 					value = *dictValuePropListMapIterator->second;
@@ -215,16 +270,22 @@ MoaError ValueConverter::appendToPropList(MoaMmValue &propListValue, bool append
 		// PIMoaUnknown's get cast to a MoaLong
 		[[fallthrough]];
 		case kMoaDictType_Long:
-		RETURN_ERR(mmValueInterfacePointer->IntegerToValue(*(PMoaLong)valueBuffer, &value));
+		RETURN_ERR(mmValueInterfacePointer->IntegerToValue(
+			*(PMoaLong)valueBuffer, &value));
+
 		break;
 		case kMoaDictType_Float:
-		RETURN_ERR(mmValueInterfacePointer->FloatToValue(*(MoaFloat*)valueBuffer, &value));
+		RETURN_ERR(mmValueInterfacePointer->FloatToValue(
+			*(MoaFloat*)valueBuffer, &value));
+
 		break;
 		case kMoaDictType_Wide:
 		RETURN_ERR(toValue(*(MoaWide*)valueBuffer, value));
 		break;
 		case kMoaDictType_Bool:
-		RETURN_ERR(mmValueInterfacePointer->IntegerToValue(*(MoaBool*)valueBuffer, &value));
+		RETURN_ERR(mmValueInterfacePointer->IntegerToValue(
+			*(MoaBool*)valueBuffer, &value));
+
 		break;
 		case kMoaDictType_MoaID:
 		RETURN_ERR(toValue(*(MoaID*)valueBuffer, value));
@@ -233,16 +294,25 @@ MoaError ValueConverter::appendToPropList(MoaMmValue &propListValue, bool append
 		RETURN_ERR(toValue((MoaByte*)valueBuffer, valueSize, value));
 		break;
 		case kMoaDictType_CString:
-		RETURN_ERR(mmValueInterfacePointer->StringToValue((PMoaChar)valueBuffer, &value));
+		RETURN_ERR(mmValueInterfacePointer->StringToValue(
+			(PMoaChar)valueBuffer, &value));
+
 		break;
 		case kMoaDictType_Double:
-		RETURN_ERR(mmValueInterfacePointer->FloatToValue(*(MoaDouble*)valueBuffer, &value));
+		RETURN_ERR(mmValueInterfacePointer->FloatToValue(
+			*(MoaDouble*)valueBuffer, &value));
+
 		break;
 		case kMoaDictType_MoaPoint:
-		RETURN_ERR(mmValueInterfacePointer->PointToValue((PMoaPoint)valueBuffer, &value));
+		RETURN_ERR(mmValueInterfacePointer->PointToValue(
+			(PMoaPoint)valueBuffer, &value));
+
 		break;
 		case kMoaDictType_MoaRect:
-		RETURN_ERR(mmValueInterfacePointer->RectToValue((PMoaRect)valueBuffer, &value));
+		RETURN_ERR(mmValueInterfacePointer->RectToValue(
+			(PMoaRect)valueBuffer, &value));
+
+		break;
 	}
 
 	if (appendValue) {
@@ -251,7 +321,12 @@ MoaError ValueConverter::appendToPropList(MoaMmValue &propListValue, bool append
 	return kMoaErr_NoErr;
 }
 
-MoaError ValueConverter::concatToDictInterfacePointer(const MoaMmValue &propListValue, PROP_LIST_DICT_VALUE_MAP &propListDictValueMap, bool &empty, PIMoaDict dictInterfacePointer) {
+MoaError ValueConverter::concatToDictInterfacePointer(
+	const MoaMmValue &propListValue,
+	PROP_LIST_DICT_VALUE_MAP &propListDictValueMap,
+	bool &empty,
+	PIMoaDict dictInterfacePointer
+) {
 	RETURN_NULL(dictInterfacePointer);
 
 	RETURN_ERR(testValueVoid(propListValue, empty, kMoaMmValueType_PropList));
@@ -261,7 +336,8 @@ MoaError ValueConverter::concatToDictInterfacePointer(const MoaMmValue &propList
 	}
 
 	if (!empty) {
-		propListDictValueMap[(const PMoaMmValue)&propListValue] = dictInterfacePointer;
+		propListDictValueMap[(const PMoaMmValue)&propListValue]
+			= dictInterfacePointer;
 
 		MoaUlong count = 0;
 		RETURN_ERR(dictInterfacePointer->Count(&count));
@@ -270,21 +346,40 @@ MoaError ValueConverter::concatToDictInterfacePointer(const MoaMmValue &propList
 		ConstPMoaChar keyStringPointer = NULL;
 
 		for (MoaUlong i = 0; i < count; i++) {
-			RETURN_ERR(dictInterfacePointer->GetNth(i, &dictTypeID, NULL, &keyStringPointer));
-			RETURN_ERR(appendToDictInterfacePointer(propListValue, propListDictValueMap, dictTypeID, keyStringPointer, dictInterfacePointer));
+			RETURN_ERR(dictInterfacePointer->GetNth(
+				i, &dictTypeID, NULL, &keyStringPointer));
+
+			RETURN_ERR(appendToDictInterfacePointer(
+				propListValue,
+				propListDictValueMap,
+				dictTypeID,
+				keyStringPointer,
+				dictInterfacePointer
+			));
 		}
 	}
 	return kMoaErr_NoErr;
 }
 
-MoaError ValueConverter::concatToDictInterfacePointer(const MoaMmValue &propListValue, PROP_LIST_DICT_VALUE_MAP &propListDictValueMap, PIMoaDict dictInterfacePointer) {
+MoaError ValueConverter::concatToDictInterfacePointer(
+	const MoaMmValue &propListValue,
+	PROP_LIST_DICT_VALUE_MAP &propListDictValueMap,
+	PIMoaDict dictInterfacePointer
+) {
 	RETURN_NULL(dictInterfacePointer);
 
 	bool empty = false;
-	return concatToDictInterfacePointer(propListValue, propListDictValueMap, empty, dictInterfacePointer);
+
+	return concatToDictInterfacePointer(propListValue,
+		propListDictValueMap, empty, dictInterfacePointer);
 }
 
-MoaError ValueConverter::concatToPropList(MoaMmValue &propListValue, bool appendInterfaceValues, DICT_VALUE_PROP_LIST_MAP &dictValuePropListMap, PIMoaDict dictInterfacePointer) {
+MoaError ValueConverter::concatToPropList(
+	MoaMmValue &propListValue,
+	bool appendInterfaceValues,
+	DICT_VALUE_PROP_LIST_MAP &dictValuePropListMap,
+	PIMoaDict dictInterfacePointer
+) {
 	RETURN_NULL(dictInterfacePointer);
 
 	dictValuePropListMap[dictInterfacePointer] = &propListValue;
@@ -297,13 +392,28 @@ MoaError ValueConverter::concatToPropList(MoaMmValue &propListValue, bool append
 	ConstPMoaChar keyStringPointer = NULL;
 
 	for (MoaUlong i = 0; i < count; i++) {
-		RETURN_ERR(dictInterfacePointer->GetNth(i, &dictTypeID, &valueSize, &keyStringPointer));
-		RETURN_ERR(appendToPropList(propListValue, appendInterfaceValues, dictValuePropListMap, dictTypeID, valueSize, keyStringPointer, dictInterfacePointer));
+		RETURN_ERR(dictInterfacePointer->GetNth(
+			i, &dictTypeID, &valueSize, &keyStringPointer));
+
+		RETURN_ERR(appendToPropList(
+			propListValue,
+			appendInterfaceValues,
+			dictValuePropListMap,
+			dictTypeID,
+			valueSize,
+			keyStringPointer,
+			dictInterfacePointer
+		));
 	}
 	return kMoaErr_NoErr;
 }
 
-ValueConverter::ValueConverter(PIMoaDrPlayer drPlayerInterfacePointer, PIMoaMmValue mmValueInterfacePointer, PIMoaMmList mmListInterfacePointer, PIMoaCalloc callocInterfacePointer)
+ValueConverter::ValueConverter(
+	PIMoaDrPlayer drPlayerInterfacePointer,
+	PIMoaMmValue mmValueInterfacePointer,
+	PIMoaMmList mmListInterfacePointer,
+	PIMoaCalloc callocInterfacePointer
+)
 	: drPlayerInterfacePointer(drPlayerInterfacePointer),
 	mmValueInterfacePointer(mmValueInterfacePointer),
 	mmListInterfacePointer(mmListInterfacePointer),
@@ -353,11 +463,14 @@ ValueConverter &ValueConverter::operator=(const ValueConverter &valueConverter) 
 	return *this;
 }
 
-MoaError ValueConverter::toString(const MoaMmValue &value, std::string &string, bool strict) {
+MoaError ValueConverter::toString(
+	const MoaMmValue &value, std::string &string, bool strict
+) {
 	MoaMmValue stringValue = value;
 
 	ConstPMoaChar stringPointer = NULL;
-	MoaError err = mmValueInterfacePointer->ValueToStringPtr(&stringValue, &stringPointer);
+	MoaError err = mmValueInterfacePointer->ValueToStringPtr(
+		&stringValue, &stringPointer);
 
 	MoaMmValue resultValue = kVoidMoaMmValueInitializer;
 
@@ -367,17 +480,21 @@ MoaError ValueConverter::toString(const MoaMmValue &value, std::string &string, 
 
 	if (!strict
 	&& err == kMoaMmErr_StringExpected) {
-		RETURN_ERR(drPlayerInterfacePointer->CallHandler(symbols.String, 1, &stringValue, &resultValue));
+		RETURN_ERR(drPlayerInterfacePointer->CallHandler(
+			symbols.String, 1, &stringValue, &resultValue));
+
 		stringValue = resultValue;
 
-		err = mmValueInterfacePointer->ValueToStringPtr(&stringValue, &stringPointer);
+		err = mmValueInterfacePointer->ValueToStringPtr(
+			&stringValue, &stringPointer);
 	}
 
 	RETURN_ERR(err);
 	RETURN_NULL(stringPointer);
 
 	SCOPE_EXIT {
-		err = errOrDefaultErr(mmValueInterfacePointer->ValueReleaseStringPtr(&stringValue), err);
+		err = errOrDefaultErr(mmValueInterfacePointer->ValueReleaseStringPtr(
+			&stringValue), err);
 	};
 
 	string = stringPointer;
@@ -422,7 +539,9 @@ MoaError ValueConverter::toID(const MoaMmValue &value, MoaID &id) {
 	return kMoaErr_NoErr;
 }
 
-MoaError ValueConverter::toBytes(const MoaMmValue &value, MoaByte* &bytesPointer, MoaLong &valueSize) {
+MoaError ValueConverter::toBytes(
+	const MoaMmValue &value, MoaByte* &bytesPointer, MoaLong &valueSize
+) {
 	bytesPointer = NULL;
 
 	MAKE_SCOPE_EXIT(freeMemoryBytesPointerScopeExit) {
@@ -435,7 +554,9 @@ MoaError ValueConverter::toBytes(const MoaMmValue &value, MoaByte* &bytesPointer
 		return kMoaDrErr_HandlerNotDefined;
 	}
 
-	bytesPointer = (MoaByte*)callocInterfacePointer->NRAlloc((MoaUlong)valueSize);
+	bytesPointer
+		= (MoaByte*)callocInterfacePointer->NRAlloc((MoaUlong)valueSize);
+
 	RETURN_NULL(bytesPointer);
 
 	// copy so we don't add to the main pointer we want to free later
@@ -453,14 +574,18 @@ MoaError ValueConverter::toBytes(const MoaMmValue &value, MoaByte* &bytesPointer
 	return kMoaErr_NoErr;
 }
 
-MoaError ValueConverter::toValue(const SYMBOL_VARIANT &symbolVariant, MoaMmValue &value) {
+MoaError ValueConverter::toValue(
+	const SYMBOL_VARIANT &symbolVariant, MoaMmValue &value
+) {
 	MoaMmSymbol symbol = 0;
 
 	RETURN_ERR(getSymbol(symbolVariant, symbol, mmValueInterfacePointer));
 	return mmValueInterfacePointer->SymbolToValue(symbol, &value);
 }
 
-MoaError ValueConverter::toValue(const MoaWide &wide, MoaMmValue &value) {
+MoaError ValueConverter::toValue(
+	const MoaWide &wide, MoaMmValue &value
+) {
 	value = kVoidMoaMmValueInitializer;
 
 	MAKE_SCOPE_EXIT(releaseValueScopeExit) {
@@ -491,18 +616,9 @@ MoaError ValueConverter::toValue(const MoaWide &wide, MoaMmValue &value) {
 	return kMoaErr_NoErr;
 }
 
-MoaError ValueConverter::toValue(const MoaID &id, MoaMmValue &value) {
-	/*
-	#ifdef MACINTOSH
-	// hmmm
-	#endif
-	#ifdef WINDOWS
-	LPOLESTR iidString = NULL;
-	RETURN_ERR(StringFromIID(id, &iidString))
-	RETURN_ERR(mmValueInterfacePointer->StringToValue(CW2A(iidString, CP_DIRECTOR(productVersionMajor)), &value))
-	#endif
-	*/
-
+MoaError ValueConverter::toValue(
+	const MoaID &id, MoaMmValue &value
+) {
 	unsigned char* dataPointer = (unsigned char*)&id;
 
 	value = kVoidMoaMmValueInitializer;
@@ -521,7 +637,9 @@ MoaError ValueConverter::toValue(const MoaID &id, MoaMmValue &value) {
 	return kMoaErr_NoErr;
 }
 
-MoaError ValueConverter::toValue(const MoaByte* bytesPointer, MoaLong valueSize, MoaMmValue &value) {
+MoaError ValueConverter::toValue(
+	const MoaByte* bytesPointer, MoaLong valueSize, MoaMmValue &value
+) {
 	RETURN_NULL(bytesPointer);
 
 	value = kVoidMoaMmValueInitializer;
@@ -540,24 +658,31 @@ MoaError ValueConverter::toValue(const MoaByte* bytesPointer, MoaLong valueSize,
 	return kMoaErr_NoErr;
 }
 
-MoaError ValueConverter::toValue(PIMoaDrCastMem drCastMemInterfacePointer, MoaMmValue &value) {
+MoaError ValueConverter::toValue(
+	PIMoaDrCastMem drCastMemInterfacePointer, MoaMmValue &value
+) {
 	value = kVoidMoaMmValueInitializer;
 
 	RETURN_NULL(drCastMemInterfacePointer);
 	return drCastMemInterfacePointer->GetProp(symbols.Member, &value);
 }
 
-MoaError ValueConverter::testStringValueEmpty(const MoaMmValue &testStringValue, bool &empty) {
+MoaError ValueConverter::testStringValueEmpty(
+	const MoaMmValue &testStringValue, bool &empty
+) {
 	empty = true;
 
 	MoaLong stringLength = 0;
-	RETURN_ERR(mmValueInterfacePointer->ValueStringLength(&testStringValue, &stringLength));
+	RETURN_ERR(mmValueInterfacePointer->ValueStringLength(
+		&testStringValue, &stringLength));
 
 	empty = !stringLength;
 	return kMoaErr_NoErr;
 }
 
-MoaError ValueConverter::testListValueEmpty(const MoaMmValue &testListValue, bool &empty) {
+MoaError ValueConverter::testListValueEmpty(
+	const MoaMmValue &testListValue, bool &empty
+) {
 	empty = true;
 
 	MoaLong elements = mmListInterfacePointer->CountElements(&testListValue);
@@ -570,19 +695,25 @@ MoaError ValueConverter::testListValueEmpty(const MoaMmValue &testListValue, boo
 	return kMoaErr_NoErr;
 }
 
-MoaError ValueConverter::testValueVoid(const MoaMmValue &testValue, bool &voidP, MoaMmValueType testValueType) {
+MoaError ValueConverter::testValueVoid(
+	const MoaMmValue &testValue, bool &voidP, MoaMmValueType testValueType
+) {
 	voidP = true;
 
 	MoaMmValueType valueType = kMoaMmValueType_Void;
 	RETURN_ERR(getValueType(testValue, voidP, valueType));
 
-	if (!voidP && testValueType != kMoaMmValueType_Void && valueType != testValueType) {
+	if (!voidP
+		&& testValueType != kMoaMmValueType_Void
+		&& valueType != testValueType) {
 		return kMoaMmErr_ValueTypeMismatch;
 	}
 	return kMoaErr_NoErr;
 }
 
-MoaError ValueConverter::testPropFound(MoaMmSymbol propertySymbol, bool &found, PIMoaDrCastMem drCastMemInterfacePointer) {
+MoaError ValueConverter::testPropFound(
+	MoaMmSymbol propertySymbol, bool &found, PIMoaDrCastMem drCastMemInterfacePointer
+) {
 	found = false;
 
 	RETURN_NULL(drCastMemInterfacePointer);
@@ -593,7 +724,8 @@ MoaError ValueConverter::testPropFound(MoaMmSymbol propertySymbol, bool &found, 
 		releaseValue(propertyValue, mmValueInterfacePointer);
 	};
 
-	MoaError err = drCastMemInterfacePointer->GetProp(propertySymbol, &propertyValue);
+	MoaError err = drCastMemInterfacePointer->GetProp(
+		propertySymbol, &propertyValue);
 
 	if (err != kMoaMmErr_PropertyNotFound) {
 		RETURN_ERR(err);
@@ -603,7 +735,9 @@ MoaError ValueConverter::testPropFound(MoaMmSymbol propertySymbol, bool &found, 
 	return kMoaErr_NoErr;
 }
 
-MoaError ValueConverter::appendToList(const MoaMmValue &value, MoaMmValue &listValue) {
+MoaError ValueConverter::appendToList(
+	const MoaMmValue &value, MoaMmValue &listValue
+) {
 	// method to handle for a const input value
 	MoaMmValue modifiableValue = value;
 
@@ -614,10 +748,14 @@ MoaError ValueConverter::appendToList(const MoaMmValue &value, MoaMmValue &listV
 		}
 	};
 	*/
-	return mmListInterfacePointer->AppendValueToList(&listValue, &modifiableValue);
+
+	return mmListInterfacePointer->AppendValueToList(
+		&listValue, &modifiableValue);
 }
 
-MoaError ValueConverter::appendToList(const SYMBOL_VARIANT &symbolVariant, MoaMmValue &listValue) {
+MoaError ValueConverter::appendToList(
+	const SYMBOL_VARIANT &symbolVariant, MoaMmValue &listValue
+) {
 	MoaMmValue symbolValue = kVoidMoaMmValueInitializer;
 
 	SCOPE_EXIT {
@@ -627,22 +765,33 @@ MoaError ValueConverter::appendToList(const SYMBOL_VARIANT &symbolVariant, MoaMm
 	MoaMmSymbol symbol = 0;
 
 	RETURN_ERR(getSymbol(symbolVariant, symbol, mmValueInterfacePointer));
-	RETURN_ERR(mmValueInterfacePointer->SymbolToValue(symbol, &symbolValue));
-	return mmListInterfacePointer->AppendValueToList(&listValue, &symbolValue);
+
+	RETURN_ERR(mmValueInterfacePointer->SymbolToValue(
+		symbol, &symbolValue));
+
+	return mmListInterfacePointer->AppendValueToList(
+		&listValue, &symbolValue);
 }
 
-MoaError ValueConverter::appendToList(MoaLong integer, MoaMmValue &listValue) {
+MoaError ValueConverter::appendToList(
+	MoaLong integer, MoaMmValue &listValue
+) {
 	MoaMmValue integerValue = kVoidMoaMmValueInitializer;
 
 	SCOPE_EXIT {
 		releaseValue(integerValue, mmValueInterfacePointer);
 	};
 
-	RETURN_ERR(mmValueInterfacePointer->IntegerToValue(integer, &integerValue));
-	return mmListInterfacePointer->AppendValueToList(&listValue, &integerValue);
+	RETURN_ERR(mmValueInterfacePointer->IntegerToValue(
+		integer, &integerValue));
+
+	return mmListInterfacePointer->AppendValueToList(
+		&listValue, &integerValue);
 }
 
-MoaError ValueConverter::appendToList(ConstPMoaChar stringPointer, MoaMmValue &listValue) {
+MoaError ValueConverter::appendToList(
+	ConstPMoaChar stringPointer, MoaMmValue &listValue
+) {
 	RETURN_NULL(stringPointer);
 
 	MoaMmValue stringValue = kVoidMoaMmValueInitializer;
@@ -651,11 +800,18 @@ MoaError ValueConverter::appendToList(ConstPMoaChar stringPointer, MoaMmValue &l
 		releaseValue(stringValue, mmValueInterfacePointer);
 	};
 
-	RETURN_ERR(mmValueInterfacePointer->StringToValue(stringPointer, &stringValue));
-	return mmListInterfacePointer->AppendValueToList(&listValue, &stringValue);
+	RETURN_ERR(mmValueInterfacePointer->StringToValue(
+		stringPointer, &stringValue));
+
+	return mmListInterfacePointer->AppendValueToList(
+		&listValue, &stringValue);
 }
 
-MoaError ValueConverter::appendToPropList(const MoaMmValue &propertyValue, const MoaMmValue &value, MoaMmValue &propListValue) {
+MoaError ValueConverter::appendToPropList(
+	const MoaMmValue &propertyValue,
+	const MoaMmValue &value,
+	MoaMmValue &propListValue
+) {
 	// because AppendValueToPropList has a non-const value input
 	// we technically have to check for a different output
 	// (even though I don't think it ever does)
@@ -678,21 +834,33 @@ MoaError ValueConverter::appendToPropList(const MoaMmValue &propertyValue, const
 		}
 	};
 	*/
-	return mmListInterfacePointer->AppendValueToPropList(&propListValue, &modifiablePropertyValue, &modifiableValue);
+	return mmListInterfacePointer->AppendValueToPropList(
+		&propListValue, &modifiablePropertyValue, &modifiableValue);
 }
 
-MoaError ValueConverter::appendToPropList(MoaMmSymbol propertySymbol, const MoaMmValue &value, MoaMmValue &propListValue) {
+MoaError ValueConverter::appendToPropList(
+	MoaMmSymbol propertySymbol,
+	const MoaMmValue &value,
+	MoaMmValue &propListValue
+) {
 	MoaMmValue propertyValue = kVoidMoaMmValueInitializer;
 
 	SCOPE_EXIT {
 		releaseValue(propertyValue, mmValueInterfacePointer);
 	};
 
-	RETURN_ERR(mmValueInterfacePointer->SymbolToValue(propertySymbol, &propertyValue));
-	return appendToPropList(propertyValue, value, propListValue);
+	RETURN_ERR(mmValueInterfacePointer->SymbolToValue(
+		propertySymbol, &propertyValue));
+
+	return appendToPropList(
+		propertyValue, value, propListValue);
 }
 
-MoaError ValueConverter::appendToPropList(MoaMmSymbol propertySymbol, ConstPMoaChar stringPointer, MoaMmValue &propListValue) {
+MoaError ValueConverter::appendToPropList(
+	MoaMmSymbol propertySymbol,
+	ConstPMoaChar stringPointer,
+	MoaMmValue &propListValue
+) {
 	RETURN_NULL(stringPointer);
 
 	MoaMmValue value = kVoidMoaMmValueInitializer;
@@ -701,11 +869,18 @@ MoaError ValueConverter::appendToPropList(MoaMmSymbol propertySymbol, ConstPMoaC
 		releaseValue(value, mmValueInterfacePointer);
 	};
 
-	RETURN_ERR(mmValueInterfacePointer->StringToValue(stringPointer, &value));
-	return appendToPropList(propertySymbol, value, propListValue);
+	RETURN_ERR(mmValueInterfacePointer->StringToValue(
+		stringPointer, &value));
+
+	return appendToPropList(
+		propertySymbol, value, propListValue);
 }
 
-MoaError ValueConverter::appendToPropList(ConstPMoaChar propertyStringPointer, const MoaMmValue &value, MoaMmValue &propListValue) {
+MoaError ValueConverter::appendToPropList(
+	ConstPMoaChar propertyStringPointer,
+	const MoaMmValue &value,
+	MoaMmValue &propListValue
+) {
 	RETURN_NULL(propertyStringPointer);
 
 	MoaMmValue propertyValue = kVoidMoaMmValueInitializer;
@@ -714,11 +889,18 @@ MoaError ValueConverter::appendToPropList(ConstPMoaChar propertyStringPointer, c
 		releaseValue(propertyValue, mmValueInterfacePointer);
 	};
 
-	RETURN_ERR(mmValueInterfacePointer->StringToValue(propertyStringPointer, &propertyValue));
-	return appendToPropList(propertyValue, value, propListValue);
+	RETURN_ERR(mmValueInterfacePointer->StringToValue(
+		propertyStringPointer, &propertyValue));
+
+	return appendToPropList(
+		propertyValue, value, propListValue);
 }
 
-MoaError ValueConverter::appendToPropList(ConstPMoaChar propertyStringPointer, ConstPMoaChar stringPointer, MoaMmValue &propListValue) {
+MoaError ValueConverter::appendToPropList(
+	ConstPMoaChar propertyStringPointer,
+	ConstPMoaChar stringPointer,
+	MoaMmValue &propListValue
+) {
 	RETURN_NULL(propertyStringPointer);
 	RETURN_NULL(stringPointer);
 
@@ -728,92 +910,146 @@ MoaError ValueConverter::appendToPropList(ConstPMoaChar propertyStringPointer, C
 		releaseValue(value, mmValueInterfacePointer);
 	};
 
-	RETURN_ERR(mmValueInterfacePointer->StringToValue(stringPointer, &value));
-	return appendToPropList(propertyStringPointer, value, propListValue);
+	RETURN_ERR(mmValueInterfacePointer->StringToValue(
+		stringPointer, &value));
+
+	return appendToPropList(
+		propertyStringPointer, value, propListValue);
 }
 
-MoaError ValueConverter::appendToPropList(SYMBOL_VARIANT propertySymbolVariant, const MoaMmValue &value, MoaMmValue &propListValue) {
+MoaError ValueConverter::appendToPropList(
+	SYMBOL_VARIANT propertySymbolVariant,
+	const MoaMmValue &value,
+	MoaMmValue &propListValue
+) {
 	MoaMmSymbol propertySymbol = 0;
 
-	RETURN_ERR(getSymbol(propertySymbolVariant, propertySymbol, mmValueInterfacePointer));
-	return appendToPropList(propertySymbol, value, propListValue);
+	RETURN_ERR(getSymbol(
+		propertySymbolVariant, propertySymbol, mmValueInterfacePointer));
+
+	return appendToPropList(
+		propertySymbol, value, propListValue);
 }
 
-MoaError ValueConverter::appendToPropList(SYMBOL_VARIANT propertySymbolVariant, ConstPMoaChar stringPointer, MoaMmValue &propListValue) {
+MoaError ValueConverter::appendToPropList(
+	SYMBOL_VARIANT propertySymbolVariant,
+	ConstPMoaChar stringPointer,
+	MoaMmValue &propListValue
+) {
 	RETURN_NULL(stringPointer);
 
 	MoaMmSymbol propertySymbol = 0;
 
-	RETURN_ERR(getSymbol(propertySymbolVariant, propertySymbol, mmValueInterfacePointer));
-	return appendToPropList(propertySymbol, stringPointer, propListValue);
+	RETURN_ERR(getSymbol(
+		propertySymbolVariant, propertySymbol, mmValueInterfacePointer));
+
+	return appendToPropList(
+		propertySymbol, stringPointer, propListValue);
 }
 
-MoaError ValueConverter::concatToDictInterfacePointer(const MoaMmValue &propListValue, bool &empty, PIMoaDict dictInterfacePointer) {
+MoaError ValueConverter::concatToDictInterfacePointer(
+	const MoaMmValue &propListValue,
+	bool &empty, PIMoaDict dictInterfacePointer
+) {
 	RETURN_NULL(dictInterfacePointer);
 
 	PROP_LIST_DICT_VALUE_MAP propListDictValueMap = {};
-	return concatToDictInterfacePointer(propListValue, propListDictValueMap, empty, dictInterfacePointer);
+
+	return concatToDictInterfacePointer(propListValue,
+		propListDictValueMap, empty, dictInterfacePointer);
 }
 
-MoaError ValueConverter::concatToDictInterfacePointer(const MoaMmValue &propListValue, PIMoaDict dictInterfacePointer) {
+MoaError ValueConverter::concatToDictInterfacePointer(
+	const MoaMmValue &propListValue,
+	PIMoaDict dictInterfacePointer
+) {
 	RETURN_NULL(dictInterfacePointer);
 
 	bool empty = false;
-	return concatToDictInterfacePointer(propListValue, empty, dictInterfacePointer);
+
+	return concatToDictInterfacePointer(propListValue,
+		empty, dictInterfacePointer);
 }
 
-MoaError ValueConverter::concatToPropList(MoaMmValue &propListValue, bool appendInterfaceValues, PIMoaDict dictInterfacePointer) {
+MoaError ValueConverter::concatToPropList(
+	MoaMmValue &propListValue,
+	bool appendInterfaceValues, PIMoaDict dictInterfacePointer
+) {
 	RETURN_NULL(dictInterfacePointer);
 
 	DICT_VALUE_PROP_LIST_MAP dictValuePropListMap = {};
-	return concatToPropList(propListValue, appendInterfaceValues, dictValuePropListMap, dictInterfacePointer);
+
+	return concatToPropList(propListValue,
+		appendInterfaceValues, dictValuePropListMap, dictInterfacePointer);
 }
 
-MoaError ValueConverter::getValueType(const MoaMmValue &value, bool &voidP, MoaMmValueType &valueType) {
+MoaError ValueConverter::getValueType(
+	const MoaMmValue &value, bool &voidP, MoaMmValueType &valueType
+) {
 	voidP = true;
 
-	RETURN_ERR(mmValueInterfacePointer->ValueType(&value, &valueType));
+	RETURN_ERR(mmValueInterfacePointer->ValueType(
+		&value, &valueType));
 
 	voidP = valueType == kMoaMmValueType_Void;
 	return kMoaErr_NoErr;
 }
 
-MoaError ValueConverter::getAt(const MoaMmValue &listValue, MoaLong index, MoaMmValue &value) {
-	MoaError err = mmListInterfacePointer->GetValueByIndex(&listValue, index, &value);
+MoaError ValueConverter::getAt(
+	const MoaMmValue &listValue, MoaLong index, MoaMmValue &value
+) {
+	MoaError err = mmListInterfacePointer->GetValueByIndex(
+		&listValue, index, &value);
 
 	return err == kMoaDrErr_HandlerNotDefined
 		? kMoaErr_NoErr : err;
 }
 
-MoaError ValueConverter::getAt(const MoaMmValue &listValue, MoaLong index, MoaLong &integer) {
+MoaError ValueConverter::getAt(
+	const MoaMmValue &listValue, MoaLong index, MoaLong &integer
+) {
 	MoaMmValue integerValue = kVoidMoaMmValueInitializer;
 
 	SCOPE_EXIT {
 		releaseValue(integerValue, mmValueInterfacePointer);
 	};
 
-	MoaError err = mmListInterfacePointer->GetValueByIndex(&listValue, index, &integerValue);
+	MoaError err = mmListInterfacePointer->GetValueByIndex(
+		&listValue, index, &integerValue);
 
 	if (err == kMoaDrErr_HandlerNotDefined) {
 		return kMoaErr_NoErr;
 	}
 
 	RETURN_ERR(err);
-	return mmValueInterfacePointer->ValueToInteger(&integerValue, &integer);
+
+	return mmValueInterfacePointer->ValueToInteger(
+		&integerValue, &integer);
 }
 
-MoaError ValueConverter::getProp(const MoaMmValue &propListValue, MoaMmSymbol propertySymbol, MoaMmValue &value) {
+MoaError ValueConverter::getProp(
+	const MoaMmValue &propListValue,
+	MoaMmSymbol propertySymbol,
+	MoaMmValue &value
+) {
 	MoaMmValue propertyValue = kVoidMoaMmValueInitializer;
 
 	SCOPE_EXIT {
 		releaseValue(propertyValue, mmValueInterfacePointer);
 	};
 
-	RETURN_ERR(mmValueInterfacePointer->SymbolToValue(propertySymbol, &propertyValue));
-	return mmListInterfacePointer->GetValueByProperty(&propListValue, &propertyValue, &value);
+	RETURN_ERR(mmValueInterfacePointer->SymbolToValue(
+		propertySymbol, &propertyValue));
+
+	return mmListInterfacePointer->GetValueByProperty(
+		&propListValue, &propertyValue, &value);
 }
 
-MoaError ValueConverter::getProp(const MoaMmValue &propListValue, ConstPMoaChar propertyStringPointer, MoaMmValue &value) {
+MoaError ValueConverter::getProp(
+	const MoaMmValue &propListValue,
+	ConstPMoaChar propertyStringPointer,
+	MoaMmValue &value
+) {
 	RETURN_NULL(propertyStringPointer);
 
 	MoaMmValue propertyValue = kVoidMoaMmValueInitializer;
@@ -822,18 +1058,32 @@ MoaError ValueConverter::getProp(const MoaMmValue &propListValue, ConstPMoaChar 
 		releaseValue(propertyValue, mmValueInterfacePointer);
 	};
 
-	RETURN_ERR(mmValueInterfacePointer->StringToValue(propertyStringPointer, &propertyValue));
-	return mmListInterfacePointer->GetValueByProperty(&propListValue, &propertyValue, &value);
+	RETURN_ERR(mmValueInterfacePointer->StringToValue(
+		propertyStringPointer, &propertyValue));
+
+	return mmListInterfacePointer->GetValueByProperty(
+		&propListValue, &propertyValue, &value);
 }
 
-MoaError ValueConverter::getProp(const MoaMmValue &propListValue, SYMBOL_VARIANT propertySymbolVariant, MoaMmValue &value) {
+MoaError ValueConverter::getProp(
+	const MoaMmValue &propListValue,
+	SYMBOL_VARIANT propertySymbolVariant,
+	MoaMmValue &value
+) {
 	MoaMmSymbol propertySymbol = 0;
 
-	RETURN_ERR(getSymbol(propertySymbolVariant, propertySymbol, mmValueInterfacePointer));
-	return getProp(propListValue, propertySymbol, value);
+	RETURN_ERR(getSymbol(
+		propertySymbolVariant, propertySymbol, mmValueInterfacePointer));
+
+	return getProp(
+		propListValue, propertySymbol, value);
 }
 
-MoaError ValueConverter::getAProp(const MoaMmValue &propListValue, MoaMmSymbol propertySymbol, MoaMmValue &value) {
+MoaError ValueConverter::getAProp(
+	const MoaMmValue &propListValue,
+	MoaMmSymbol propertySymbol,
+	MoaMmValue &value
+) {
 	MoaError err = getProp(propListValue, propertySymbol, value);
 
 	// if the value isn't found we don't throw, instead the value is set to void
@@ -841,7 +1091,11 @@ MoaError ValueConverter::getAProp(const MoaMmValue &propListValue, MoaMmSymbol p
 		? kMoaErr_NoErr : err;
 }
 
-MoaError ValueConverter::getAProp(const MoaMmValue &propListValue, ConstPMoaChar propertyStringPointer, MoaMmValue &value) {
+MoaError ValueConverter::getAProp(
+	const MoaMmValue &propListValue,
+	ConstPMoaChar propertyStringPointer,
+	MoaMmValue &value
+) {
 	RETURN_NULL(propertyStringPointer);
 
 	MoaError err = getProp(propListValue, propertyStringPointer, value);
@@ -850,7 +1104,11 @@ MoaError ValueConverter::getAProp(const MoaMmValue &propListValue, ConstPMoaChar
 		? kMoaErr_NoErr : err;
 }
 
-MoaError ValueConverter::getAProp(const MoaMmValue &propListValue, SYMBOL_VARIANT propertySymbolVariant, MoaMmValue &value) {
+MoaError ValueConverter::getAProp(
+	const MoaMmValue &propListValue,
+	SYMBOL_VARIANT propertySymbolVariant,
+	MoaMmValue &value
+) {
 	MoaError err = getProp(propListValue, propertySymbolVariant, value);
 
 	if (err == kMoaDrErr_HandlerNotDefined) {

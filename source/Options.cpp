@@ -7,9 +7,11 @@ void Options::destroy() {
 }
 
 void Options::duplicate(const Options &options) {
-	setInterface((PPMoaVoid)&mmValueInterfacePointer, options.mmValueInterfacePointer);
+	setInterface((PPMoaVoid)&mmValueInterfacePointer,
+		options.mmValueInterfacePointer);
 
-	setValue(agentOptionsValue, options.agentOptionsValue, mmValueInterfacePointer);
+	setValue(agentOptionsValue, options.agentOptionsValue,
+		mmValueInterfacePointer);
 
 	incrementFilename = options.incrementFilename;
 	replaceExistingFile = options.replaceExistingFile;
@@ -28,7 +30,8 @@ Options::Options(PIMoaMmValue mmValueInterfacePointer)
 	mmValueInterfacePointer->AddRef();
 
 	// location defaults to #current
-	MoaError err = mmValueInterfacePointer->StringToSymbol("Current", &locationSymbol);
+	MoaError err = mmValueInterfacePointer->StringToSymbol(
+		"Current", &locationSymbol);
 
 	if (err != kMoaErr_NoErr) {
 		throw std::runtime_error("failed to convert string to symbol");
@@ -53,9 +56,11 @@ Options &Options::operator=(const Options &options) {
 }
 
 void Options::getAgentOptionsValue(MoaMmValue &agentOptionsValue) const {
-	getValue(agentOptionsValue, this->agentOptionsValue, mmValueInterfacePointer);
+	getValue(agentOptionsValue, this->agentOptionsValue,
+		mmValueInterfacePointer);
 }
 
 void Options::setAgentOptionsValue(const MoaMmValue &agentOptionsValue) {
-	setValue(this->agentOptionsValue, agentOptionsValue, mmValueInterfacePointer);
+	setValue(this->agentOptionsValue, agentOptionsValue,
+		mmValueInterfacePointer);
 }

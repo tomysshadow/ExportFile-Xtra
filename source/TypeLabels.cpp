@@ -10,7 +10,7 @@ namespace TypeLabel {
 		std::vector<SYMBOL_VARIANT> symbolVariantVector = {};
 
 		for (
-			MAP::iterator typeLabelMapIterator = typeLabelMap.begin();
+			auto typeLabelMapIterator = typeLabelMap.begin();
 			typeLabelMapIterator != typeLabelMap.end();
 			typeLabelMapIterator++
 		) {
@@ -19,7 +19,7 @@ namespace TypeLabel {
 			symbolVariantVector = {};
 
 			for (
-				Label::MAPPED_VECTOR::CONST_ITERATOR labelMappedVectorIterator = labelMappedVector.cbegin();
+				auto labelMappedVectorIterator = labelMappedVector.cbegin();
 				labelMappedVectorIterator != labelMappedVector.cend();
 				labelMappedVectorIterator++
 			) {

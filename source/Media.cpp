@@ -9,9 +9,14 @@ namespace Media {
 
 	/*
 	void DirectorMedia::Content::duplicate(const Content &content) {
-		setInterface((PPMoaVoid)&readerInterfacePointer, content.readerInterfacePointer);
-		setInterface((PPMoaVoid)&readerRegistryEntryDictInterfacePointer, content.readerRegistryEntryDictInterfacePointer);
-		setInterface((PPMoaVoid)&dataObjectInterfacePointer, content.dataObjectInterfacePointer);
+		setInterface((PPMoaVoid)&readerInterfacePointer,
+			content.readerInterfacePointer);
+
+		setInterface((PPMoaVoid)&readerRegistryEntryDictInterfacePointer,
+			content.readerRegistryEntryDictInterfacePointer);
+
+		setInterface((PPMoaVoid)&dataObjectInterfacePointer,
+			content.dataObjectInterfacePointer);
 
 		formatPointer = content.formatPointer;
 		streamOptional = content.streamOptional;
@@ -53,12 +58,18 @@ namespace Media {
 		setInterface((PPMoaVoid)&this->readerInterfacePointer, readerInterfacePointer);
 	}
 
-	void DirectorMedia::Content::setReaderRegistryEntryDictInterfacePointer(PIMoaRegistryEntryDict readerRegistryEntryDictInterfacePointer) {
-		setInterface((PPMoaVoid)&this->readerRegistryEntryDictInterfacePointer, readerRegistryEntryDictInterfacePointer);
+	void DirectorMedia::Content::setReaderRegistryEntryDictInterfacePointer(
+		PIMoaRegistryEntryDict readerRegistryEntryDictInterfacePointer
+	) {
+		setInterface((PPMoaVoid)&this->readerRegistryEntryDictInterfacePointer,
+			readerRegistryEntryDictInterfacePointer);
 	}
 
-	void DirectorMedia::Content::setDataObjectInterfacePointer(PIMoaDataObject dataObjectInterfacePointer) {
-		setInterface((PPMoaVoid)&this->dataObjectInterfacePointer, dataObjectInterfacePointer);
+	void DirectorMedia::Content::setDataObjectInterfacePointer(
+		PIMoaDataObject dataObjectInterfacePointer
+	) {
+		setInterface((PPMoaVoid)&this->dataObjectInterfacePointer,
+			dataObjectInterfacePointer);
 	}
 
 	DirectorMedia::DirectorMedia(Label::Info::MAP::const_iterator labelInfoNotFound)
@@ -73,10 +84,17 @@ namespace Media {
 	}
 
 	void MixerMedia::duplicate(const MixerMedia &mixerMedia) {
-		setInterface((PPMoaVoid)&drMovieContextInterfacePointer, mixerMedia.drMovieContextInterfacePointer);
-		setInterface((PPMoaVoid)&drCastMemInterfacePointer, mixerMedia.drCastMemInterfacePointer);
-		setInterface((PPMoaVoid)&registryEntryDictInterfacePointer, mixerMedia.registryEntryDictInterfacePointer);
-		setInterface((PPMoaVoid)&mmValueInterfacePointer, mixerMedia.mmValueInterfacePointer);
+		setInterface((PPMoaVoid)&drMovieContextInterfacePointer,
+			mixerMedia.drMovieContextInterfacePointer);
+
+		setInterface((PPMoaVoid)&drCastMemInterfacePointer,
+			mixerMedia.drCastMemInterfacePointer);
+
+		setInterface((PPMoaVoid)&registryEntryDictInterfacePointer,
+			mixerMedia.registryEntryDictInterfacePointer);
+
+		setInterface((PPMoaVoid)&mmValueInterfacePointer,
+			mixerMedia.mmValueInterfacePointer);
 
 		isSavingSymbol = mixerMedia.isSavingSymbol;
 
@@ -89,7 +107,11 @@ namespace Media {
 		#endif
 	}
 
-	MixerMedia::MixerMedia(const ExportFileValueConverter &exportFileValueConverter, PIMoaDrMovie drMovieInterfacePointer, PIMoaMmValue mmValueInterfacePointer)
+	MixerMedia::MixerMedia(
+		const ExportFileValueConverter &exportFileValueConverter,
+		PIMoaDrMovie drMovieInterfacePointer,
+		PIMoaMmValue mmValueInterfacePointer
+	)
 		: mmValueInterfacePointer(
 			mmValueInterfacePointer
 		),
@@ -113,21 +135,27 @@ namespace Media {
 
 		mmValueInterfacePointer->AddRef();
 
-		MoaError err = mmValueInterfacePointer->StringToSymbol("IsSaving", &isSavingSymbol);
+		MoaError err = mmValueInterfacePointer->StringToSymbol(
+			"IsSaving", &isSavingSymbol);
 
 		if (err != kMoaErr_NoErr) {
 			throw std::runtime_error("failed to convert string to symbol");
 		}
 
 		// may be null if Director version doesn't need it
-		err = drMovieInterfacePointer->QueryInterface(&IID_IMoaDrMovieContext, (PPMoaVoid)&drMovieContextInterfacePointer);
+		err = drMovieInterfacePointer->QueryInterface(&IID_IMoaDrMovieContext,
+			(PPMoaVoid)&drMovieContextInterfacePointer);
 
 		if (err != kMoaErr_NoErr) {
 			drMovieContextInterfacePointer = NULL;
 		}
 	}
 
-	MixerMedia::MixerMedia(const ExportFileValueConverter &exportFileValueConverter, PIMoaDrPlayer drPlayerInterfacePointer, PIMoaMmValue mmValueInterfacePointer)
+	MixerMedia::MixerMedia(
+		const ExportFileValueConverter &exportFileValueConverter,
+		PIMoaDrPlayer drPlayerInterfacePointer,
+		PIMoaMmValue mmValueInterfacePointer
+	)
 		: mmValueInterfacePointer(
 			mmValueInterfacePointer
 		),
@@ -147,7 +175,8 @@ namespace Media {
 
 		mmValueInterfacePointer->AddRef();
 
-		MoaError err = mmValueInterfacePointer->StringToSymbol("IsSaving", &isSavingSymbol);
+		MoaError err = mmValueInterfacePointer->StringToSymbol(
+			"IsSaving", &isSavingSymbol);
 
 		if (err != kMoaErr_NoErr) {
 			throw std::runtime_error("failed to convert string to symbol");
@@ -164,7 +193,8 @@ namespace Media {
 		}
 
 		// may be null if Director version doesn't need it
-		err = drMovieInterfacePointer->QueryInterface(&IID_IMoaDrMovieContext, (PPMoaVoid)&drMovieContextInterfacePointer);
+		err = drMovieInterfacePointer->QueryInterface(
+			&IID_IMoaDrMovieContext, (PPMoaVoid)&drMovieContextInterfacePointer);
 
 		if (err != kMoaErr_NoErr) {
 			drMovieContextInterfacePointer = NULL;
@@ -214,12 +244,18 @@ namespace Media {
 		return isSavingSymbol;
 	}
 
-	void MixerMedia::setDrCastMemInterfacePointer(PIMoaDrCastMem drCastMemInterfacePointer) {
-		setInterface((PPMoaVoid)&this->drCastMemInterfacePointer, drCastMemInterfacePointer);
+	void MixerMedia::setDrCastMemInterfacePointer(
+		PIMoaDrCastMem drCastMemInterfacePointer
+	) {
+		setInterface((PPMoaVoid)&this->drCastMemInterfacePointer,
+			drCastMemInterfacePointer);
 	}
 
-	void MixerMedia::setRegistryEntryDictInterfacePointer(PIMoaRegistryEntryDict registryEntryDictInterfacePointer) {
-		setInterface((PPMoaVoid)&this->registryEntryDictInterfacePointer, registryEntryDictInterfacePointer);
+	void MixerMedia::setRegistryEntryDictInterfacePointer(
+		PIMoaRegistryEntryDict registryEntryDictInterfacePointer
+	) {
+		setInterface((PPMoaVoid)&this->registryEntryDictInterfacePointer,
+			registryEntryDictInterfacePointer);
 	}
 
 	void MixerMedia::Lingo::destroy() {
@@ -231,8 +267,11 @@ namespace Media {
 	}
 
 	void MixerMedia::Lingo::duplicate(const Lingo &lingo) {
-		setInterface((PPMoaVoid)&drMovieInterfacePointer, lingo.drMovieInterfacePointer);
-		setInterface((PPMoaVoid)&mmValueInterfacePointer, lingo.mmValueInterfacePointer);
+		setInterface((PPMoaVoid)&drMovieInterfacePointer,
+			lingo.drMovieInterfacePointer);
+
+		setInterface((PPMoaVoid)&mmValueInterfacePointer,
+			lingo.mmValueInterfacePointer);
 
 		setValue(defaultResultValue, lingo.defaultResultValue, mmValueInterfacePointer);
 		setValue(defaultErrCodeValue, lingo.defaultErrCodeValue, mmValueInterfacePointer);
@@ -249,16 +288,24 @@ namespace Media {
 	}
 
 	MoaError MixerMedia::Lingo::getDefaultValues() {
-		static constexpr MoaLong DEFAULT_RESULT_VALUE = IS_ERROR(kMoaErr_InternalError);
-		static constexpr MoaLong DEFAULT_ERR_CODE_VALUE = HRESULT_CODE(kMoaErr_InternalError);
+		static constexpr MoaLong DEFAULT_RESULT_VALUE
+			= IS_ERROR(kMoaErr_InternalError);
 
-		RETURN_ERR(mmValueInterfacePointer->IntegerToValue(DEFAULT_RESULT_VALUE, &defaultResultValue));
-		RETURN_ERR(mmValueInterfacePointer->IntegerToValue(DEFAULT_ERR_CODE_VALUE, &defaultErrCodeValue));
+		static constexpr MoaLong DEFAULT_ERR_CODE_VALUE
+			= HRESULT_CODE(kMoaErr_InternalError);
+
+		RETURN_ERR(mmValueInterfacePointer->IntegerToValue(
+			DEFAULT_RESULT_VALUE, &defaultResultValue));
+
+		RETURN_ERR(mmValueInterfacePointer->IntegerToValue(
+			DEFAULT_ERR_CODE_VALUE, &defaultErrCodeValue));
+
 		return kMoaErr_NoErr;
 	}
 
-	MixerMedia::Lingo::Lingo(PIMoaDrMovie drMovieInterfacePointer, PIMoaMmValue mmValueInterfacePointer)
-		: drMovieInterfacePointer(drMovieInterfacePointer),
+	MixerMedia::Lingo::Lingo(
+		PIMoaDrMovie drMovieInterfacePointer, PIMoaMmValue mmValueInterfacePointer
+	) : drMovieInterfacePointer(drMovieInterfacePointer),
 		mmValueInterfacePointer(mmValueInterfacePointer) {
 		if (!drMovieInterfacePointer) {
 			throw std::invalid_argument("drMovieInterfacePointer must not be NULL");
@@ -284,8 +331,9 @@ namespace Media {
 		}
 	}
 
-	MixerMedia::Lingo::Lingo(PIMoaDrPlayer drPlayerInterfacePointer, PIMoaMmValue mmValueInterfacePointer)
-		: mmValueInterfacePointer(mmValueInterfacePointer) {
+	MixerMedia::Lingo::Lingo(
+		PIMoaDrPlayer drPlayerInterfacePointer, PIMoaMmValue mmValueInterfacePointer
+	) : mmValueInterfacePointer(mmValueInterfacePointer) {
 		if (!drPlayerInterfacePointer) {
 			throw std::invalid_argument("drPlayerInterfacePointer must not be NULL");
 		}
@@ -294,7 +342,8 @@ namespace Media {
 			throw std::invalid_argument("mmValueInterfacePointer must not be NULL");
 		}
 
-		MoaError err = drPlayerInterfacePointer->GetActiveMovie(&drMovieInterfacePointer);
+		MoaError err = drPlayerInterfacePointer->GetActiveMovie(
+			&drMovieInterfacePointer);
 
 		if (err != kMoaErr_NoErr) {
 			throw std::runtime_error("failed to get active movie");
@@ -332,7 +381,10 @@ namespace Media {
 		return *this;
 	}
 
-	void MixerMedia::Lingo::callHandler(MoaMmValue &memberValue, MoaError mixerSavedCallHandlerThreadErr) {
+	void MixerMedia::Lingo::callHandler(
+		MoaMmValue &memberValue,
+		MoaError mixerSavedCallHandlerThreadErr
+	) {
 		MoaLong result = !IS_ERROR(mixerSavedCallHandlerThreadErr);
 
 		MoaMmValue resultValue = kVoidMoaMmValueInitializer;
@@ -341,7 +393,8 @@ namespace Media {
 			releaseValue(resultValue, mmValueInterfacePointer);
 		};
 
-		MoaError err = mmValueInterfacePointer->IntegerToValue(result, &resultValue);
+		MoaError err = mmValueInterfacePointer->IntegerToValue(
+			result, &resultValue);
 
 		MoaLong errCode = HRESULT_CODE(mixerSavedCallHandlerThreadErr);
 
@@ -351,7 +404,8 @@ namespace Media {
 			releaseValue(errCodeValue, mmValueInterfacePointer);
 		};
 
-		MoaError err2 = mmValueInterfacePointer->IntegerToValue(errCode, &errCodeValue);
+		MoaError err2 = mmValueInterfacePointer->IntegerToValue(
+			errCode, &errCodeValue);
 
 		// default values so this will theoretically NEVER fail
 		static constexpr MoaLong ARGS_SIZE = 3;
@@ -363,7 +417,8 @@ namespace Media {
 		};
 
 		// don't care if this fails, handler may not be defined
-		drMovieInterfacePointer->CallHandler(symbols.MixerSaved, ARGS_SIZE, args, NULL);
+		drMovieInterfacePointer->CallHandler(
+			symbols.MixerSaved, ARGS_SIZE, args, NULL);
 	}
 
 	PIMoaDrMovie MixerMedia::Lingo::getDrMovieInterfacePointer() const {
@@ -381,7 +436,10 @@ namespace Media {
 		}
 	}
 
-	MoaError WinBMPMedia::allocateSourceBitmap(PIMoaReceptorPixels receptorPixelsInterfacePointer, PIMoaStream readStreamInterfacePointer) {
+	MoaError WinBMPMedia::allocateSourceBitmap(
+		PIMoaReceptorPixels receptorPixelsInterfacePointer,
+		PIMoaStream readStreamInterfacePointer
+	) {
 		if (sourceBitmapFileHeaderOptional.has_value() && sourceBitmapInfoPointer) {
 			return kMoaErr_NoErr;
 		}
@@ -395,9 +453,15 @@ namespace Media {
 		// we read it here (but don't validate it yet, as we don't need to use it yet)
 		// this has the offset to the bits which will be useful for later
 		sourceBitmapFileHeaderOptional.emplace();
-		BITMAPFILEHEADER &sourceBitmapFileHeader = sourceBitmapFileHeaderOptional.value();
 
-		RETURN_ERR(readStreamSafe(&sourceBitmapFileHeader, sizeof(sourceBitmapFileHeader), readStreamInterfacePointer));
+		BITMAPFILEHEADER &sourceBitmapFileHeader
+			= sourceBitmapFileHeaderOptional.value();
+
+		RETURN_ERR(readStreamSafe(
+			&sourceBitmapFileHeader,
+			sizeof(sourceBitmapFileHeader),
+			readStreamInterfacePointer
+		));
 
 		MoaStreamPosition sourceBitmapInfoPosition = 0;
 
@@ -413,12 +477,21 @@ namespace Media {
 		{
 			// in its own scope because this might become invalid later
 			// we need this ugly get call because this is technically a char pointer
-			BITMAPINFOHEADER &sourceBitmapInfoHeader = ((PBITMAPINFO)sourceBitmapInfoPointer.get())->bmiHeader;
+			BITMAPINFOHEADER &sourceBitmapInfoHeader
+				= ((PBITMAPINFO)sourceBitmapInfoPointer.get())->bmiHeader;
 
-			RETURN_ERR(readStreamSafe(&sourceBitmapInfoHeader, sizeof(sourceBitmapInfoHeader), readStreamInterfacePointer));
+			RETURN_ERR(readStreamSafe(
+				&sourceBitmapInfoHeader,
+				sizeof(sourceBitmapInfoHeader),
+				readStreamInterfacePointer
+			));
 
 			// using the source bitmap info, see if there is a color table
-			if (!getBitmapInfoColorsSize(sourceBitmapInfoHeader, true, sourceBitmapInfoColorsSize)) {
+			if (!getBitmapInfoColorsSize(
+				sourceBitmapInfoHeader,
+				true,
+				sourceBitmapInfoColorsSize
+			)) {
 				return ERR_CANNOT_READ;
 			}
 		}
@@ -426,13 +499,18 @@ namespace Media {
 		if (sourceBitmapInfoColorsSize) {
 			// if there's a color table, it isn't included in the size of the bitmap info header
 			// so we need to reallocate this
-			RETURN_ERR(readStreamInterfacePointer->SetPosition(sourceBitmapInfoPosition));
+			RETURN_ERR(readStreamInterfacePointer->SetPosition(
+				sourceBitmapInfoPosition));
 
 			sourceBitmapInfoSize += sourceBitmapInfoColorsSize;
 			sourceBitmapInfoPointer = makeSharedArray<char>(sourceBitmapInfoSize);
 
 			// read in the color table also
-			RETURN_ERR(readStreamSafe((PMoaVoid)sourceBitmapInfoPointer.get(), sourceBitmapInfoSize, readStreamInterfacePointer));
+			RETURN_ERR(readStreamSafe(
+				(PMoaVoid)sourceBitmapInfoPointer.get(),
+				sourceBitmapInfoSize,
+				readStreamInterfacePointer
+			));
 		}
 
 		sourceBitmapScopeExit.dismiss();
@@ -454,7 +532,12 @@ namespace Media {
 			rowPointer = (RGBTRIPLE*)((LPBYTE)rgbTriplePointer + stride) - 1;
 
 			while (rgbTriplePointer <= rowPointer) {
-				colorRef = RGB(rgbTriplePointer->rgbtRed, rgbTriplePointer->rgbtGreen, rgbTriplePointer->rgbtBlue);
+				colorRef = RGB(
+					rgbTriplePointer->rgbtRed,
+					rgbTriplePointer->rgbtGreen,
+					rgbTriplePointer->rgbtBlue
+				);
+
 				mmRGBTriplePointer = (MoaMmRGBTriple*)rgbTriplePointer;
 				WinToMoaRGB(colorRef, mmRGBTriplePointer);
 
@@ -481,7 +564,12 @@ namespace Media {
 			rowPointer = (RGBQUAD*)((LPBYTE)rgbQuadPointer + stride) - 1;
 
 			while (rgbQuadPointer <= rowPointer) {
-				colorRef = RGB(rgbQuadPointer->rgbRed, rgbQuadPointer->rgbGreen, rgbQuadPointer->rgbBlue);
+				colorRef = RGB(
+					rgbQuadPointer->rgbRed,
+					rgbQuadPointer->rgbGreen,
+					rgbQuadPointer->rgbBlue
+				);
+
 				mmRGBTriplePointer = (MoaMmRGBTriple*)rgbQuadPointer;
 				WinToMoaRGB(colorRef, mmRGBTriplePointer);
 
@@ -497,7 +585,11 @@ namespace Media {
 		return ((((DWORD)absWidth * bitCount) + 31) & ~31) >> 3;
 	}
 
-	bool WinBMPMedia::getImageSize(MoaLong colorSpace, LONG absWidth, LONG absHeight, MoaLong &rowBytes, DWORD &imageSize) {
+	bool WinBMPMedia::getImageSize(
+		MoaLong colorSpace,
+		LONG absWidth, LONG absHeight,
+		MoaLong &rowBytes, DWORD &imageSize
+	) {
 		rowBytes = 0;
 		imageSize = 0;
 
@@ -511,7 +603,8 @@ namespace Media {
 			{ RPCS_RGBA, 32 }
 		};
 
-		BIT_COUNT_MAP::const_iterator foundBitCount = _BIT_COUNT_MAP.find(colorSpace);
+		BIT_COUNT_MAP::const_iterator foundBitCount
+			= _BIT_COUNT_MAP.find(colorSpace);
 
 		if (foundBitCount == _BIT_COUNT_MAP.end()) {
 			return false;
@@ -530,7 +623,10 @@ namespace Media {
 		return true;
 	}
 
-	bool WinBMPMedia::getSamplesPerPixel(MoaLong colorSpace, MoaShort &samplesPerPixel) {
+	bool WinBMPMedia::getSamplesPerPixel(
+		MoaLong colorSpace,
+		MoaShort &samplesPerPixel
+	) {
 		samplesPerPixel = 0;
 
 		#if defined READ_RPCS_INDEXED_RGB || defined READ_RPCS_RGB16
@@ -543,7 +639,8 @@ namespace Media {
 			{ RPCS_RGBA, 4 }
 		};
 
-		SAMPLES_PER_PIXEL_MAP::const_iterator foundSamplesPerPixel = _SAMPLES_PER_PIXEL_MAP.find(colorSpace);
+		SAMPLES_PER_PIXEL_MAP::const_iterator foundSamplesPerPixel
+			= _SAMPLES_PER_PIXEL_MAP.find(colorSpace);
 
 		if (foundSamplesPerPixel == _SAMPLES_PER_PIXEL_MAP.end()) {
 			return false;
@@ -561,7 +658,9 @@ namespace Media {
 		return max(0, dimensionFlipped);
 	}
 
-	bool WinBMPMedia::getColorTableIndexedRGB(BITMAPINFO &bitmapInfo, MoaPixelFormat &pixelFormat) {
+	bool WinBMPMedia::getColorTableIndexedRGB(
+		BITMAPINFO &bitmapInfo, MoaPixelFormat &pixelFormat
+	) {
 		//#ifdef READ_RPCS_INDEXED_RGB
 		if (pixelFormat.cs.colorSpace != RPCS_INDEXED_RGB) {
 			return false;
@@ -569,7 +668,11 @@ namespace Media {
 
 		DWORD colorsUsed = 0;
 
-		if (!getBitmapInfoColorsUsedRGB(bitmapInfo.bmiHeader, false, colorsUsed)) {
+		if (!getBitmapInfoColorsUsedRGB(
+			bitmapInfo.bmiHeader,
+			false,
+			colorsUsed
+		)) {
 			return false;
 		}
 
@@ -578,11 +681,14 @@ namespace Media {
 		}
 
 		pixelFormat.cs.colorTable.Header.iNumEntries = (MoaLong)colorsUsed;
-		pixelFormat.cs.colorTable.Header.iNumEntriesAlloc = sizeof(pixelFormat.cs.colorTable.Entry) / sizeof(TMoaCTableEntry);
+
+		pixelFormat.cs.colorTable.Header.iNumEntriesAlloc
+			= sizeof(pixelFormat.cs.colorTable.Entry) / sizeof(TMoaCTableEntry);
 
 		// the math works out such that there should be enough space allocated for every entry
 		// but maybe the source bitmap is invalid here
-		if (pixelFormat.cs.colorTable.Header.iNumEntries > pixelFormat.cs.colorTable.Header.iNumEntriesAlloc) {
+		if (pixelFormat.cs.colorTable.Header.iNumEntries
+			> pixelFormat.cs.colorTable.Header.iNumEntriesAlloc) {
 			return false;
 		}
 
@@ -607,7 +713,9 @@ namespace Media {
 		return true;
 	}
 
-	bool WinBMPMedia::getBitmapInfoColorsUsedRGB(const BITMAPINFOHEADER &bitmapInfoHeader, bool allocation, DWORD &colorsUsed) {
+	bool WinBMPMedia::getBitmapInfoColorsUsedRGB(
+		const BITMAPINFOHEADER &bitmapInfoHeader, bool allocation, DWORD &colorsUsed
+	) {
 		colorsUsed = 0;
 
 		if (!validateBitmapInfoHeader(bitmapInfoHeader)) {
@@ -628,12 +736,16 @@ namespace Media {
 		return true;
 	}
 
-	bool WinBMPMedia::validateBitmapFileHeader(const BITMAPFILEHEADER &bitmapFileHeader, DWORD end) {
+	bool WinBMPMedia::validateBitmapFileHeader(
+		const BITMAPFILEHEADER &bitmapFileHeader, DWORD end
+	) {
 		return bitmapFileHeader.bfType == TYPE
 		&& end > bitmapFileHeader.bfOffBits; // must actually be greater, so not empty
 	}
 
-	bool WinBMPMedia::validateBitmapInfoHeader(const BITMAPINFOHEADER &bitmapInfoHeader) {
+	bool WinBMPMedia::validateBitmapInfoHeader(
+		const BITMAPINFOHEADER &bitmapInfoHeader
+	) {
 		return bitmapInfoHeader.biSize >= sizeof(BITMAPINFOHEADER) // may be larger for newer versions
 		&& (
 			bitmapInfoHeader.biCompression != BI_BITFIELDS // if compression is bitfields, must be 16-bit or 32-bit
@@ -642,18 +754,27 @@ namespace Media {
 		);
 	}
 
-	bool WinBMPMedia::getBitmapInfoColorsSize(const BITMAPINFOHEADER &bitmapInfoHeader, bool allocation, DWORD &colorsSize) {
+	bool WinBMPMedia::getBitmapInfoColorsSize(
+		const BITMAPINFOHEADER &bitmapInfoHeader,
+		bool allocation,
+		DWORD &colorsSize
+	) {
 		colorsSize = 0;
 
 		if (!validateBitmapInfoHeader(bitmapInfoHeader)) {
 			return false;
 		}
 
-		// for allocations, we ignore the compression if the bits per pixel is less than or equal to eight
-		// this is because some components assume there is always a color table in that case
-		// and allocating more memory than we actually need prevents out of bounds references in those components
-		// however, in reality there isn't actually a color table there, so otherwise we don't add to the size
-		if ((allocation || bitmapInfoHeader.biCompression == BI_RGB) && bitmapInfoHeader.biBitCount <= 8) {
+		// for allocations, we ignore the compression if the
+		// bits per pixel is less than or equal to eight
+		// this is because some components assume there is
+		// always a color table in that case
+		// and allocating more memory than we actually need prevents
+		// out of bounds references in those components
+		// however, in reality there isn't actually a
+		// color table there, so otherwise we don't add to the size
+		if ((allocation || bitmapInfoHeader.biCompression == BI_RGB)
+			&& bitmapInfoHeader.biBitCount <= 8) {
 			DWORD colorsUsed = 0;
 		
 			if (!getBitmapInfoColorsUsedRGB(bitmapInfoHeader, allocation, colorsUsed)) {
@@ -674,7 +795,9 @@ namespace Media {
 		destroy();
 	}
 
-	MoaError WinBMPMedia::getPixelFormat(PIMoaReceptorPixels receptorPixelsInterfacePointer) {
+	MoaError WinBMPMedia::getPixelFormat(
+		PIMoaReceptorPixels receptorPixelsInterfacePointer
+	) {
 		RETURN_NULL(receptorPixelsInterfacePointer);
 
 		if (pixelFormatOptional.has_value()) {
@@ -713,7 +836,8 @@ namespace Media {
 				// the RPCS_INDEXED_RGB mode works, but
 				// PNG Writer incorrectly misinterprets the data as 24-bit data anyway
 				// so we don't provide it
-				// (this doesn't prevent creating 8-bit bitmaps, but the Writer Xtra must downscale it itself)
+				// this doesn't prevent creating 8-bit bitmaps, but
+				// the Writer Xtra must downscale it itself
 				#ifdef READ_RPCS_INDEXED_RGB
 				if (sourceBitmapInfoHeader.biBitCount <= 8) {
 					colorSpaceCount++;
@@ -751,7 +875,9 @@ namespace Media {
 
 		// the colors duke, the colors!!!
 		size_t colorsBitmapInfoSize = sourceBitmapInfoSize;
-		std::shared_ptr<char[]> colorsBitmapInfoPointer = makeSharedArray<char>(colorsBitmapInfoSize);
+
+		std::shared_ptr<char[]> colorsBitmapInfoPointer
+			= makeSharedArray<char>(colorsBitmapInfoSize);
 
 		DWORD colorsSize = sourceBitmapInfoColorsSize;
 
@@ -759,7 +885,8 @@ namespace Media {
 			BITMAPINFO &colorsBitmapInfo = *(PBITMAPINFO)colorsBitmapInfoPointer.get();
 
 			// start with the same bitmap info as the source
-			if (memcpy_s(&colorsBitmapInfo, colorsBitmapInfoSize, &sourceBitmapInfo, sourceBitmapInfoSize)) {
+			if (memcpy_s(&colorsBitmapInfo, colorsBitmapInfoSize,
+				&sourceBitmapInfo, sourceBitmapInfoSize)) {
 				return kMoaErr_OutOfMem;
 			}
 
@@ -782,14 +909,19 @@ namespace Media {
 
 				// the bit count used for the implicit calculation may be changing
 				// correct it if necessary
-				if (colorsBitmapInfoHeader.biBitCount != sourceBitmapInfoHeader.biBitCount && !colorsBitmapInfoHeader.biClrUsed) {
-					colorsBitmapInfoHeader.biClrUsed = (DWORD)(1 << sourceBitmapInfoHeader.biBitCount);
+				if (colorsBitmapInfoHeader.biBitCount != sourceBitmapInfoHeader.biBitCount
+					&& !colorsBitmapInfoHeader.biClrUsed) {
+					colorsBitmapInfoHeader.biClrUsed
+						= (DWORD)(1 << sourceBitmapInfoHeader.biBitCount);
 				}
 			} else {
 			#endif
 			colorsBitmapInfoHeader.biClrUsed = 0;
 			colorsBitmapInfoHeader.biClrImportant = 0;
-			colorsBitmapInfoHeader.biBitCount = (WORD)(pixelFormat.cs.colorSpace == RPCS_RGBA ? 32 : 24);
+
+			colorsBitmapInfoHeader.biBitCount
+				= (WORD)(pixelFormat.cs.colorSpace == RPCS_RGBA ? 32 : 24);
+
 			#ifdef READ_RPCS_INDEXED_RGB
 			}
 			#endif
@@ -806,13 +938,15 @@ namespace Media {
 				bitmapInfoSize = sizeof(BITMAPINFO) + colorsSize;
 				bitmapInfoPointer = makeSharedArray<char>(bitmapInfoSize);
 
-				((PBITMAPINFO)bitmapInfoPointer.get())->bmiHeader = colorsBitmapInfoHeader;
+				((PBITMAPINFO)bitmapInfoPointer.get())->bmiHeader
+					= colorsBitmapInfoHeader;
 			}
 
 			colorsBitmapInfoPointer = 0;
 		}
 
-		BITMAPINFOHEADER &bitmapInfoHeader = ((PBITMAPINFO)bitmapInfoPointer.get())->bmiHeader;
+		BITMAPINFOHEADER &bitmapInfoHeader
+			= ((PBITMAPINFO)bitmapInfoPointer.get())->bmiHeader;
 
 		direction = *DIRECTIONS;
 
@@ -831,7 +965,11 @@ namespace Media {
 		}
 		#endif
 
-		if (!getImageSize(pixelFormat.cs.colorSpace, absSourceWidth, absSourceHeight, pixelFormat.dim.rowBytes, imageSize)) {
+		if (!getImageSize(
+			pixelFormat.cs.colorSpace,
+			absSourceWidth, absSourceHeight,
+			pixelFormat.dim.rowBytes, imageSize
+		)) {
 			return ERR_CANNOT_READ;
 		}
 
@@ -845,7 +983,10 @@ namespace Media {
 			bitmapInfoHeader.biSizeImage = imageSize;
 		}
 
-		if (!getSamplesPerPixel(pixelFormat.cs.colorSpace, pixelFormat.cs.samplesPerPixel)) {
+		if (!getSamplesPerPixel(
+			pixelFormat.cs.colorSpace,
+			pixelFormat.cs.samplesPerPixel
+		)) {
 			return ERR_CANNOT_READ;
 		}
 
@@ -856,19 +997,28 @@ namespace Media {
 		#endif
 
 		pixelFormat.cs.transparentIdx = -1;
-		pixelFormat.cs.flags = pixelFormat.cs.colorSpace == RPCS_RGBA ? RPCSFLAGS_TRANSPARENT : RPCSFLAGS_NONE;
+
+		pixelFormat.cs.flags = pixelFormat.cs.colorSpace == RPCS_RGBA
+			? RPCSFLAGS_TRANSPARENT
+			: RPCSFLAGS_NONE;
 
 		// can't be an integer divide: must be able to round down OR up to nearest number
 		static constexpr double METERS_TO_INCHES = 0.0254;
 
-		pixelFormat.dim.resolution.x = (MoaCoord)round(METERS_TO_INCHES * bitmapInfoHeader.biXPelsPerMeter);
-		pixelFormat.dim.resolution.y = (MoaCoord)round(METERS_TO_INCHES * bitmapInfoHeader.biYPelsPerMeter);
+		pixelFormat.dim.resolution.x
+			= (MoaCoord)round(METERS_TO_INCHES * bitmapInfoHeader.biXPelsPerMeter);
+
+		pixelFormat.dim.resolution.y
+			= (MoaCoord)round(METERS_TO_INCHES * bitmapInfoHeader.biYPelsPerMeter);
 
 		pixelFormatOptionalScopeExit.dismiss();
 		return kMoaErr_NoErr;
 	}
 
-	MoaError WinBMPMedia::getMappedView(PIMoaReceptorPixels receptorPixelsInterfacePointer, PIMoaStream readStreamInterfacePointer) {
+	MoaError WinBMPMedia::getMappedView(
+		PIMoaReceptorPixels receptorPixelsInterfacePointer,
+		PIMoaStream readStreamInterfacePointer
+	) {
 		//RETURN_NULL(receptorPixelsInterfacePointer); // may be NULL
 		RETURN_NULL(readStreamInterfacePointer);
 
@@ -885,14 +1035,18 @@ namespace Media {
 		RETURN_ERR(readStreamInterfacePointer->SetPosition(0));
 
 		// this is important to do first for CanRead
-		RETURN_ERR(allocateSourceBitmap(receptorPixelsInterfacePointer, readStreamInterfacePointer));
+		RETURN_ERR(allocateSourceBitmap(
+			receptorPixelsInterfacePointer,
+			readStreamInterfacePointer
+		));
 
 		// get in and validate the source bitmap file header
 		if (!sourceBitmapFileHeaderOptional.has_value()) {
 			return kMoaErr_InternalError;
 		}
 
-		BITMAPFILEHEADER &sourceBitmapFileHeader = sourceBitmapFileHeaderOptional.value();
+		BITMAPFILEHEADER &sourceBitmapFileHeader
+			= sourceBitmapFileHeaderOptional.value();
 
 		MoaStreamPosition end = 0;
 		RETURN_ERR(readStreamInterfacePointer->GetEnd(&end));
@@ -931,7 +1085,8 @@ namespace Media {
 		}
 
 		// next we'll read in the bitmap bits
-		RETURN_ERR(readStreamInterfacePointer->SetPosition(sourceBitmapFileHeader.bfOffBits));
+		RETURN_ERR(readStreamInterfacePointer->SetPosition(
+			sourceBitmapFileHeader.bfOffBits));
 
 		if (!pixelFormatOptional.has_value()) {
 			return kMoaErr_InternalError;
@@ -952,7 +1107,9 @@ namespace Media {
 		// we have to do this ourselves
 		DWORD fileMappingSize = stride + imageSize;
 
-		fileMapping = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, fileMappingSize, NULL);
+		fileMapping = CreateFileMapping(
+			INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, fileMappingSize, NULL);
+
 		RETURN_ERR(osErr(fileMapping));
 
 		MoaError err = kMoaErr_NoErr;
@@ -962,13 +1119,18 @@ namespace Media {
 		// then we can just use the source, and don't need to copy it
 		// (this usually happens for RGBA)
 		bool sourceBitmap = bitmapInfoSize == sourceBitmapInfoSize
-			&& memoryEquals(bitmapInfoPointer.get(), sourceBitmapInfoPointer.get(), bitmapInfoSize);
+			&& memoryEquals(
+				bitmapInfoPointer.get(),
+				sourceBitmapInfoPointer.get(),
+				bitmapInfoSize
+			);
 
 		if (!sourceBitmap) {
 			HDC compatibleDCHandle = CreateCompatibleDC(NULL);
 
 			SCOPE_EXIT {
-				err = errOrDefaultErr(osErr(deleteGDIDC(compatibleDCHandle)), err);
+				err = errOrDefaultErr(osErr(
+					deleteGDIDC(compatibleDCHandle)), err);
 			};
 
 			RETURN_ERR(osErr(compatibleDCHandle));
@@ -980,7 +1142,8 @@ namespace Media {
 			HBITMAP bitmapHandle = NULL;
 
 			SCOPE_EXIT {
-				err = errOrDefaultErr(osErr(deleteGDIObject(*(HGDIOBJ*)&bitmapHandle)), err);
+				err = errOrDefaultErr(osErr(
+					deleteGDIObject(*(HGDIOBJ*)&bitmapHandle)), err);
 			};
 
 			{
@@ -1001,10 +1164,12 @@ namespace Media {
 				//RETURN_NULL(bitsPointer); // doesn't matter, bitsPointer goes unused
 			}
 
-			HGDIOBJ replacedGDIObject = SelectObject(compatibleDCHandle, bitmapHandle);
+			HGDIOBJ replacedGDIObject
+				= SelectObject(compatibleDCHandle, bitmapHandle);
 
 			SCOPE_EXIT {
-				err = errOrDefaultErr(osErr(deselectGDIObject(compatibleDCHandle, replacedGDIObject)), err);
+				err = errOrDefaultErr(osErr(deselectGDIObject(
+					compatibleDCHandle, replacedGDIObject)), err);
 			};
 
 			RETURN_ERR(osErr(replacedGDIObject));
@@ -1013,7 +1178,8 @@ namespace Media {
 			HDC sourceCompatibleDCHandle = CreateCompatibleDC(compatibleDCHandle);
 
 			SCOPE_EXIT {
-				err = errOrDefaultErr(osErr(deleteGDIDC(sourceCompatibleDCHandle)), err);
+				err = errOrDefaultErr(osErr(
+					deleteGDIDC(sourceCompatibleDCHandle)), err);
 			};
 
 			RETURN_ERR(osErr(sourceCompatibleDCHandle));
@@ -1030,7 +1196,8 @@ namespace Media {
 			);
 
 			SCOPE_EXIT {
-				err = errOrDefaultErr(osErr(deleteGDIObject(*(HGDIOBJ*)&sourceBitmapHandle)), err);
+				err = errOrDefaultErr(osErr(
+					deleteGDIObject(*(HGDIOBJ*)&sourceBitmapHandle)), err);
 			};
 
 			RETURN_ERR(osErr(sourceBitmapHandle));
@@ -1071,12 +1238,20 @@ namespace Media {
 			// it may also have EOF Extra Data that isn't actually part of the bitmap
 			// but that's fine, GDI's calculated size is authoritative
 			MoaStreamCount numberOfBytesRead = 0;
-			RETURN_ERR(readStreamPartial(sourceBitsPointer, memoryBasicInformation.RegionSize, numberOfBytesRead, readStreamInterfacePointer));
 
-			HGDIOBJ sourceReplacedGDIObject = SelectObject(sourceCompatibleDCHandle, sourceBitmapHandle);
+			RETURN_ERR(readStreamPartial(
+				sourceBitsPointer,
+				memoryBasicInformation.RegionSize,
+				numberOfBytesRead,
+				readStreamInterfacePointer
+			));
+
+			HGDIOBJ sourceReplacedGDIObject
+				= SelectObject(sourceCompatibleDCHandle, sourceBitmapHandle);
 
 			SCOPE_EXIT {
-				err = errOrDefaultErr(osErr(deselectGDIObject(sourceCompatibleDCHandle, sourceReplacedGDIObject)), err);
+				err = errOrDefaultErr(osErr(
+					deselectGDIObject(sourceCompatibleDCHandle, sourceReplacedGDIObject)), err);
 			};
 
 			RETURN_ERR(osErr(sourceReplacedGDIObject));
@@ -1122,7 +1297,8 @@ namespace Media {
 			// if we're using the source bitmap directly, here we read it into the mapped view after the fact
 			// this should be a safe read instead of partial, because imageSize should be calculated exactly right
 			// because the header should've been vetted by getPixelFormat already
-			RETURN_ERR(readStreamSafe(mappedView, imageSize, readStreamInterfacePointer));
+			RETURN_ERR(readStreamSafe(
+				mappedView, imageSize, readStreamInterfacePointer));
 		}
 
 		bool result = true;
@@ -1134,6 +1310,7 @@ namespace Media {
 			break;
 			case RPCS_RGBA:
 			result = rgbaX((RGBQUAD*)mappedView, stride, imageSize);
+			break;
 		}
 
 		if (!result) {

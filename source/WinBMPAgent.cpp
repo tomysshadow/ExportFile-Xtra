@@ -22,13 +22,15 @@ STDMETHODIMP_(MoaError) MoaCreate_CWinBMPAgent(CWinBMPAgent* This) {
 
 	ThrowNull(This);
 
-	MoaError err = GetIMoaFormatServices(This->pCallback, &This->formatServicesInterfacePointer);
+	MoaError err = GetIMoaFormatServices(
+		This->pCallback, &This->formatServicesInterfacePointer);
 
 	if (err != kMoaErr_NoErr) {
 		This->formatServicesInterfacePointer = NULL;
 	}
 
-	err = GetIMoaDataObjectServices(This->pCallback, &This->dataObjectServicesInterfacePointer);
+	err = GetIMoaDataObjectServices(
+		This->pCallback, &This->dataObjectServicesInterfacePointer);
 
 	if (err != kMoaErr_NoErr) {
 		This->dataObjectServicesInterfacePointer = NULL;
@@ -59,7 +61,10 @@ STD_INTERFACE_CREATE_DESTROY(CWinBMPAgent, IMoaRegister)
 BEGIN_DEFINE_CLASS_INTERFACE(CWinBMPAgent, IMoaRegister)
 END_DEFINE_CLASS_INTERFACE
 
-STDMETHODIMP CWinBMPAgent_IMoaRegister::Register(PIMoaCache cacheInterfacePointer, PIMoaXtraEntryDict xtraEntryDictInterfacePointer) {
+STDMETHODIMP CWinBMPAgent_IMoaRegister::Register(
+	PIMoaCache cacheInterfacePointer,
+	PIMoaXtraEntryDict xtraEntryDictInterfacePointer
+) {
 	moa_try
 
 	ThrowNull(cacheInterfacePointer);
@@ -68,55 +73,84 @@ STDMETHODIMP CWinBMPAgent_IMoaRegister::Register(PIMoaCache cacheInterfacePointe
 	{
 		// this interface should NOT be released
 		PIMoaRegistryEntryDict registryEntryDictInterfacePointer = NULL;
-		ThrowErr(cacheInterfacePointer->AddRegistryEntry(xtraEntryDictInterfacePointer, &CLSID_CWinBMPAgent, &IID_IMoaAgent, &registryEntryDictInterfacePointer));
+
+		ThrowErr(cacheInterfacePointer->AddRegistryEntry(
+			xtraEntryDictInterfacePointer,
+			&CLSID_CWinBMPAgent,
+			&IID_IMoaAgent,
+			&registryEntryDictInterfacePointer
+		));
+
 		ThrowNull(registryEntryDictInterfacePointer);
 
 		static constexpr MoaLong NAME_SIZE = 7;
 		MoaChar name[NAME_SIZE] = "WinBMP";
 
-		ThrowErr(registryEntryDictInterfacePointer->Put(kMoaDictType_CString, name, NAME_SIZE, kAgentRegKey_Name));
+		ThrowErr(registryEntryDictInterfacePointer->Put(kMoaDictType_CString,
+			name, NAME_SIZE, kAgentRegKey_Name));
 
 		// IMPORTANT: this should NOT be kMoaCfFormatName_BMP
 		// (it interferes with Director's default BMP reading behaviour otherwise)
-		ThrowErr(registryEntryDictInterfacePointer->Put(kMoaDictType_CString, kMoaCfFormatName_WinBMP, sizeof(kMoaCfFormatName_WinBMP), kAgentRegKey_Format));
+		ThrowErr(registryEntryDictInterfacePointer->Put(kMoaDictType_CString,
+			kMoaCfFormatName_WinBMP, sizeof(kMoaCfFormatName_WinBMP), kAgentRegKey_Format));
 
 		static constexpr MoaLong FILE_CREATOR_SIZE = 5;
 		MoaChar fileCreator[FILE_CREATOR_SIZE] = "????";
 
-		ThrowErr(registryEntryDictInterfacePointer->Put(kMoaDictType_CString, fileCreator, FILE_CREATOR_SIZE, kAgentRegKey_FileCreator));
+		ThrowErr(registryEntryDictInterfacePointer->Put(kMoaDictType_CString,
+			fileCreator, FILE_CREATOR_SIZE, kAgentRegKey_FileCreator));
 
 		static constexpr MoaLong TYPES_SIZE = 5;
 		MoaChar types[TYPES_SIZE] = "WBMP";
 
-		ThrowErr(registryEntryDictInterfacePointer->Put(kMoaDictType_CString, types, TYPES_SIZE, kAgentRegKey_FileTypes));
-		ThrowErr(registryEntryDictInterfacePointer->Put(kMoaDictType_CString, types, TYPES_SIZE, kAgentRegKey_MacScrapTypes));
+		ThrowErr(registryEntryDictInterfacePointer->Put(kMoaDictType_CString,
+			types, TYPES_SIZE, kAgentRegKey_FileTypes));
+
+		ThrowErr(registryEntryDictInterfacePointer->Put(kMoaDictType_CString,
+			types, TYPES_SIZE, kAgentRegKey_MacScrapTypes));
 
 		// importFileInto in projectors ignores the Hidden key, so
 		// this must be assigned some other extension to never be used
 		static constexpr MoaLong FILE_EXTS_SIZE = 9;
 		MoaChar fileExts[FILE_EXTS_SIZE] = "*.winbmp";
 
-		ThrowErr(registryEntryDictInterfacePointer->Put(kMoaDictType_CString, fileExts, FILE_EXTS_SIZE, kAgentRegKey_FileExts));
+		ThrowErr(registryEntryDictInterfacePointer->Put(kMoaDictType_CString,
+			fileExts, FILE_EXTS_SIZE, kAgentRegKey_FileExts));
 
 		/*
 		static constexpr MoaLong MIME_TYPE_SIZE = 10;
 		MoaChar mimeType[MIME_TYPE_SIZE] = "image/bmp";
 
-		ThrowErr(registryEntryDictInterfacePointer->Put(kMoaDictType_CString, mimeType, MIME_TYPE_SIZE, kAgentRegKey_MimeType));
+		ThrowErr(registryEntryDictInterfacePointer->Put(kMoaDictType_CString,
+			mimeType, MIME_TYPE_SIZE, kAgentRegKey_MimeType));
 		*/
 
 		registryEntryDictInterfacePointer = NULL;
-		ThrowErr(cacheInterfacePointer->AddRegistryEntry(xtraEntryDictInterfacePointer, &CLSID_CWinBMPAgent, &IID_IMoaReader, &registryEntryDictInterfacePointer));
+
+		ThrowErr(cacheInterfacePointer->AddRegistryEntry(
+			xtraEntryDictInterfacePointer,
+			&CLSID_CWinBMPAgent,
+			&IID_IMoaReader,
+			&registryEntryDictInterfacePointer
+		));
+
 		ThrowNull(registryEntryDictInterfacePointer);
 
 		MoaBool hasUI = FALSE;
-		ThrowErr(registryEntryDictInterfacePointer->Put(kMoaDictType_Bool, &hasUI, sizeof(hasUI), kReaderRegKey_HasUI));
+		ThrowErr(registryEntryDictInterfacePointer->Put(kMoaDictType_Bool,
+			&hasUI, sizeof(hasUI), kReaderRegKey_HasUI));
 
 		// hidden so we don't compete with Director's default BMP reading behaviour
 		MoaBool hidden = TRUE;
-		ThrowErr(registryEntryDictInterfacePointer->Put(kMoaDictType_Bool, &hidden, sizeof(hidden), kReaderRegKey_Hidden));
+		ThrowErr(registryEntryDictInterfacePointer->Put(kMoaDictType_Bool,
+			&hidden, sizeof(hidden), kReaderRegKey_Hidden));
 
-		ThrowErr(registryEntryDictInterfacePointer->Put(kMoaDictType_Bytes, &IID_IMoaReceptorPixels, sizeof(IID_IMoaReceptorPixels), kReaderRegKey_UnderstoodReceptors));
+		ThrowErr(registryEntryDictInterfacePointer->Put(
+			kMoaDictType_Bytes,
+			&IID_IMoaReceptorPixels,
+			sizeof(IID_IMoaReceptorPixels),
+			kReaderRegKey_UnderstoodReceptors
+		));
 	}
 
 	moa_catch
@@ -129,9 +163,12 @@ STD_INTERFACE_CREATE_DESTROY(CWinBMPAgent, IMoaReader)
 BEGIN_DEFINE_CLASS_INTERFACE(CWinBMPAgent, IMoaReader)
 END_DEFINE_CLASS_INTERFACE
 
-const MoaInterfaceID CWinBMPAgent::RECEPTORS[RECEPTORS_SIZE] = { IID_IMoaReceptorPixels };
+const MoaInterfaceID CWinBMPAgent::RECEPTORS[RECEPTORS_SIZE]
+	= { IID_IMoaReceptorPixels };
 
-MoaError CWinBMPAgent_IMoaReader::CountUnderstoodReceptorIDs(MoaLong* pNumReceptors) {
+MoaError CWinBMPAgent_IMoaReader::CountUnderstoodReceptorIDs(
+	MoaLong* pNumReceptors
+) {
 	moa_try
 
 	ThrowNull(pNumReceptors);
@@ -148,7 +185,9 @@ MoaError CWinBMPAgent_IMoaReader::CountUnderstoodReceptorIDs(MoaLong* pNumRecept
 	moa_try_end
 }
 
-MoaError CWinBMPAgent_IMoaReader::GetNthUnderstoodReceptorID(MoaLong index, MoaInterfaceID* ppReceptorIID) {
+MoaError CWinBMPAgent_IMoaReader::GetNthUnderstoodReceptorID(
+	MoaLong index, MoaInterfaceID* ppReceptorIID
+) {
 	moa_try
 
 	ThrowNull(ppReceptorIID);
@@ -169,7 +208,9 @@ MoaError CWinBMPAgent_IMoaReader::GetNthUnderstoodReceptorID(MoaLong index, MoaI
 	moa_try_end
 }
 
-MoaError CWinBMPAgent_IMoaReader::SetReaderDataSource(PIMoaDataObject pSourceData) {
+MoaError CWinBMPAgent_IMoaReader::SetReaderDataSource(
+	PIMoaDataObject pSourceData
+) {
 	moa_try
 
 	// may be NULL
@@ -186,7 +227,9 @@ MoaError CWinBMPAgent_IMoaReader::SetReaderDataSource(PIMoaDataObject pSourceDat
 	moa_try_end
 }
 
-MoaError CWinBMPAgent_IMoaReader::SetReaderOptions(PIMoaDict pOptionsDict) {
+MoaError CWinBMPAgent_IMoaReader::SetReaderOptions(
+	PIMoaDict pOptionsDict
+) {
 	moa_try
 
 	// may be null
@@ -199,7 +242,9 @@ MoaError CWinBMPAgent_IMoaReader::SetReaderOptions(PIMoaDict pOptionsDict) {
 	moa_try_end
 }
 
-MoaError CWinBMPAgent_IMoaReader::GetReaderOptions(PIMoaDict* ppOptionsDict) {
+MoaError CWinBMPAgent_IMoaReader::GetReaderOptions(
+	PIMoaDict* ppOptionsDict
+) {
 	moa_try
 
 	ThrowNull(ppOptionsDict);
@@ -216,7 +261,9 @@ MoaError CWinBMPAgent_IMoaReader::GetReaderOptions(PIMoaDict* ppOptionsDict) {
 	moa_try_end
 }
 
-MoaError CWinBMPAgent_IMoaReader::GetDefaultReaderOptions(PIMoaDict* ppOptionsDict) {
+MoaError CWinBMPAgent_IMoaReader::GetDefaultReaderOptions(
+	PIMoaDict* ppOptionsDict
+) {
 	moa_try
 
 	ThrowNull(ppOptionsDict);
@@ -233,7 +280,9 @@ MoaError CWinBMPAgent_IMoaReader::GetDefaultReaderOptions(PIMoaDict* ppOptionsDi
 	moa_try_end
 }
 
-MoaError CWinBMPAgent_IMoaReader::GetReaderOptionsFromUser(SysWindow pParentWindow, PIMoaDict* ppOptionsDict) {
+MoaError CWinBMPAgent_IMoaReader::GetReaderOptionsFromUser(
+	SysWindow pParentWindow, PIMoaDict* ppOptionsDict
+) {
 	moa_try
 
 	ThrowNull(pParentWindow);
@@ -252,7 +301,9 @@ MoaError CWinBMPAgent_IMoaReader::GetReaderOptionsFromUser(SysWindow pParentWind
 	moa_try_end
 }
 
-MoaError CWinBMPAgent_IMoaReader::CanRead(ConstPMoaStorageMedium pStorage, MoaFileType fileType) {
+MoaError CWinBMPAgent_IMoaReader::CanRead(
+	ConstPMoaStorageMedium pStorage, MoaFileType fileType
+) {
 	PIMoaStream streamInterfacePointer = NULL;
 
 	moa_try
@@ -263,10 +314,13 @@ MoaError CWinBMPAgent_IMoaReader::CanRead(ConstPMoaStorageMedium pStorage, MoaFi
 		Throw(kMoaErr_BadClass);
 	}
 
-	ThrowErr(pObj->dataObjectServicesInterfacePointer->StorageMediumToMoaStream(pStorage, &streamInterfacePointer));
+	ThrowErr(pObj->dataObjectServicesInterfacePointer->StorageMediumToMoaStream(
+		pStorage, &streamInterfacePointer));
+
 	ThrowNull(streamInterfacePointer);
 
-	MoaError err = openStream(kMoaStreamOpenAccess_ReadOnly, true, streamInterfacePointer);
+	MoaError err = openStream(kMoaStreamOpenAccess_ReadOnly, true,
+		streamInterfacePointer);
 
 	bool streamAlreadyOpen = false;
 
@@ -297,7 +351,9 @@ MoaError CWinBMPAgent_IMoaReader::CanRead(ConstPMoaStorageMedium pStorage, MoaFi
 	moa_try_end
 }
 
-MoaError CWinBMPAgent_IMoaReader::CountUserSelectors(MoaLong* pNumSelectors) {
+MoaError CWinBMPAgent_IMoaReader::CountUserSelectors(
+	MoaLong* pNumSelectors
+) {
 	moa_try
 
 	ThrowNull(pNumSelectors);
@@ -314,7 +370,9 @@ MoaError CWinBMPAgent_IMoaReader::CountUserSelectors(MoaLong* pNumSelectors) {
 	moa_try_end
 }
 
-MoaError CWinBMPAgent_IMoaReader::GetNthUserSelector(MoaLong index, PMoaChar pSelectorName, PIMoaDict* ppSelectorData) {
+MoaError CWinBMPAgent_IMoaReader::GetNthUserSelector(
+	MoaLong index, PMoaChar pSelectorName, PIMoaDict* ppSelectorData
+) {
 	moa_try
 
 	ThrowNull(pSelectorName);
@@ -332,7 +390,9 @@ MoaError CWinBMPAgent_IMoaReader::GetNthUserSelector(MoaLong index, PMoaChar pSe
 	moa_try_end
 }
 
-MoaError CWinBMPAgent_IMoaReader::SetCurrentSelector(PIMoaDict pSelectorData) {
+MoaError CWinBMPAgent_IMoaReader::SetCurrentSelector(
+	PIMoaDict pSelectorData
+) {
 	moa_try
 
 	// may be null
@@ -345,17 +405,22 @@ MoaError CWinBMPAgent_IMoaReader::SetCurrentSelector(PIMoaDict pSelectorData) {
 	moa_try_end
 }
 
-MoaError CWinBMPAgent_IMoaReader::Read(PIMoaReceptor pReceptor, ConstPMoaInterfaceID pReceptorID) {
+MoaError CWinBMPAgent_IMoaReader::Read(
+	PIMoaReceptor pReceptor, ConstPMoaInterfaceID pReceptorID
+) {
 	moa_try
 
 	ThrowNull(pReceptor);
 	ThrowNull(pReceptorID);
 
-	MoaLong equalID = MoaEqualID(pReceptorID, &pObj->RECEPTORS[pObj->RECEPTOR_IID_I_MOA_RECEPTOR_PIXELS_INDEX]);
+	MoaLong equalID = MoaEqualID(pReceptorID,
+		&pObj->RECEPTORS[pObj->RECEPTOR_IID_I_MOA_RECEPTOR_PIXELS_INDEX]);
 
 	if (equalID) {
 		// this interface should NOT be released
-		PIMoaReceptorPixels receptorPixelsInterfacePointer = (PIMoaReceptorPixels)pReceptor;
+		PIMoaReceptorPixels receptorPixelsInterfacePointer
+			= (PIMoaReceptorPixels)pReceptor;
+
 		ThrowNull(receptorPixelsInterfacePointer);
 
 		Throw(ReadPixels(receptorPixelsInterfacePointer));
@@ -368,7 +433,9 @@ MoaError CWinBMPAgent_IMoaReader::Read(PIMoaReceptor pReceptor, ConstPMoaInterfa
 	moa_try_end
 }
 
-MoaError CWinBMPAgent_IMoaReader::ReadPixels(PIMoaReceptorPixels receptorPixelsInterfacePointer) {
+MoaError CWinBMPAgent_IMoaReader::ReadPixels(
+	PIMoaReceptorPixels receptorPixelsInterfacePointer
+) {
 	PIMoaStream streamInterfacePointer = NULL;
 
 	MoaFormatEtc formatEtc = {};
@@ -387,7 +454,9 @@ MoaError CWinBMPAgent_IMoaReader::ReadPixels(PIMoaReceptorPixels receptorPixelsI
 
 	// format etc.
 	MixFormat mixFormat = 0;
-	ThrowErr(pObj->formatServicesInterfacePointer->RegisterFormat(kMoaCfFormatName_WinBMP, &mixFormat));
+
+	ThrowErr(pObj->formatServicesInterfacePointer->RegisterFormat(
+		kMoaCfFormatName_WinBMP, &mixFormat));
 
 	SetMoaFormatEtc(&formatEtc, mixFormat, kMoaStorageMediumType_HGlobal);
 
@@ -395,10 +464,13 @@ MoaError CWinBMPAgent_IMoaReader::ReadPixels(PIMoaReceptorPixels receptorPixelsI
 		Throw(kMoaErr_BadClass);
 	}
 
-	ThrowErr(pObj->dataObjectServicesInterfacePointer->DataObjectToMoaStream(pObj->sourceDataObjectInterfacePointer, &formatEtc, &streamInterfacePointer));
+	ThrowErr(pObj->dataObjectServicesInterfacePointer->DataObjectToMoaStream(
+		pObj->sourceDataObjectInterfacePointer, &formatEtc, &streamInterfacePointer));
+
 	ThrowNull(streamInterfacePointer);
 
-	MoaError err = openStream(kMoaStreamOpenAccess_ReadOnly, true, streamInterfacePointer);
+	MoaError err = openStream(kMoaStreamOpenAccess_ReadOnly, true,
+		streamInterfacePointer);
 
 	// IMPORTANT UNDOCUMENTED BEHAVIOUR
 	// if the stream was already open, writers expect the reader to leave it open
@@ -434,7 +506,10 @@ MoaError CWinBMPAgent_IMoaReader::ReadPixels(PIMoaReceptorPixels receptorPixelsI
 	moa_try_end
 }
 
-MoaError CWinBMPAgent_IMoaReader::ReadPixels(PIMoaReceptorPixels receptorPixelsInterfacePointer, PIMoaStream readStreamInterfacePointer) {
+MoaError CWinBMPAgent_IMoaReader::ReadPixels(
+	PIMoaReceptorPixels receptorPixelsInterfacePointer,
+	PIMoaStream readStreamInterfacePointer
+) {
 	Media::WinBMPMedia winBMPMedia;
 
 	moa_try
@@ -444,11 +519,13 @@ MoaError CWinBMPAgent_IMoaReader::ReadPixels(PIMoaReceptorPixels receptorPixelsI
 	ThrowNull(readStreamInterfacePointer);
 
 	// this also handles CanRead
-	ThrowErr(winBMPMedia.getMappedView(receptorPixelsInterfacePointer, readStreamInterfacePointer));
+	ThrowErr(winBMPMedia.getMappedView(
+		receptorPixelsInterfacePointer, readStreamInterfacePointer));
 
 	if (receptorPixelsInterfacePointer) {
 		// get the pixel format if we don't already have it
-		// (we should theoretically already have it, but I don't want to directly couple this to stretchSourceBitmap's internal logic)
+		// we should theoretically already have it, but I don't want to
+		// directly couple this to stretchSourceBitmap's internal logic
 		ThrowErr(winBMPMedia.getPixelFormat(receptorPixelsInterfacePointer));
 
 		if (!winBMPMedia.pixelFormatOptional.has_value()) {
@@ -467,7 +544,8 @@ MoaError CWinBMPAgent_IMoaReader::ReadPixels(PIMoaReceptorPixels receptorPixelsI
 		LPBYTE bytesPointer = (LPBYTE)winBMPMedia.mappedView;
 
 		// a loop that can go either direction
-		// be super careful here: access violations abound if you're off by one with the top/bottom row
+		// be super careful here: access violations abound if you're
+		// off by one with the top/bottom row
 		bool bottomUp = winBMPMedia.direction == BOTTOM_UP;
 
 		MoaLong endRow = pixelFormat.dim.pixels.y;
@@ -476,7 +554,9 @@ MoaError CWinBMPAgent_IMoaReader::ReadPixels(PIMoaReceptorPixels receptorPixelsI
 		MoaLong bottomRow = !bottomUp * endRow - bottomUp;
 
 		for (MoaLong i = topRow; i != bottomRow; i += nextRow) {
-			ThrowErr(receptorPixelsInterfacePointer->SetPixels(i, bytesPointer, pixelFormat.dim.rowBytes));
+			ThrowErr(receptorPixelsInterfacePointer->SetPixels(
+				i, bytesPointer, pixelFormat.dim.rowBytes));
+
 			bytesPointer += (SIZE_T)pixelFormat.dim.rowBytes;
 		}
 

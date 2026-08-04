@@ -28,12 +28,23 @@ void BitmapImporter::destroy() {
 }
 
 void BitmapImporter::duplicate(const BitmapImporter &bitmapImporter) {
-	setInterface((PPMoaVoid)&mmValueInterfacePointer, bitmapImporter.mmValueInterfacePointer);
-	setInterface((PPMoaVoid)&drUtilsInterfacePointer, bitmapImporter.drUtilsInterfacePointer);
-	setInterface((PPMoaVoid)&mmImageInterfacePointer, bitmapImporter.mmImageInterfacePointer);
-	setInterface((PPMoaVoid)&drMovieInterfacePointer, bitmapImporter.drMovieInterfacePointer);
-	setInterface((PPMoaVoid)&drCastInterfacePointer, bitmapImporter.drCastInterfacePointer);
-	setInterface((PPMoaVoid)&drCastMemInterfacePointer, bitmapImporter.drCastMemInterfacePointer);
+	setInterface((PPMoaVoid)&mmValueInterfacePointer,
+		bitmapImporter.mmValueInterfacePointer);
+
+	setInterface((PPMoaVoid)&drUtilsInterfacePointer,
+		bitmapImporter.drUtilsInterfacePointer);
+
+	setInterface((PPMoaVoid)&mmImageInterfacePointer,
+		bitmapImporter.mmImageInterfacePointer);
+
+	setInterface((PPMoaVoid)&drMovieInterfacePointer,
+		bitmapImporter.drMovieInterfacePointer);
+
+	setInterface((PPMoaVoid)&drCastInterfacePointer,
+		bitmapImporter.drCastInterfacePointer);
+
+	setInterface((PPMoaVoid)&drCastMemInterfacePointer,
+		bitmapImporter.drCastMemInterfacePointer);
 
 	formatSymbol = bitmapImporter.formatSymbol;
 
@@ -55,12 +66,23 @@ void BitmapImporter::move(BitmapImporter &bitmapImporter) {
 	castIndex = bitmapImporter.castIndex;
 	bitmapImporter.castIndex = NULL;
 
-	moveInterface((PPMoaVoid)&mmValueInterfacePointer, (PPMoaVoid)&bitmapImporter.mmValueInterfacePointer);
-	moveInterface((PPMoaVoid)&drUtilsInterfacePointer, (PPMoaVoid)&bitmapImporter.drUtilsInterfacePointer);
-	moveInterface((PPMoaVoid)&mmImageInterfacePointer, (PPMoaVoid)&bitmapImporter.mmImageInterfacePointer);
-	moveInterface((PPMoaVoid)&drMovieInterfacePointer, (PPMoaVoid)&bitmapImporter.drMovieInterfacePointer);
-	moveInterface((PPMoaVoid)&drCastInterfacePointer, (PPMoaVoid)&bitmapImporter.drCastInterfacePointer);
-	moveInterface((PPMoaVoid)&drCastMemInterfacePointer, (PPMoaVoid)&bitmapImporter.drCastMemInterfacePointer);
+	moveInterface((PPMoaVoid)&mmValueInterfacePointer,
+		(PPMoaVoid)&bitmapImporter.mmValueInterfacePointer);
+
+	moveInterface((PPMoaVoid)&drUtilsInterfacePointer,
+		(PPMoaVoid)&bitmapImporter.drUtilsInterfacePointer);
+
+	moveInterface((PPMoaVoid)&mmImageInterfacePointer,
+		(PPMoaVoid)&bitmapImporter.mmImageInterfacePointer);
+
+	moveInterface((PPMoaVoid)&drMovieInterfacePointer,
+		(PPMoaVoid)&bitmapImporter.drMovieInterfacePointer);
+
+	moveInterface((PPMoaVoid)&drCastInterfacePointer,
+		(PPMoaVoid)&bitmapImporter.drCastInterfacePointer);
+
+	moveInterface((PPMoaVoid)&drCastMemInterfacePointer,
+		(PPMoaVoid)&bitmapImporter.drCastMemInterfacePointer);
 
 	formatSymbol = bitmapImporter.formatSymbol;
 
@@ -82,7 +104,8 @@ MoaError BitmapImporter::getSymbols() {
 MoaError BitmapImporter::getFormatSymbol(const Label::Labels::Info &labelsInfo) {
 	const Label::Info::MAP &labelInfoMap = labelsInfo.get();
 
-	Label::Info::MAP::const_iterator foundLabelInfo = labelInfoMap.find(symbols.Image);
+	Label::Info::MAP::const_iterator foundLabelInfo
+		= labelInfoMap.find(symbols.Image);
 
 	if (foundLabelInfo == labelInfoMap.cend()) {
 		return kMoaDrErr_LabelNotFound;
@@ -108,16 +131,22 @@ MoaError BitmapImporter::createMemberInCast(MoaDrCastIndex movieCastIndex) {
 		releaseInterface((PPMoaVoid)&drCastInterfacePointer);
 	};
 
-	RETURN_ERR(drMovieInterfacePointer->GetNthCast(movieCastIndex, &drCastInterfacePointer));
+	RETURN_ERR(drMovieInterfacePointer->GetNthCast(
+		movieCastIndex, &drCastInterfacePointer));
+
 	RETURN_NULL(drCastInterfacePointer);
 
 	RETURN_ERR(drCastInterfacePointer->GetLastFreeMemberIndex(&memberIndex));
 	RETURN_NULL(memberIndex);
 
-	RETURN_ERR(drCastInterfacePointer->CreateCastMem(memberIndex, symbols.Bitmap));
+	RETURN_ERR(drCastInterfacePointer->CreateCastMem(
+		memberIndex, symbols.Bitmap));
+
 	releaseDrCastInterfacePointerScopeExit.dismiss();
 
-	RETURN_ERR(drCastInterfacePointer->GetCastMem(memberIndex, &drCastMemInterfacePointer));
+	RETURN_ERR(drCastInterfacePointer->GetCastMem(
+		memberIndex, &drCastMemInterfacePointer));
+
 	RETURN_NULL(drCastMemInterfacePointer);
 	return kMoaErr_NoErr;
 }
@@ -143,7 +172,11 @@ MoaError BitmapImporter::createMember() {
 	return createMemberInCast(castIndex);
 }
 
-MoaError BitmapImporter::getMemberImageValue(GlobalHandleLock<>::GlobalHandle mediaData, MoaMmValue &memberStageImageValue, bool color) {
+MoaError BitmapImporter::getMemberImageValue(
+	GlobalHandleLock<>::GlobalHandle mediaData,
+	MoaMmValue &memberStageImageValue,
+	bool color
+) {
 	// this holds for the duration of this scope, then releases, the global handle
 	GlobalHandleLock<> globalHandleLock(mediaData);
 	memberStageImageValue = kVoidMoaMmValueInitializer;
@@ -310,7 +343,11 @@ BitmapImporter &BitmapImporter::operator=(BitmapImporter &&bitmapImporter) noexc
 	return *this;
 }
 
-MoaError BitmapImporter::toImageValue(GlobalHandleLock<>::GlobalHandle mediaData, MoaMmValue &stageImageValue, bool color) {
+MoaError BitmapImporter::toImageValue(
+	GlobalHandleLock<>::GlobalHandle mediaData,
+	MoaMmValue &stageImageValue,
+	bool color
+) {
 	stageImageValue = kVoidMoaMmValueInitializer;
 	
 	MoaMmValue memberStageImageValue = kVoidMoaMmValueInitializer;
@@ -328,18 +365,29 @@ MoaError BitmapImporter::toImageValue(GlobalHandleLock<>::GlobalHandle mediaData
 }
 
 // more efficient method for Icon Values specifically (avoids a copy of the image)
-MoaError BitmapImporter::insertIntoIconValues(GlobalHandleLock<>::GlobalHandle mediaData, IconValues &iconValues, RESOURCE_ID resourceID) {
+MoaError BitmapImporter::insertIntoIconValues(
+	GlobalHandleLock<>::GlobalHandle mediaData,
+	IconValues &iconValues,
+	RESOURCE_ID resourceID
+) {
 	MoaMmValue memberStageImageValue = kVoidMoaMmValueInitializer;
 
 	SCOPE_EXIT {
 		releaseValue(memberStageImageValue, mmValueInterfacePointer);
 	};
 
-	RETURN_ERR(getMemberImageValue(mediaData, memberStageImageValue, resourceID == IDB_ASSET_INFO_MAP_ICON_COLOR || resourceID == IDB_ASSET_INFO_MAP_ICON_COLOR_LINKED));
+	RETURN_ERR(getMemberImageValue(mediaData, memberStageImageValue,
+
+		resourceID == IDB_ASSET_INFO_MAP_ICON_COLOR
+		|| resourceID == IDB_ASSET_INFO_MAP_ICON_COLOR_LINKED
+	));
+
 	return iconValues.setValue(resourceID, memberStageImageValue);
 }
 
-MoaError BitmapImporter::getMedia(MoaDrMediaInfo &mediaInfo, PIMoaDrCastMem imageDrCastMemInterfacePointer) {
+MoaError BitmapImporter::getMedia(
+	MoaDrMediaInfo &mediaInfo, PIMoaDrCastMem imageDrCastMemInterfacePointer
+) {
 	RETURN_NULL(imageDrCastMemInterfacePointer);
 
 	if (mediaInfo.labelSymbol != symbols.Image) {
@@ -362,7 +410,8 @@ MoaError BitmapImporter::getMedia(MoaDrMediaInfo &mediaInfo, PIMoaDrCastMem imag
 	RETURN_ERR(mmValueInterfacePointer->ValueToSymbol(&typeValue, &typeSymbol));
 
 	if (typeSymbol != symbols.Bitmap) {
-		// handle built-in member types that don't have an image property but do have a picture property
+		// handle built-in member types that don't have an image property
+		// but do have a picture property
 		// (or our Director version is old enough to predate images)
 		MoaMmSymbol memberPropertySymbol = !mmImageInterfacePointer
 			|| typeSymbol == symbols.Picture
@@ -376,10 +425,12 @@ MoaError BitmapImporter::getMedia(MoaDrMediaInfo &mediaInfo, PIMoaDrCastMem imag
 			releaseValue(memberPropertyValue, mmValueInterfacePointer);
 		};
 
-		MoaError err = imageDrCastMemInterfacePointer->GetProp(memberPropertySymbol, &memberPropertyValue);
+		MoaError err = imageDrCastMemInterfacePointer->GetProp(
+			memberPropertySymbol, &memberPropertyValue);
 
 		if (err == kMoaErr_NoErr) {
-			err = drCastMemInterfacePointer->SetProp(memberPropertySymbol, &memberPropertyValue);
+			err = drCastMemInterfacePointer->SetProp(
+				memberPropertySymbol, &memberPropertyValue);
 
 			if (err == kMoaErr_NoErr) {
 				return drCastMemInterfacePointer->GetMedia(&mediaInfo);
@@ -389,7 +440,9 @@ MoaError BitmapImporter::getMedia(MoaDrMediaInfo &mediaInfo, PIMoaDrCastMem imag
 	return imageDrCastMemInterfacePointer->GetMedia(&mediaInfo);
 }
 
-MoaError BitmapImporter::getProp(MoaMmValue &memberPropertyValue, PIMoaDrCastMem pictureDrCastMemInterfacePointer) {
+MoaError BitmapImporter::getProp(
+	MoaMmValue &memberPropertyValue, PIMoaDrCastMem pictureDrCastMemInterfacePointer
+) {
 	// release this as necessary
 	releaseValue(memberPropertyValue, mmValueInterfacePointer);
 

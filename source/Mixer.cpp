@@ -9,7 +9,8 @@
 // ideally, even if the file write fails, the mixerSaved handler is still called
 // with the error code passed to it
 MoaError mixerSavedContext(Media::MixerMedia &mixerMedia) {
-	PIMoaDrCastMem drCastMemInterfacePointer = mixerMedia.getDrCastMemInterfacePointer();
+	PIMoaDrCastMem drCastMemInterfacePointer
+		= mixerMedia.getDrCastMemInterfacePointer();
 
 	SCOPE_EXIT {
 		releaseInterface((PPMoaVoid)&drCastMemInterfacePointer);
@@ -20,7 +21,8 @@ MoaError mixerSavedContext(Media::MixerMedia &mixerMedia) {
 		return kMoaErr_InternalError;
 	}
 
-	PIMoaMmValue mmValueInterfacePointer = mixerMedia.getMmValueInterfacePointer();
+	PIMoaMmValue mmValueInterfacePointer
+		= mixerMedia.getMmValueInterfacePointer();
 
 	SCOPE_EXIT {
 		releaseInterface((PPMoaVoid)&mmValueInterfacePointer);
@@ -41,10 +43,12 @@ MoaError mixerSavedContext(Media::MixerMedia &mixerMedia) {
 
 	// if we fail to tell if the member is saving, the member probably got erased
 	// we should report this as an error to the mixerSaved handler instead of returning
-	MoaError err = drCastMemInterfacePointer->GetProp(mixerMedia.getIsSavingSymbol(), &isSavingValue);
+	MoaError err = drCastMemInterfacePointer->GetProp(
+		mixerMedia.getIsSavingSymbol(), &isSavingValue);
 
 	if (err == kMoaErr_NoErr) {
-		err = mmValueInterfacePointer->ValueToInteger(&isSavingValue, &isSaving);
+		err = mmValueInterfacePointer->ValueToInteger(
+			&isSavingValue, &isSaving);
 
 		if (err != kMoaErr_NoErr) {
 			isSaving = FALSE;
@@ -61,12 +65,14 @@ MoaError mixerSavedContext(Media::MixerMedia &mixerMedia) {
 	}
 
 	// if we fail to swap the files, this error should be reported to the mixerSaved handler
-	err = errOrDefaultErr(fileErr(mixerMedia.formatPointer->swapFile(false)), err);
+	err = errOrDefaultErr(fileErr(
+		mixerMedia.formatPointer->swapFile(false)), err);
 
 	// the rest of this code is for calling the mixerSaved handler
 	// it's important to handle the files if at all possible to not leave junk on the disk
 	// so this is done second
-	PIMoaRegistryEntryDict registryEntryDictInterfacePointer = mixerMedia.getRegistryEntryDictInterfacePointer();
+	PIMoaRegistryEntryDict registryEntryDictInterfacePointer
+		= mixerMedia.getRegistryEntryDictInterfacePointer();
 
 	SCOPE_EXIT {
 		releaseInterface((PPMoaVoid)&registryEntryDictInterfacePointer);
@@ -78,7 +84,12 @@ MoaError mixerSavedContext(Media::MixerMedia &mixerMedia) {
 	}
 
 	MoaLong mixerSavedCallHandler = 0;
-	RETURN_ERR(Registry::Entry::getValueLong(kExportFileRegKey_MixerSavedCallHandler, mixerSavedCallHandler, registryEntryDictInterfacePointer));
+
+	RETURN_ERR(Registry::Entry::getValueLong(
+		kExportFileRegKey_MixerSavedCallHandler,
+		mixerSavedCallHandler,
+		registryEntryDictInterfacePointer
+	));
 
 	if (mixerSavedCallHandler) {
 		MoaMmValue memberValue = kVoidMoaMmValueInitializer;
@@ -88,7 +99,8 @@ MoaError mixerSavedContext(Media::MixerMedia &mixerMedia) {
 		};
 
 		// can't call the handler without the member value
-		RETURN_ERR(mixerMedia.exportFileValueConverter.toValue(drCastMemInterfacePointer, memberValue));
+		RETURN_ERR(mixerMedia.exportFileValueConverter.toValue(
+			drCastMemInterfacePointer, memberValue));
 
 		mixerMedia.lingo.callHandler(memberValue, err);
 	}
@@ -104,7 +116,8 @@ MoaError mixerSaved(Media::MixerMedia* mixerMediaPointer) {
 		delete mixerMediaPointer;
 	};
 
-	PIMoaDrMovieContext drMovieContextInterfacePointer = mixerMediaPointer->getDrMovieContextInterfacePointer();
+	PIMoaDrMovieContext drMovieContextInterfacePointer
+		= mixerMediaPointer->getDrMovieContextInterfacePointer();
 
 	SCOPE_EXIT {
 		releaseInterface((PPMoaVoid)&drMovieContextInterfacePointer);
@@ -113,14 +126,16 @@ MoaError mixerSaved(Media::MixerMedia* mixerMediaPointer) {
 	DrContextState drContextState = {};
 
 	if (drMovieContextInterfacePointer) {
-		RETURN_ERR(drMovieContextInterfacePointer->PushXtraContext(&drContextState));
+		RETURN_ERR(drMovieContextInterfacePointer->PushXtraContext(
+			&drContextState));
 	}
 
 	MoaError err = kMoaErr_NoErr;
 
 	SCOPE_EXIT {
 		if (drMovieContextInterfacePointer) {
-			err = errOrDefaultErr(drMovieContextInterfacePointer->PopXtraContext(&drContextState), err);
+			err = errOrDefaultErr(drMovieContextInterfacePointer->PopXtraContext(
+				&drContextState), err);
 		}
 	};
 	
@@ -221,7 +236,9 @@ LRESULT Mixer::Window::onMixerSaved(WORD wParam, DWORD lParam) {
 	return mixerSaved((Media::MixerMedia*)lParam);
 }
 
-LRESULT CALLBACK Mixer::Window::proc(HWND windowHandle, UINT message, WPARAM wParam, LPARAM lParam) {
+LRESULT CALLBACK Mixer::Window::proc(
+	HWND windowHandle, UINT message, WPARAM wParam, LPARAM lParam
+) {
 	if (message == WM_MIXER_SAVED) {
 		return onMixerSaved((WORD)wParam, (DWORD)lParam);
 	}
@@ -301,7 +318,8 @@ unsigned int Mixer::thread(void* argList) {
 		}
 		#endif
 
-		// this doesn't really need to be precise, just needs to be some kinda small amount of time
+		// this doesn't really need to be precise
+		// just needs to be some kinda small amount of time
 		static const std::chrono::milliseconds MILLISECONDS(25);
 
 		MoaError err = kMoaErr_NoErr;
@@ -311,7 +329,11 @@ unsigned int Mixer::thread(void* argList) {
 			err = mixerSaved(mixerMediaPointer);
 			#endif
 			#ifdef WINDOWS
-			err = SendMessage(windowHandle, Mixer::Window::WM_MIXER_SAVED, 0, (LPARAM)mixerMediaPointer);
+			err = SendMessage(
+				windowHandle,
+				Mixer::Window::WM_MIXER_SAVED,
+				0, (LPARAM)mixerMediaPointer
+			);
 			#endif
 
 			if (FAILED(err)) {

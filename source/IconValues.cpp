@@ -4,7 +4,7 @@ void IconValues::destroy() {
 	// may be NULL in the event of a move
 	if (mmValueInterfacePointer) {
 		for (
-			ICON_VALUE_MAP::iterator iconValueMapIterator = iconValueMap.begin();
+			auto iconValueMapIterator = iconValueMap.begin();
 			iconValueMapIterator != iconValueMap.end();
 			iconValueMapIterator++
 		) {
@@ -19,20 +19,24 @@ void IconValues::destroy() {
 void IconValues::duplicate(const IconValues &iconValues) {
 	destroy();
 
-	setInterface((PPMoaVoid)&mmValueInterfacePointer, iconValues.mmValueInterfacePointer);
-	setInterface((PPMoaVoid)&mmImageInterfacePointer, iconValues.mmImageInterfacePointer);
+	setInterface((PPMoaVoid)&mmValueInterfacePointer,
+		iconValues.mmValueInterfacePointer);
+
+	setInterface((PPMoaVoid)&mmImageInterfacePointer,
+		iconValues.mmImageInterfacePointer);
 
 	MoaError err = kMoaErr_NoErr;
 
 	iconValueMap = iconValues.iconValueMap;
 
 	for (
-		ICON_VALUE_MAP::iterator iconValueMapIterator = iconValueMap.begin();
+		auto iconValueMapIterator = iconValueMap.begin();
 		iconValueMapIterator != iconValueMap.end();
 		iconValueMapIterator++
 	) {
 		// handler not defined error is fine, may be void
-		err = mmImageInterfacePointer->Duplicate(&iconValueMapIterator->second, &iconValueMapIterator->second);
+		err = mmImageInterfacePointer->Duplicate(
+			&iconValueMapIterator->second, &iconValueMapIterator->second);
 
 		if (err != kMoaErr_NoErr && err != kMoaDrErr_HandlerNotDefined) {
 			throw std::runtime_error("failed to duplicate image");
@@ -44,11 +48,16 @@ void IconValues::move(IconValues &iconValues) {
 	iconValueMap = iconValues.iconValueMap;
 	iconValues.iconValueMap = {};
 
-	moveInterface((PPMoaVoid)&mmValueInterfacePointer, (PPMoaVoid)&iconValues.mmValueInterfacePointer);
-	moveInterface((PPMoaVoid)&mmImageInterfacePointer, (PPMoaVoid)&iconValues.mmImageInterfacePointer);
+	moveInterface((PPMoaVoid)&mmValueInterfacePointer,
+		(PPMoaVoid)&iconValues.mmValueInterfacePointer);
+
+	moveInterface((PPMoaVoid)&mmImageInterfacePointer,
+		(PPMoaVoid)&iconValues.mmImageInterfacePointer);
 }
 
-IconValues::IconValues(PIMoaMmValue mmValueInterfacePointer, PIMoaMmImage mmImageInterfacePointer)
+IconValues::IconValues(
+	PIMoaMmValue mmValueInterfacePointer, PIMoaMmImage mmImageInterfacePointer
+)
 	: mmValueInterfacePointer(mmValueInterfacePointer),
 	mmImageInterfacePointer(mmImageInterfacePointer) {
 	if (!mmValueInterfacePointer) {
@@ -95,7 +104,7 @@ IconValues &IconValues::operator=(IconValues &&iconValues) noexcept {
 }
 
 MoaError IconValues::setValue(RESOURCE_ID resourceID, const MoaMmValue &value) {
-	ICON_VALUE_MAP::iterator foundIconValue = iconValueMap.find(resourceID);
+	auto foundIconValue = iconValueMap.find(resourceID);
 
 	if (foundIconValue == iconValueMap.end()) {
 		return kMoaErr_BadParam;

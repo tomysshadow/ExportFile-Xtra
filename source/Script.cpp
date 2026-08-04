@@ -987,6 +987,7 @@ STDMETHODIMP TStdXtra_IMoaMmXScript::Call(PMoaDrCallInfo callPtr) {
 		case m_callGetExportFile:
 		pObj->argsBase = ARGS_BASE_ALTERNATE_SYNTAX_CALL;
 		err = CallGet(callPtr);
+		break;
 	}
 
 	// for Mac: these macros seem to live in CFPlugInCOM.h I think?
@@ -2618,6 +2619,7 @@ MoaError TStdXtra_IMoaMmXScript::HandleCreateFileError(
 					);
 
 				defaultError = true;
+				break;
 			}
 
 			// didn't fix it, no point trying the same thing again
@@ -3218,7 +3220,7 @@ MoaError TStdXtra_IMoaMmXScript::GetArgLong(
 	ThrowNull(callPtr);
 	ThrowNull(argOptionalPointer);
 
-	std::optional<MoaLong> &argOptional = *argOptionalPointer;
+	auto &argOptional = *argOptionalPointer;
 
 	//if (!argOptional.has_value()) {
 	{

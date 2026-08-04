@@ -8,14 +8,17 @@ namespace Label {
 		SYMBOL_VARIANT symbolVariant = 0;
 
 		for (
-			Label::Info::MAP::iterator labelInfoMapIterator = labelInfoMap.begin();
+			auto labelInfoMapIterator = labelInfoMap.begin();
 			labelInfoMapIterator != labelInfoMap.end();
 			labelInfoMapIterator++
 		) {
-			RETURN_ERR(getSymbol(labelInfoMapIterator->second.labelFormat, mmValueInterfacePointer));
+			RETURN_ERR(getSymbol(
+				labelInfoMapIterator->second.labelFormat, mmValueInterfacePointer));
 
 			symbolVariant = labelInfoMapIterator->first;
-			RETURN_ERR(getSymbol(symbolVariant, mmValueInterfacePointer));
+
+			RETURN_ERR(getSymbol(
+				symbolVariant, mmValueInterfacePointer));
 
 			symbolsLabelInfoMap[symbolVariant] = labelInfoMapIterator->second;
 		}

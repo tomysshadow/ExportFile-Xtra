@@ -53,7 +53,9 @@ ExportFileValueConverter::ExportFileValueConverter(
 	}
 }
 
-MoaError ExportFileValueConverter::toAsset(PIMoaDrCastMem drCastMemInterfacePointer, PIMoaMmXAsset &mmXAssetInterfacePointer) {
+MoaError ExportFileValueConverter::toAsset(
+	PIMoaDrCastMem drCastMemInterfacePointer, PIMoaMmXAsset &mmXAssetInterfacePointer
+) {
 	mmXAssetInterfacePointer = NULL;
 
 	RETURN_NULL(drCastMemInterfacePointer);
@@ -67,7 +69,9 @@ MoaError ExportFileValueConverter::toAsset(PIMoaDrCastMem drCastMemInterfacePoin
 	// this is already AddRef'd for us
 	// do not error if it's NULL (just means this member doesn't have an interface)
 	RETURN_ERR(drCastMemInterfacePointer->GetProp(symbols.Interface, &interfaceValue));
-	return mmValueInterfacePointer->ValueToInteger(&interfaceValue, (PMoaLong)&mmXAssetInterfacePointer);
+
+	return mmValueInterfacePointer->ValueToInteger(
+		&interfaceValue, (PMoaLong)&mmXAssetInterfacePointer);
 }
 
 MoaError ExportFileValueConverter::toValue(Args &args, MoaMmValue &value) {
@@ -137,7 +141,9 @@ MoaError ExportFileValueConverter::toValue(Args &args, MoaMmValue &value) {
 		releaseValue(agentValue, mmValueInterfacePointer);
 	};
 
-	RETURN_ERR(mmValueInterfacePointer->StringToValue(args.agentStringOptional.value().c_str(), &agentValue));
+	RETURN_ERR(mmValueInterfacePointer->StringToValue(
+		args.agentStringOptional.value().c_str(), &agentValue));
+
 	RETURN_ERR(appendToPropList(symbols.Agent, agentValue, value));
 
 	if (!args.optionsOptional.has_value()) {
@@ -157,7 +163,9 @@ MoaError ExportFileValueConverter::toValue(Args &args, MoaMmValue &value) {
 	return kMoaErr_NoErr;
 }
 
-MoaError ExportFileValueConverter::toValue(Path::Info &pathInfo, MoaMmValue &value, std::string &path) {
+MoaError ExportFileValueConverter::toValue(
+	Path::Info &pathInfo, MoaMmValue &value, std::string &path
+) {
 	value = kVoidMoaMmValueInitializer;
 
 	MAKE_SCOPE_EXIT(releaseValueScopeExit) {
@@ -171,7 +179,13 @@ MoaError ExportFileValueConverter::toValue(Path::Info &pathInfo, MoaMmValue &val
 	std::optional<std::string> extensionOptional = std::nullopt;
 	std::optional<std::string> filenameOptional = std::nullopt;
 
-	if (!pathInfo.getElementOptionals(dirnameOptional, basenameOptional, extensionOptional, filenameOptional, path)) {
+	if (!pathInfo.getElementOptionals(
+		dirnameOptional,
+		basenameOptional,
+		extensionOptional,
+		filenameOptional,
+		path
+	)) {
 		return kMoaErr_BadParam;
 	}
 
@@ -179,31 +193,37 @@ MoaError ExportFileValueConverter::toValue(Path::Info &pathInfo, MoaMmValue &val
 		return kMoaErr_InternalError;
 	}
 
-	RETURN_ERR(appendToPropList(symbols.Dirname, dirnameOptional.value().c_str(), value));
+	RETURN_ERR(appendToPropList(symbols.Dirname,
+		dirnameOptional.value().c_str(), value));
 
 	if (!basenameOptional.has_value()) {
 		return kMoaErr_InternalError;
 	}
 
-	RETURN_ERR(appendToPropList(symbols.Basename, basenameOptional.value().c_str(), value));
+	RETURN_ERR(appendToPropList(symbols.Basename,
+		basenameOptional.value().c_str(), value));
 
 	if (!extensionOptional.has_value()) {
 		return kMoaErr_InternalError;
 	}
 
-	RETURN_ERR(appendToPropList(symbols.Extension, extensionOptional.value().c_str(), value));
+	RETURN_ERR(appendToPropList(symbols.Extension,
+		extensionOptional.value().c_str(), value));
 
 	if (!filenameOptional.has_value()) {
 		return kMoaErr_InternalError;
 	}
 
-	RETURN_ERR(appendToPropList(symbols.Filename, filenameOptional.value().c_str(), value));
+	RETURN_ERR(appendToPropList(symbols.Filename,
+		filenameOptional.value().c_str(), value));
 
 	releaseValueScopeExit.dismiss();
 	return kMoaErr_NoErr;
 }
 
-MoaError ExportFileValueConverter::toValue(Path::Info &pathInfo, MoaMmValue &value) {
+MoaError ExportFileValueConverter::toValue(
+	Path::Info &pathInfo, MoaMmValue &value
+) {
 	value = kVoidMoaMmValueInitializer;
 
 	MAKE_SCOPE_EXIT(releaseValueScopeExit) {
@@ -218,7 +238,9 @@ MoaError ExportFileValueConverter::toValue(Path::Info &pathInfo, MoaMmValue &val
 	return kMoaErr_NoErr;
 }
 
-MoaError ExportFileValueConverter::toValue(const Label::MAPPED_VECTOR &labelMappedVector, MoaMmValue &value) {
+MoaError ExportFileValueConverter::toValue(
+	const Label::MAPPED_VECTOR &labelMappedVector, MoaMmValue &value
+) {
 	value = kVoidMoaMmValueInitializer;
 
 	MAKE_SCOPE_EXIT(releaseValueScopeExit) {
@@ -228,7 +250,7 @@ MoaError ExportFileValueConverter::toValue(const Label::MAPPED_VECTOR &labelMapp
 	RETURN_ERR(mmListInterfacePointer->NewListValue(&value));
 
 	for (
-		Label::MAPPED_VECTOR::CONST_ITERATOR labelMappedVectorIterator = labelMappedVector.cbegin();
+		auto labelMappedVectorIterator = labelMappedVector.cbegin();
 		labelMappedVectorIterator != labelMappedVector.cend();
 		labelMappedVectorIterator++
 	) {
@@ -249,7 +271,7 @@ MoaError ExportFileValueConverter::toValue(const Agent::Info::MAP &agentInfoMap,
 	RETURN_ERR(mmListInterfacePointer->NewPropListValue(&value));
 
 	for (
-		Agent::Info::MAP::const_iterator agentInfoMapIterator = agentInfoMap.begin();
+		auto agentInfoMapIterator = agentInfoMap.begin();
 		agentInfoMapIterator != agentInfoMap.end();
 		agentInfoMapIterator++
 	) {
@@ -440,7 +462,7 @@ MoaError ExportFileValueConverter::appendToPropList(ConstPMoaChar propertyString
 	RETURN_ERR(mmListInterfacePointer->NewListValue(&pathExtensionsValue));
 
 	for (
-		Path::EXTENSION_MAPPED_VECTOR::CONST_ITERATOR pathExtensionsIterator = agentInfo.pathExtensions.cbegin();
+		auto pathExtensionsIterator = agentInfo.pathExtensions.cbegin();
 		pathExtensionsIterator != agentInfo.pathExtensions.cend();
 		pathExtensionsIterator++
 	) {
@@ -469,7 +491,7 @@ MoaError ExportFileValueConverter::appendToPropList(ConstPMoaChar propertyString
 	MoaMmValue writerClassIDValue = kVoidMoaMmValueInitializer;
 
 	for (
-		Agent::Info::WRITER_VECTOR::const_iterator writerVectorIterator = agentInfo.writerVector.begin();
+		auto writerVectorIterator = agentInfo.writerVector.begin();
 		writerVectorIterator != agentInfo.writerVector.end();
 		writerVectorIterator++
 	) {
@@ -478,9 +500,17 @@ MoaError ExportFileValueConverter::appendToPropList(ConstPMoaChar propertyString
 		};
 
 		RETURN_ERR(toValue(writerVectorIterator->classID, writerClassIDValue));
-		RETURN_ERR(mmListInterfacePointer->AppendValueToList(&writerClassIDsValue, &writerClassIDValue));
+
+		RETURN_ERR(mmListInterfacePointer->AppendValueToList(
+			&writerClassIDsValue, &writerClassIDValue));
 	}
 
-	RETURN_ERR(appendToPropList(symbols.WriterClassIDs, writerClassIDsValue, agentInfoPropListValue));
-	return mmListInterfacePointer->AppendValueToPropList(&propListValue, &propertyValue, &agentInfoPropListValue);
+	RETURN_ERR(appendToPropList(
+		symbols.WriterClassIDs,
+		writerClassIDsValue,
+		agentInfoPropListValue
+	));
+
+	return mmListInterfacePointer->AppendValueToPropList(
+		&propListValue, &propertyValue, &agentInfoPropListValue);
 }
