@@ -19,7 +19,12 @@ class Stream : NonCopyable {
 	};
 
 	Stream(PIMoaCallback callbackInterfacePointer);
-	Stream(ConstPMoaChar pathStringPointer, bool replace, PIMoaCallback callbackInterfacePointer);
+
+	Stream(
+		ConstPMoaChar pathStringPointer, bool replace,
+		PIMoaCallback callbackInterfacePointer
+	);
+
 	~Stream();
 	MoaError open();
 	MoaError close();
@@ -27,8 +32,13 @@ class Stream : NonCopyable {
 	MoaError copy(PIMoaStream writeStreamInterfacePointer, MoaUlong size = (MoaUlong)-1);
 	MoaError readSafe(PMoaVoid buffer, MoaStreamCount numberOfBytesToRead);
 	MoaError writeSafe(PMoaVoid buffer, MoaStreamCount numberOfBytesToWrite);
-	MoaError readPartial(PMoaVoid buffer, MoaStreamCount numberOfBytesToRead, MoaStreamCount &numberOfBytesRead);
-	MoaError writePartial(PMoaVoid buffer, MoaStreamCount numberOfBytesToWrite, MoaStreamCount &numberOfBytesWritten);
+
+	MoaError readPartial(PMoaVoid buffer,
+		MoaStreamCount numberOfBytesToRead, MoaStreamCount &numberOfBytesRead);
+
+	MoaError writePartial(PMoaVoid buffer,
+		MoaStreamCount numberOfBytesToWrite, MoaStreamCount &numberOfBytesWritten);
+
 	MoaError getPosition(MoaStreamPosition &position);
 	MoaError setPosition(MoaStreamPosition position);
 	MoaError resetPosition();

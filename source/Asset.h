@@ -51,11 +51,17 @@ namespace Asset {
 				{"Palette", {"", {}, {{"", 9}}}},
 				{"Picture", {"", {}, {{"", 1}}}},
 				{"Sound", {"", {}, {{"", 4}}}},
-				{"Button", {"ButtonType", {}, {{"PushButton", 13}, {"CheckBox", 15}, {"RadioButton", 14}}}},
+
+				{"Button", {"ButtonType", {}, {
+					{"PushButton", 13}, {"CheckBox", 15}, {"RadioButton", 14}}}},
+
 				{"Shape", {"", {}, {{"", 2}}}},
 				{"Movie", {"", {}, {{"", 8}}}},
 				{"DigitalVideo", {"", {}, {{"", 6}}}},
-				{"Script", {"ScriptType", {}, {{"", 18}, {"Movie", 11}, {"Score", 19}, {"Parent", 10}}}},
+
+				{"Script", {"ScriptType", {}, {
+					{"", 18}, {"Movie", 11}, {"Score", 19}, {"Parent", 10}}}},
+
 				{"Text", {"", {}, {{"", 3}}}},
 				{"RichText", {"", {}, {{"", 3}}}},
 				{"OLE", {"", {}, {{"", 17}}}},

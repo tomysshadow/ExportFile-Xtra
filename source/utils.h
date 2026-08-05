@@ -134,28 +134,40 @@ inline std::shared_ptr<T[]> makeSharedArray(size_t size) {
 
 #define DIRECTOR_UTF8(productVersionMajor) ((productVersionMajor) >= 11)
 
-#define FILESYSTEM_DIRECTOR_PATH(element, productVersionMajor) (DIRECTOR_UTF8(productVersionMajor) \
+#define FILESYSTEM_DIRECTOR_PATH(element, productVersionMajor) \
+	(DIRECTOR_UTF8(productVersionMajor) \
 	? std::filesystem::u8path(element) \
 	: std::filesystem::path(element))
 
-#define FILESYSTEM_DIRECTOR_STRING(path, productVersionMajor) (DIRECTOR_UTF8(productVersionMajor) \
+#define FILESYSTEM_DIRECTOR_STRING(path, productVersionMajor) \
+	(DIRECTOR_UTF8(productVersionMajor) \
 	? (path).u8string() \
 	: (path).string())
 
 #ifdef MACINTOSH
-#define kCFStringEncodingDirector(productVersionMajor) (DIRECTOR_UTF8(productVersionMajor) ? kCFStringEncodingUTF8 : kCFStringEncodingASCII)
+#define kCFStringEncodingDirector(productVersionMajor) \
+	(DIRECTOR_UTF8(productVersionMajor) \
+	? kCFStringEncodingUTF8 \
+	: kCFStringEncodingASCII)
 #endif
 #ifdef WINDOWS
-#define CP_DIRECTOR(productVersionMajor) (DIRECTOR_UTF8(productVersionMajor) ? CP_UTF8 : ATL::_AtlGetConversionACP())
+#define CP_DIRECTOR(productVersionMajor) \
+	(DIRECTOR_UTF8(productVersionMajor) \
+	? CP_UTF8 \
+	: ATL::_AtlGetConversionACP())
 #endif
 
-#define RETURN_NULL(pointer) do { if (!(pointer)) { return kMoaErr_OutOfMem; } } while (0)
+#define RETURN_NULL(pointer) \
+	do { if (!(pointer)) { return kMoaErr_OutOfMem; } } while (0)
 
-#define RETURN_NULL_BOOL(pointer) do { if (!(pointer)) { return false; } } while (0)
+#define RETURN_NULL_BOOL(pointer) \
+	do { if (!(pointer)) { return false; } } while (0)
 
-#define RETURN_ERR(err) do { MoaError _err = (err); if (_err != kMoaErr_NoErr) { return _err; } } while (0)
+#define RETURN_ERR(err) \
+	do { MoaError _err = (err); if (_err != kMoaErr_NoErr) { return _err; } } while (0)
 
-#define RETURN_ERR_BOOL(err) do { if ((err) != kMoaErr_NoErr) { return false; } } while (0)
+#define RETURN_ERR_BOOL(err) \
+	do { if ((err) != kMoaErr_NoErr) { return false; } } while (0)
 
 inline MoaError errOrDefaultErr(MoaError err, MoaError defaultErr) {
 	RETURN_ERR(err);
@@ -277,7 +289,8 @@ inline PIMoaUnknown getInterface(PIMoaUnknown interfacePointer) {
 	return interfacePointer;
 }
 
-inline void setInterface(PPMoaVoid interfacePointerPointer, PIMoaUnknown valueInterfacePointer) {
+inline void setInterface(PPMoaVoid interfacePointerPointer,
+	PIMoaUnknown valueInterfacePointer) {
 	if (!interfacePointerPointer) {
 		throw std::invalid_argument("interfacePointerPointer must not be NULL");
 	}
@@ -296,7 +309,8 @@ inline void setInterface(PPMoaVoid interfacePointerPointer, PIMoaUnknown valueIn
 	}
 }
 
-inline void moveInterface(PPMoaVoid interfacePointerPointer, PPMoaVoid valueInterfacePointerPointer) {
+inline void moveInterface(PPMoaVoid interfacePointerPointer,
+	PPMoaVoid valueInterfacePointerPointer) {
 	if (!interfacePointerPointer) {
 		throw std::invalid_argument("interfacePointerPointer must not be NULL");
 	}
@@ -310,7 +324,8 @@ inline void moveInterface(PPMoaVoid interfacePointerPointer, PPMoaVoid valueInte
 	valueInterfacePointer = NULL;
 }
 
-inline MoaError openStream(MoaLong accessMode, bool setPosition, PIMoaStream streamInterfacePointer) {
+inline MoaError openStream(MoaLong accessMode, bool setPosition,
+	PIMoaStream streamInterfacePointer) {
 	RETURN_NULL(streamInterfacePointer);
 
 	if (setPosition) {
@@ -346,7 +361,8 @@ inline MoaError closeStream(PIMoaStream &streamInterfacePointer) {
 	return kMoaErr_NoErr;
 }
 
-inline MoaError cloneFile(PIMoaFile &fileInterfacePointer, PIMoaFile valueFileInterfacePointer) {
+inline MoaError cloneFile(PIMoaFile &fileInterfacePointer,
+	PIMoaFile valueFileInterfacePointer) {
 	MoaError err = kMoaErr_NoErr;
 
 	if (valueFileInterfacePointer) {
@@ -380,7 +396,8 @@ inline MoaError deleteFile(PIMoaFile &fileInterfacePointer) {
 	return kMoaErr_NoErr;
 }
 
-inline MoaError clonePathName(PIMoaPathName &pathNameInterfacePointer, PIMoaPathName valuePathNameInterfacePointer) {
+inline MoaError clonePathName(PIMoaPathName &pathNameInterfacePointer,
+	PIMoaPathName valuePathNameInterfacePointer) {
 	MoaError err = kMoaErr_NoErr;
 
 	if (valuePathNameInterfacePointer) {
@@ -395,7 +412,11 @@ inline MoaError clonePathName(PIMoaPathName &pathNameInterfacePointer, PIMoaPath
 	return err;
 }
 
-inline void endUsingResources(MoaFileRef fileRef, XtraResourceCookie &saveCookie, PIMoaCallback callbackInterfacePointer) {
+inline void endUsingResources(
+	MoaFileRef fileRef,
+	XtraResourceCookie &saveCookie,
+	PIMoaCallback callbackInterfacePointer
+) {
 	if (!callbackInterfacePointer) {
 		throw std::invalid_argument("callbackInterfacePointer must not be NULL");
 	}
@@ -421,7 +442,8 @@ inline void freeMemory(PMoaVoid &pv, PIMoaCalloc callocInterfacePointer) {
 	pv = NULL;
 }
 
-inline MoaError duplicateMemory(PMoaVoid &data, MoaUlong size, PIMoaCalloc callocInterfacePointer) {
+inline MoaError duplicateMemory(PMoaVoid &data, MoaUlong size,
+	PIMoaCalloc callocInterfacePointer) {
 	RETURN_NULL(data);
 
 	if (!callocInterfacePointer) {
@@ -454,7 +476,8 @@ inline void releaseValue(MoaMmValue &value, PIMoaMmValue mmValueInterfacePointer
 	value = kVoidMoaMmValueInitializer;
 }
 
-inline void getValue(MoaMmValue &get, const MoaMmValue &value, PIMoaMmValue mmValueInterfacePointer) {
+inline void getValue(MoaMmValue &get, const MoaMmValue &value,
+	PIMoaMmValue mmValueInterfacePointer) {
 	if (!mmValueInterfacePointer) {
 		throw std::invalid_argument("mmValueInterfacePointer must not be NULL");
 	}
@@ -463,7 +486,8 @@ inline void getValue(MoaMmValue &get, const MoaMmValue &value, PIMoaMmValue mmVa
 	mmValueInterfacePointer->ValueAddRef(&get);
 }
 
-inline void setValue(MoaMmValue &set, const MoaMmValue &value, PIMoaMmValue mmValueInterfacePointer) {
+inline void setValue(MoaMmValue &set, const MoaMmValue &value,
+	PIMoaMmValue mmValueInterfacePointer) {
 	if (!mmValueInterfacePointer) {
 		throw std::invalid_argument("mmValueInterfacePointer must not be NULL");
 	}
@@ -479,7 +503,8 @@ inline void moveValue(MoaMmValue &move, MoaMmValue &value) {
 	value = kVoidMoaMmValueInitializer;
 }
 
-inline MoaError releaseMedia(MoaDrMediaInfo &mediaInfo, PIMoaDrUtils drUtilsInterfacePointer) {
+inline MoaError releaseMedia(MoaDrMediaInfo &mediaInfo,
+	PIMoaDrUtils drUtilsInterfacePointer) {
 	if (!drUtilsInterfacePointer) {
 		throw std::invalid_argument("drUtilsInterfacePointer must not be NULL");
 	}
@@ -610,10 +635,17 @@ inline bool unmapMappedView(LPVOID &mappedView) {
 }
 #endif
 
-MoaError getSymbol(SYMBOL_VARIANT &symbolVariant, PIMoaMmValue mmValueInterfacePointer);
-MoaError getSymbol(const SYMBOL_VARIANT &symbolVariant, MoaMmSymbol &symbol, PIMoaMmValue mmValueInterfacePointer);
-MoaError readStreamSafe(PMoaVoid buffer, MoaStreamCount numberOfBytesToRead, PIMoaStream readStreamInterfacePointer);
-MoaError writeStreamSafe(PMoaVoid buffer, MoaStreamCount numberOfBytesToWrite, PIMoaStream writeStreamInterfacePointer);
+MoaError getSymbol(SYMBOL_VARIANT &symbolVariant,
+	PIMoaMmValue mmValueInterfacePointer);
+
+MoaError getSymbol(const SYMBOL_VARIANT &symbolVariant,
+	MoaMmSymbol &symbol, PIMoaMmValue mmValueInterfacePointer);
+
+MoaError readStreamSafe(PMoaVoid buffer,
+	MoaStreamCount numberOfBytesToRead, PIMoaStream readStreamInterfacePointer);
+
+MoaError writeStreamSafe(PMoaVoid buffer,
+	MoaStreamCount numberOfBytesToWrite, PIMoaStream writeStreamInterfacePointer);
 
 MoaError readStreamPartial(
 	PMoaVoid buffer, MoaStreamCount numberOfBytesToRead,

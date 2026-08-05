@@ -20,7 +20,10 @@ namespace Mixer {
 		static ATOM registeredClass;
 
 		static LRESULT onMixerSaved(WORD wParam, DWORD lParam);
-		static LRESULT CALLBACK proc(HWND windowHandle, UINT message, WPARAM wParam, LPARAM lParam);
+
+		static LRESULT CALLBACK proc(
+			HWND windowHandle, UINT message, WPARAM wParam, LPARAM lParam
+		);
 
 		public:
 		static constexpr UINT WM_MIXER_SAVED = WM_USER;

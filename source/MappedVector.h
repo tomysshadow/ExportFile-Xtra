@@ -55,7 +55,7 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 
 	public:
 	SIZE_TYPE findIndex(const ValueType &value) const {
-		typename MAP::const_iterator mapIterator = _map.find(value);
+		auto mapIterator = _map.find(value);
 
 		if (mapIterator == _map.cend()) {
 			return NPOS;
@@ -195,7 +195,11 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 			throw std::invalid_argument("endIterator must not be less than beginIterator");
 		}
 
-		for (CONST_ITERATOR vectorIterator = beginIterator; vectorIterator != endIterator; vectorIterator++) {
+		for (
+			auto vectorIterator = beginIterator;
+			vectorIterator != endIterator;
+			vectorIterator++
+		) {
 			_map.erase(*vectorIterator);
 		}
 
@@ -204,7 +208,11 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 
 		// may be zero if begin and end are the same (which is valid)
 		if (index) {
-			for (CONST_ITERATOR vectorIterator = iterator; vectorIterator != _vector.cend(); vectorIterator++) {
+			for (
+				auto vectorIterator = iterator;
+				vectorIterator != _vector.cend();
+				vectorIterator++
+			) {
 				_map[*vectorIterator] -= index;
 			}
 		}
@@ -253,7 +261,7 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 	// so this doesn't use the other overloads
 	// once again this returns true if the value was erased, false otherwise
 	bool erase(const ValueType &value) {
-		typename MAP::const_iterator mapIterator = _map.find(value);
+		auto mapIterator = _map.find(value);
 
 		if (mapIterator == _map.cend()) {
 			return false;
@@ -371,14 +379,16 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 // these are intentionally outside the class to allow for type conversions when adding/subtracting
 template <typename ValueType>
 inline MappedVector<ValueType> operator+(
-	const MappedVector<ValueType> &addMappedVector, const MappedVector<ValueType> &addMappedVector2
+	const MappedVector<ValueType> &addMappedVector,
+	const MappedVector<ValueType> &addMappedVector2
 ) {
 	return MappedVector<ValueType>(addMappedVector).concat(addMappedVector2);
 }
 
 template <typename ValueType>
 inline MappedVector<ValueType> operator-(
-	const MappedVector<ValueType> &subtractMappedVector, const MappedVector<ValueType> &subtractMappedVector2
+	const MappedVector<ValueType> &subtractMappedVector,
+	const MappedVector<ValueType> &subtractMappedVector2
 ) {
 	return MappedVector<ValueType>(subtractMappedVector).difference(subtractMappedVector2);
 }

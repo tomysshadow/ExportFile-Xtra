@@ -14,7 +14,9 @@
 #include "mixsvc.h"
 #include "mixpix.h"
 
-#define ERR_CANNOT_READ (receptorPixelsInterfacePointer ? kMoaErr_BadParam : kMoaStatus_False)
+#define ERR_CANNOT_READ (receptorPixelsInterfacePointer\
+	? kMoaErr_BadParam : kMoaStatus_False)
+
 //#define READ_RPCS_INDEXED_RGB
 //#define READ_RPCS_RGB16
 
@@ -48,8 +50,14 @@ namespace Media {
 			PIMoaRegistryEntryDict getReaderRegistryEntryDictInterfacePointer() const;
 			PIMoaDataObject getDataObjectInterfacePointer() const;
 			void setReaderInterfacePointer(PIMoaReader readerInterfacePointer);
-			void setReaderRegistryEntryDictInterfacePointer(PIMoaRegistryEntryDict readerRegistryEntryDictInterfacePointer);
-			void setDataObjectInterfacePointer(PIMoaDataObject dataObjectInterfacePointer);
+
+			void setReaderRegistryEntryDictInterfacePointer(
+				PIMoaRegistryEntryDict readerRegistryEntryDictInterfacePointer
+			);
+
+			void setDataObjectInterfacePointer(
+				PIMoaDataObject dataObjectInterfacePointer
+			);
 
 			Formats::Format::POINTER formatPointer = 0;
 			std::unique_ptr<Stream> streamPointer = 0;
@@ -91,8 +99,14 @@ namespace Media {
 		PIMoaRegistryEntryDict getRegistryEntryDictInterfacePointer() const;
 		PIMoaMmValue getMmValueInterfacePointer() const;
 		MoaMmSymbol getIsSavingSymbol() const;
-		void setDrCastMemInterfacePointer(PIMoaDrCastMem drCastMemInterfacePointer);
-		void setRegistryEntryDictInterfacePointer(PIMoaRegistryEntryDict registryEntryDictInterfacePointer);
+
+		void setDrCastMemInterfacePointer(
+			PIMoaDrCastMem drCastMemInterfacePointer
+		);
+
+		void setRegistryEntryDictInterfacePointer(
+			PIMoaRegistryEntryDict registryEntryDictInterfacePointer
+		);
 
 		ExportFileValueConverter exportFileValueConverter;
 
@@ -117,12 +131,23 @@ namespace Media {
 			MoaError getSymbols();
 			MoaError getDefaultValues();
 			public:
-			Lingo(PIMoaDrMovie drMovieInterfacePointer, PIMoaMmValue mmValueInterfacePointer);
-			Lingo(PIMoaDrPlayer drPlayerInterfacePointer, PIMoaMmValue mmValueInterfacePointer);
+			Lingo(
+				PIMoaDrMovie drMovieInterfacePointer, PIMoaMmValue mmValueInterfacePointer
+			);
+
+			Lingo(
+				PIMoaDrPlayer drPlayerInterfacePointer, PIMoaMmValue mmValueInterfacePointer
+			);
+
 			~Lingo();
 			Lingo(const Lingo &lingo);
 			Lingo &operator=(const Lingo &lingo);
-			void callHandler(MoaMmValue &memberValue, MoaError mixerSavedCallHandlerThreadErr);
+
+			void callHandler(
+				MoaMmValue &memberValue,
+				MoaError mixerSavedCallHandlerThreadErr
+			);
+
 			PIMoaDrMovie getDrMovieInterfacePointer() const;
 		};
 
@@ -159,28 +184,63 @@ namespace Media {
 
 		DWORD sourceBitmapInfoColorsSize = 0;
 
-		MoaError allocateSourceBitmap(PIMoaReceptorPixels receptorPixelsInterfacePointer, PIMoaStream readStreamInterfacePointer);
+		MoaError allocateSourceBitmap(
+			PIMoaReceptorPixels receptorPixelsInterfacePointer,
+			PIMoaStream readStreamInterfacePointer
+		);
 
 		static bool rgbX(RGBTRIPLE* rgbTriplePointer, DWORD stride, DWORD imageSize);
 		static bool rgbaX(RGBQUAD* rgbQuadPointer, DWORD stride, DWORD imageSize);
 		static DWORD getStride(LONG absWidth, WORD bitCount);
-		static bool getImageSize(MoaLong colorSpace, LONG absWidth, LONG absHeight, MoaLong &rowBytes, DWORD &imageSize);
-		static bool getSamplesPerPixel(MoaLong colorSpace, MoaShort &samplesPerPixel);
+
+		static bool getImageSize(
+			MoaLong colorSpace,
+			LONG absWidth, LONG absHeight,
+			MoaLong &rowBytes, DWORD &imageSize
+		);
+
+		static bool getSamplesPerPixel(
+			MoaLong colorSpace,
+			MoaShort &samplesPerPixel
+		);
+
 		static int getCoordinate(int dimension);
-		static bool getColorTableIndexedRGB(BITMAPINFO &bitmapInfo, MoaPixelFormat &pixelFormat);
-		static bool getBitmapInfoColorsUsedRGB(const BITMAPINFOHEADER &bitmapInfoHeader, bool allocation, DWORD &colorsUsed);
+
+		static bool getColorTableIndexedRGB(
+			BITMAPINFO &bitmapInfo, MoaPixelFormat &pixelFormat
+		);
+
+		static bool getBitmapInfoColorsUsedRGB(
+			const BITMAPINFOHEADER &bitmapInfoHeader, bool allocation, DWORD &colorsUsed
+		);
 
 		public:
 		static constexpr WORD TYPE = 0x4D42;
 
-		static bool validateBitmapFileHeader(const BITMAPFILEHEADER &bitmapFileHeader, DWORD end);
-		static bool validateBitmapInfoHeader(const BITMAPINFOHEADER &bitmapInfoHeader);
-		static bool getBitmapInfoColorsSize(const BITMAPINFOHEADER &bitmapInfoHeader, bool allocation, DWORD &colorsSize);
+		static bool validateBitmapFileHeader(
+			const BITMAPFILEHEADER &bitmapFileHeader, DWORD end
+		);
+
+		static bool validateBitmapInfoHeader(
+			const BITMAPINFOHEADER &bitmapInfoHeader
+		);
+
+		static bool getBitmapInfoColorsSize(
+			const BITMAPINFOHEADER &bitmapInfoHeader,
+			bool allocation,
+			DWORD &colorsSize
+		);
 
 		WinBMPMedia() = default;
 		~WinBMPMedia();
-		MoaError getPixelFormat(PIMoaReceptorPixels receptorPixelsInterfacePointer);
-		MoaError getMappedView(PIMoaReceptorPixels receptorPixelsInterfacePointer, PIMoaStream readStreamInterfacePointer);
+		MoaError getPixelFormat(
+			PIMoaReceptorPixels receptorPixelsInterfacePointer
+		);
+
+		MoaError getMappedView(
+			PIMoaReceptorPixels receptorPixelsInterfacePointer,
+			PIMoaStream readStreamInterfacePointer
+		);
 
 		LPVOID mappedView = NULL;
 

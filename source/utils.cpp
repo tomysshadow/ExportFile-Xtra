@@ -1,6 +1,7 @@
 #include "utils.h"
 
-MoaError getSymbol(SYMBOL_VARIANT &symbolVariant, PIMoaMmValue mmValueInterfacePointer) {
+MoaError getSymbol(SYMBOL_VARIANT &symbolVariant,
+	PIMoaMmValue mmValueInterfacePointer) {
 	RETURN_NULL(mmValueInterfacePointer);
 
 	if (auto str = std::get_if<std::string>(&symbolVariant)) {
@@ -10,7 +11,10 @@ MoaError getSymbol(SYMBOL_VARIANT &symbolVariant, PIMoaMmValue mmValueInterfaceP
 		}
 
 		MoaMmSymbol symbol = 0;
-		RETURN_ERR(mmValueInterfacePointer->StringToSymbol(str->c_str(), &symbol));
+
+		RETURN_ERR(mmValueInterfacePointer->StringToSymbol(
+			str->c_str(), &symbol));
+
 		symbolVariant = symbol;
 		return kMoaErr_NoErr;
 	}
@@ -21,7 +25,8 @@ MoaError getSymbol(SYMBOL_VARIANT &symbolVariant, PIMoaMmValue mmValueInterfaceP
 	return kMoaErr_InternalError;
 }
 
-MoaError getSymbol(const SYMBOL_VARIANT &symbolVariant, MoaMmSymbol &symbol, PIMoaMmValue mmValueInterfacePointer) {
+MoaError getSymbol(const SYMBOL_VARIANT &symbolVariant,
+	MoaMmSymbol &symbol, PIMoaMmValue mmValueInterfacePointer) {
 	RETURN_NULL(mmValueInterfacePointer);
 
 	SYMBOL_VARIANT gotSymbolVariant = symbolVariant;
@@ -35,12 +40,15 @@ MoaError getSymbol(const SYMBOL_VARIANT &symbolVariant, MoaMmSymbol &symbol, PIM
 	return kMoaErr_NoErr;
 }
 
-MoaError readStreamSafe(PMoaVoid buffer, MoaStreamCount numberOfBytesToRead, PIMoaStream readStreamInterfacePointer) {
+MoaError readStreamSafe(PMoaVoid buffer,
+	MoaStreamCount numberOfBytesToRead, PIMoaStream readStreamInterfacePointer) {
 	RETURN_NULL(buffer);
 	RETURN_NULL(readStreamInterfacePointer);
 
 	MoaStreamCount numberOfBytesRead = 0;
-	RETURN_ERR(readStreamInterfacePointer->Read(buffer, numberOfBytesToRead, &numberOfBytesRead));
+
+	RETURN_ERR(readStreamInterfacePointer->Read(buffer,
+		numberOfBytesToRead, &numberOfBytesRead));
 
 	if (numberOfBytesToRead != numberOfBytesRead) {
 		return kMoaStreamErr_ReadPastEnd;
@@ -48,12 +56,15 @@ MoaError readStreamSafe(PMoaVoid buffer, MoaStreamCount numberOfBytesToRead, PIM
 	return kMoaErr_NoErr;
 }
 
-MoaError writeStreamSafe(PMoaVoid buffer, MoaStreamCount numberOfBytesToWrite, PIMoaStream writeStreamInterfacePointer) {
+MoaError writeStreamSafe(PMoaVoid buffer,
+	MoaStreamCount numberOfBytesToWrite, PIMoaStream writeStreamInterfacePointer) {
 	RETURN_NULL(buffer);
 	RETURN_NULL(writeStreamInterfacePointer);
 
 	MoaStreamCount numberOfBytesWritten = 0;
-	RETURN_ERR(writeStreamInterfacePointer->Write(buffer, numberOfBytesToWrite, &numberOfBytesWritten));
+
+	RETURN_ERR(writeStreamInterfacePointer->Write(buffer,
+		numberOfBytesToWrite, &numberOfBytesWritten));
 
 	if (numberOfBytesToWrite != numberOfBytesWritten) {
 		return kMoaStreamErr_WrotePastEnd;
@@ -70,7 +81,8 @@ MoaError readStreamPartial(
 
 	numberOfBytesRead = 0;
 
-	MoaError err = readStreamInterfacePointer->Read(buffer, numberOfBytesToRead, &numberOfBytesRead);
+	MoaError err = readStreamInterfacePointer->Read(buffer,
+		numberOfBytesToRead, &numberOfBytesRead);
 
 	if (err == kMoaStreamErr_ReadPastEnd) {
 		err = kMoaErr_NoErr;
@@ -87,7 +99,8 @@ MoaError writeStreamPartial(
 
 	numberOfBytesWritten = 0;
 
-	MoaError err = writeStreamInterfacePointer->Write(buffer, numberOfBytesToWrite, &numberOfBytesWritten);
+	MoaError err = writeStreamInterfacePointer->Write(buffer,
+		numberOfBytesToWrite, &numberOfBytesWritten);
 
 	if (err == kMoaStreamErr_WrotePastEnd) {
 		err = kMoaErr_NoErr;
@@ -105,6 +118,7 @@ MoaError setFileAttributeHiddenWide(bool hidden, LPCWSTR pathWideStringPointer) 
 	fileAttributes = hidden
 		? fileAttributes | FILE_ATTRIBUTE_HIDDEN
 		: fileAttributes & ~FILE_ATTRIBUTE_HIDDEN;
+
 	return osErr(SetFileAttributesW(pathWideStringPointer, fileAttributes));
 }
 #endif

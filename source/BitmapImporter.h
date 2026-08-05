@@ -38,7 +38,12 @@ class BitmapImporter {
 	MoaError getFormatSymbol(const Label::Labels::Info &labelsInfo);
 	MoaError createMemberInCast(MoaDrCastIndex movieCastIndex);
 	MoaError createMember();
-	MoaError getMemberImageValue(GlobalHandleLock<>::GlobalHandle mediaData, MoaMmValue &memberStageImageValue, bool color = true);
+
+	MoaError getMemberImageValue(
+		GlobalHandleLock<>::GlobalHandle mediaData,
+		MoaMmValue &memberStageImageValue,
+		bool color = true
+	);
 
 	public:
 	BitmapImporter(
@@ -62,8 +67,24 @@ class BitmapImporter {
 	BitmapImporter(BitmapImporter &&bitmapImporter) noexcept;
 	BitmapImporter &operator=(const BitmapImporter &bitmapImporter);
 	BitmapImporter &operator=(BitmapImporter &&bitmapImporter) noexcept;
-	MoaError toImageValue(GlobalHandleLock<>::GlobalHandle mediaData, MoaMmValue &stageImageValue, bool color = true);
-	MoaError insertIntoIconValues(GlobalHandleLock<>::GlobalHandle mediaData, IconValues &iconValues, RESOURCE_ID resourceID);
-	MoaError getMedia(MoaDrMediaInfo &mediaInfo, PIMoaDrCastMem imageDrCastMemInterfacePointer);
-	MoaError getProp(MoaMmValue &memberPropertyValue, PIMoaDrCastMem pictureDrCastMemInterfacePointer);
+
+	MoaError toImageValue(
+		GlobalHandleLock<>::GlobalHandle mediaData,
+		MoaMmValue &stageImageValue,
+		bool color = true
+	);
+
+	MoaError insertIntoIconValues(
+		GlobalHandleLock<>::GlobalHandle mediaData,
+		IconValues &iconValues,
+		RESOURCE_ID resourceID
+	);
+
+	MoaError getMedia(
+		MoaDrMediaInfo &mediaInfo, PIMoaDrCastMem imageDrCastMemInterfacePointer
+	);
+
+	MoaError getProp(
+		MoaMmValue &memberPropertyValue, PIMoaDrCastMem pictureDrCastMemInterfacePointer
+	);
 };

@@ -1260,7 +1260,9 @@ namespace Path {
 		return kMoaErr_NoErr;
 	}
 
-	void Info::setDirnameOptional(const std::optional<std::string> &dirnameOptional) {
+	void Info::setDirnameOptional(
+		const std::optional<std::string> &dirnameOptional
+	) {
 		releaseInterface((PPMoaVoid)&pathNameInterfacePointer);
 
 		path.clear();
@@ -1268,7 +1270,9 @@ namespace Path {
 		this->dirnameOptional = dirnameOptional;
 	}
 
-	void Info::setBasenameOptional(const std::optional<std::string> &basenameOptional) {
+	void Info::setBasenameOptional(
+		const std::optional<std::string> &basenameOptional
+	) {
 		releaseInterface((PPMoaVoid)&pathNameInterfacePointer);
 
 		path.clear();
@@ -1276,7 +1280,9 @@ namespace Path {
 		this->basenameOptional = basenameOptional;
 	}
 
-	void Info::setExtensionOptional(const std::optional<std::string> &extensionOptional) {
+	void Info::setExtensionOptional(
+		const std::optional<std::string> &extensionOptional
+	) {
 		releaseInterface((PPMoaVoid)&pathNameInterfacePointer);
 
 		path.clear();
@@ -1284,7 +1290,9 @@ namespace Path {
 		this->extensionOptional = extensionOptional;
 	}
 
-	void Info::setFilenameOptional(const std::optional<std::string> &filenameOptional) {
+	void Info::setFilenameOptional(
+		const std::optional<std::string> &filenameOptional
+	) {
 		releaseInterface((PPMoaVoid)&pathNameInterfacePointer);
 
 		path.clear();

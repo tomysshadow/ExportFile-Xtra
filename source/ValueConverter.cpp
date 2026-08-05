@@ -696,7 +696,8 @@ MoaError ValueConverter::testListValueEmpty(
 }
 
 MoaError ValueConverter::testValueVoid(
-	const MoaMmValue &testValue, bool &voidP, MoaMmValueType testValueType
+	const MoaMmValue &testValue, bool &voidP,
+	MoaMmValueType testValueType
 ) {
 	voidP = true;
 
@@ -712,7 +713,8 @@ MoaError ValueConverter::testValueVoid(
 }
 
 MoaError ValueConverter::testPropFound(
-	MoaMmSymbol propertySymbol, bool &found, PIMoaDrCastMem drCastMemInterfacePointer
+	MoaMmSymbol propertySymbol, bool &found,
+	PIMoaDrCastMem drCastMemInterfacePointer
 ) {
 	found = false;
 

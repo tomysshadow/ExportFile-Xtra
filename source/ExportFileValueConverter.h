@@ -54,19 +54,52 @@ class ExportFileValueConverter : public ValueConverter {
 		PIMoaCalloc callocInterfacePointer
 	);
 
-	MoaError toAsset(PIMoaDrCastMem drCastMemInterfacePointer, PIMoaMmXAsset &mmXAssetInterfacePointer);
+	MoaError toAsset(
+		PIMoaDrCastMem drCastMemInterfacePointer,
+		PIMoaMmXAsset &mmXAssetInterfacePointer
+	);
 	
 	using ValueConverter::toValue;
-	MoaError toValue(Args &args, MoaMmValue &value);
-	MoaError toValue(Path::Info &pathInfo, MoaMmValue &value, std::string &path);
-	MoaError toValue(Path::Info &pathInfo, MoaMmValue &value);
-	MoaError toValue(const Label::MAPPED_VECTOR &labelMappedVector, MoaMmValue &value);
-	MoaError toValue(const Agent::Info::MAP &agentInfoMap, MoaMmValue &value);
-	MoaError toValue(const Options &options, MoaMmValue &value);
-	MoaError toValue(const IconValues::ICON_VALUE_MAP &iconValueMap, MoaMmValue &value, PIMoaDrCastMem drCastMemInterfacePointer);
 
-	MoaError testMemberLinked(MoaLong &linked, PIMoaDrCastMem drCastMemInterfacePointer);
+	MoaError toValue(
+		Args &args, MoaMmValue &value
+	);
+
+	MoaError toValue(
+		Path::Info &pathInfo, MoaMmValue &value, std::string &path
+	);
+
+	MoaError toValue(
+		Path::Info &pathInfo, MoaMmValue &value
+	);
+
+	MoaError toValue(
+		const Label::MAPPED_VECTOR &labelMappedVector, MoaMmValue &value
+	);
+
+	MoaError toValue(
+		const Agent::Info::MAP &agentInfoMap, MoaMmValue &value
+	);
+
+	MoaError toValue(
+		const Options &options, MoaMmValue &value
+	);
+
+	MoaError toValue(
+		const IconValues::ICON_VALUE_MAP &iconValueMap,
+		MoaMmValue &value,
+		PIMoaDrCastMem drCastMemInterfacePointer
+	);
+
+	MoaError testMemberLinked(
+		MoaLong &linked, PIMoaDrCastMem drCastMemInterfacePointer
+	);
 
 	using ValueConverter::appendToPropList;
-	MoaError appendToPropList(ConstPMoaChar propertyStringPointer, const Agent::Info &agentInfo, MoaMmValue &propListValue);
+
+	MoaError appendToPropList(
+		ConstPMoaChar propertyStringPointer,
+		const Agent::Info &agentInfo,
+		MoaMmValue &propListValue
+	);
 };

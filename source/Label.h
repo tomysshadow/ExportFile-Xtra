@@ -22,9 +22,15 @@ namespace Label {
 	// reserved in case the Mac labels need their own types
 	// because I legitimately don't know if they can use the Global Handle Format or
 	// will need their own Format classes
-	static constexpr TYPE TYPE_MEDIA_INFO_MAC_RESERVED = 0x00000400; // reserved in case Mac #image label needs its own type
-	static constexpr TYPE TYPE_MEDIA_INFO_MAC_RESERVED2 = 0x00000800; // reserved in case Mac #sound label needs its own type
-	static constexpr TYPE TYPE_MEDIA_INFO_MAC_RESERVED3 = 0x00001000; // reserved in case Mac #palette label needs its own type
+
+	// reserved in case Mac #image label needs its own type
+	static constexpr TYPE TYPE_MEDIA_INFO_MAC_RESERVED = 0x00000400;
+
+	// reserved in case Mac #sound label needs its own type
+	static constexpr TYPE TYPE_MEDIA_INFO_MAC_RESERVED2 = 0x00000800;
+
+	// reserved in case Mac #palette label needs its own type
+	static constexpr TYPE TYPE_MEDIA_INFO_MAC_RESERVED3 = 0x00001000;
 	#endif
 	#ifdef WINDOWS
 	static constexpr TYPE TYPE_MEDIA_INFO_WIN_DIB = 0x00002000;
@@ -84,33 +90,107 @@ namespace Label {
 			and for the time being, YAGNI
 			*/
 			Label::Info::MAP labelInfoMap = {
-				{"RTF", {"Rich Text Document", {"rtf"}, TYPE_MEMBER_PROPERTY, "RTF", "", IID_NULL}},
-				{"HTML", {"HTML Document", {"htm", "html"}, TYPE_MEMBER_PROPERTY, "HTML", "", IID_NULL}},
-				{"Text", {"Text Document", {"txt"}, TYPE_MEMBER_PROPERTY, "Text", kMoaCfFormatName_Text, IID_NULL}},
-				{"TextStyles", {"Text Styles", {"stxt"}, TYPE_MEDIA_INFO, "MoaTEStyles", "", IID_NULL}},
+				{"RTF", {"Rich Text Document", {"rtf"},
+					TYPE_MEMBER_PROPERTY, "RTF", "", IID_NULL}},
+
+				{"HTML", {"HTML Document", {"htm", "html"},
+					TYPE_MEMBER_PROPERTY, "HTML", "", IID_NULL}},
+
+				{"Text", {"Text Document", {"txt"},
+					TYPE_MEMBER_PROPERTY, "Text", kMoaCfFormatName_Text, IID_NULL}},
+
+				{"TextStyles", {"Text Styles", {"stxt"},
+					TYPE_MEDIA_INFO, "MoaTEStyles", "", IID_NULL}},
+
 				#ifdef MACINTOSH
-				{"PICT", {"PICT", {"pic", "pct", "pict"}, TYPE_MEMBER_PROPERTY | TYPE_MEMBER_PROPERTY_PICTURE, "Picture", kMoaCfFormatName_PICT, IID_NULL}},
-				{"Image", {"PICT", {"pic", "pct", "pict"}, TYPE_MEMBER_PROPERTY | TYPE_MEMBER_PROPERTY_PICTURE, "Picture", kMoaCfFormatName_PICT, IID_NULL}},
-				{"Sound", {"snd Resource Sound", {"snd_"}, TYPE_MEDIA_INFO | TYPE_MEDIA_INFO_GLOBAL_HANDLE, "MacSnd", kMoaCfFormatName_snd, CLSID_CSndAgent}},
-				{"Palette", {"Photoshop CLUT", {"act"}, TYPE_MEDIA_INFO | TYPE_MEDIA_INFO_GLOBAL_HANDLE, "MacColorTable", kMoaCfFormatName_CLUT, CLSID_CCLUTAgent}},
+				{"PICT", {"PICT", {"pic", "pct", "pict"},
+					TYPE_MEMBER_PROPERTY
+					| TYPE_MEMBER_PROPERTY_PICTURE,
+					"Picture", kMoaCfFormatName_PICT, IID_NULL}},
+
+				{"Image", {"PICT", {"pic", "pct", "pict"},
+					TYPE_MEMBER_PROPERTY
+					| TYPE_MEMBER_PROPERTY_PICTURE,
+					"Picture", kMoaCfFormatName_PICT, IID_NULL}},
+
+				{"Sound", {"snd Resource Sound", {"snd_"},
+					TYPE_MEDIA_INFO
+					| TYPE_MEDIA_INFO_GLOBAL_HANDLE,
+					"MacSnd", kMoaCfFormatName_snd, CLSID_CSndAgent}},
+
+				{"Palette", {"Photoshop CLUT", {"act"},
+					TYPE_MEDIA_INFO
+					| TYPE_MEDIA_INFO_GLOBAL_HANDLE,
+					"MacColorTable", kMoaCfFormatName_CLUT, CLSID_CCLUTAgent}},
 				#endif
 				#ifdef WINDOWS
-				{"PICT", {"PICT", {"pic", "pct", "pict"}, TYPE_MEMBER_PROPERTY | TYPE_MEMBER_PROPERTY_PICTURE, "Picture", kMoaCfFormatName_PICT, IID_NULL}},
-				{"Image", {"BMP", {"bmp", "dib", "rle"}, TYPE_MEDIA_INFO | TYPE_MEDIA_INFO_WIN_DIB, "WinDIB", kMoaCfFormatName_WinBMP, CLSID_CWinBMPAgent}},
-				{"Sound", {"WAVE Sound", {"wav", "wave"}, TYPE_MEDIA_INFO | TYPE_MEDIA_INFO_GLOBAL_HANDLE, "WinWAVE", kMoaCfFormatName_WAVE, CLSID_CWAVEAgent}},
-				{"Palette", {"Microsoft Palette", {"pal"}, TYPE_MEDIA_INFO | TYPE_MEDIA_INFO_WIN_PALETTE, "WinPALETTE", kMoaCfFormatName_Palette, CLSID_CPaletteAgent}},
+				{"PICT", {"PICT", {"pic", "pct", "pict"},
+					TYPE_MEMBER_PROPERTY
+					| TYPE_MEMBER_PROPERTY_PICTURE,
+					"Picture", kMoaCfFormatName_PICT, IID_NULL}},
+
+				{"Image", {"BMP", {"bmp", "dib", "rle"},
+					TYPE_MEDIA_INFO
+					| TYPE_MEDIA_INFO_WIN_DIB,
+					"WinDIB", kMoaCfFormatName_WinBMP, CLSID_CWinBMPAgent}},
+
+				{"Sound", {"WAVE Sound", {"wav", "wave"},
+					TYPE_MEDIA_INFO
+					| TYPE_MEDIA_INFO_GLOBAL_HANDLE,
+					"WinWAVE", kMoaCfFormatName_WAVE, CLSID_CWAVEAgent}},
+
+				{"Palette", {"Microsoft Palette", {"pal"},
+					TYPE_MEDIA_INFO
+					| TYPE_MEDIA_INFO_WIN_PALETTE,
+					"WinPALETTE", kMoaCfFormatName_Palette, CLSID_CPaletteAgent}},
+
 				#endif
-				{"Score", {"VideoWorks Score", {"vwsc"}, TYPE_MEDIA_INFO, "MoaHandle", "", IID_NULL}},
-				{"SWF", {"Flash", {"swf"}, TYPE_XTRA_MEDIA | TYPE_XTRA_MEDIA_SWF, "", kMoaCfFormatName_Flash, CLSID_CFlashAgent}},
-				{"W3D", {"Shockwave 3D", {"w3d"}, TYPE_XTRA_MEDIA | TYPE_XTRA_MEDIA_W3D, "", kMoaCfFormatName_3D, IID_NULL}},
-				{"GIF", {"Animated GIF", {"gif"}, TYPE_XTRA_MEDIA, "", kMoaCfFormatName_GIF, IID_NULL}},
-				{"PFR", {"Font", {"pfr"}, TYPE_XTRA_MEDIA, "", "", IID_NULL}},
-				{"XtraMedia", {"", {}, TYPE_XTRA_MEDIA, "", "", IID_NULL}},
-				{"WAVAsync", {"WAV", {"wav", "wave"}, TYPE_XTRA_MEDIA | TYPE_XTRA_MEDIA_MIXER_ASYNC | TYPE_XTRA_MEDIA_MIXER_WAV_ASYNC, "", "", IID_NULL}},
-				{"MP4Async", {"MP4", {"m4a", "mp4", "f4v"}, TYPE_XTRA_MEDIA | TYPE_XTRA_MEDIA_MIXER_ASYNC | TYPE_XTRA_MEDIA_MIXER_MP4_ASYNC, "", "", IID_NULL}},
-				{"Lingo", {"Lingo", {"ls"}, TYPE_MEMBER_PROPERTY, "ScriptText", kMoaCfFormatName_Script, CLSID_CScriptAgent}},
-				{"JavaScript", {"JavaScript", {"js"}, TYPE_MEMBER_PROPERTY, "ScriptText", kMoaCfFormatName_Script, CLSID_CScriptAgent}},
-				{"Composite", {"Composite", {""}, TYPE_MEDIA_INFO | TYPE_MEDIA_INFO_COMPOSITE, "MoaHandle", "", IID_NULL}}
+				{"Score", {"VideoWorks Score", {"vwsc"},
+					TYPE_MEDIA_INFO, "MoaHandle", "", IID_NULL}},
+
+				{"SWF", {"Flash", {"swf"},
+					TYPE_XTRA_MEDIA
+					| TYPE_XTRA_MEDIA_SWF,
+					"", kMoaCfFormatName_Flash, CLSID_CFlashAgent}},
+
+				{"W3D", {"Shockwave 3D", {"w3d"},
+					TYPE_XTRA_MEDIA
+					| TYPE_XTRA_MEDIA_W3D,
+					"", kMoaCfFormatName_3D, IID_NULL}},
+
+				{"GIF", {"Animated GIF", {"gif"},
+					TYPE_XTRA_MEDIA, "", kMoaCfFormatName_GIF, IID_NULL}},
+
+				{"PFR", {"Font", {"pfr"},
+					TYPE_XTRA_MEDIA, "", "", IID_NULL}},
+
+				{"XtraMedia", {"", {},
+					TYPE_XTRA_MEDIA, "", "", IID_NULL}},
+
+				{"WAVAsync", {"WAV", {"wav", "wave"},
+					TYPE_XTRA_MEDIA
+					| TYPE_XTRA_MEDIA_MIXER_ASYNC
+					| TYPE_XTRA_MEDIA_MIXER_WAV_ASYNC,
+					"", "", IID_NULL}},
+
+				{"MP4Async", {"MP4", {"m4a", "mp4", "f4v"},
+					TYPE_XTRA_MEDIA
+					| TYPE_XTRA_MEDIA_MIXER_ASYNC
+					| TYPE_XTRA_MEDIA_MIXER_MP4_ASYNC,
+					"", "", IID_NULL}},
+
+				{"Lingo", {"Lingo", {"ls"},
+					TYPE_MEMBER_PROPERTY,
+					"ScriptText", kMoaCfFormatName_Script, CLSID_CScriptAgent}},
+
+				{"JavaScript", {"JavaScript", {"js"},
+					TYPE_MEMBER_PROPERTY,
+					"ScriptText", kMoaCfFormatName_Script, CLSID_CScriptAgent}},
+
+				{"Composite", {"Composite", {""},
+					TYPE_MEDIA_INFO
+					| TYPE_MEDIA_INFO_COMPOSITE,
+					"MoaHandle", "", IID_NULL}}
 			};
 
 			MoaError getLabelInfoMapSymbols(PIMoaMmValue mmValueInterfacePointer);

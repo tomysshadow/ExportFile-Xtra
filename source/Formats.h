@@ -11,7 +11,8 @@ namespace Formats {
 		public:
 		typedef std::shared_ptr<Format> POINTER;
 
-		const std::string tempFileExtension = "tmp"; // MUST not exceed three characters (8.3 filename compatible)
+		// MUST not exceed three characters (8.3 filename compatible)
+		const std::string tempFileExtension = "tmp";
 		const bool pathRelative = true;
 
 		private:
@@ -29,56 +30,93 @@ namespace Formats {
 
 		unsigned long productVersionMajor = 0;
 
-		virtual MoaError getClosedFileStream(PIMoaFile fileInterfacePointer, PIMoaStream &streamInterfacePointer) const;
-		virtual MoaError getOpenFileStream(PIMoaFile fileInterfacePointer, PIMoaStream &writeStreamInterfacePointer) const;
+		virtual MoaError getClosedFileStream(
+			PIMoaFile fileInterfacePointer, PIMoaStream &streamInterfacePointer
+		) const;
+
+		virtual MoaError getOpenFileStream(
+			PIMoaFile fileInterfacePointer, PIMoaStream &writeStreamInterfacePointer
+		) const;
+
 		virtual MoaError createTempFile(PIMoaFile tempFileInterfacePointer);
 		virtual MoaError deleteTempFile(PIMoaFile tempFileInterfacePointer);
 		virtual MoaError swapTempFile(PIMoaFile tempFileInterfacePointer);
 
 		#ifdef WINDOWS
-		MoaError setTempFileAttributeHidden(bool hidden, PIMoaFile tempFileInterfacePointer);
+		MoaError setTempFileAttributeHidden(
+			bool hidden, PIMoaFile tempFileInterfacePointer
+		);
 		#endif
 		public:
 		Format(unsigned long productVersionMajor);
-		Format(unsigned long productVersionMajor, const std::string &tempFileExtension, bool pathRelative);
+
+		Format(unsigned long productVersionMajor,
+			const std::string &tempFileExtension, bool pathRelative);
+
 		virtual ~Format();
-		virtual MoaError writeFile(bool agent, PIMoaFile writeFileInterfacePointer);
+
+		virtual MoaError writeFile(
+			bool agent, PIMoaFile writeFileInterfacePointer
+		);
+
 		virtual MoaError cancelFile();
 		virtual MoaError swapFile(bool status);
-		virtual MoaError replaceExistingFile(PIMoaFile fileInterfacePointer);
-		virtual MoaError get(PMoaVoid &data, MoaUlong &size) const;
-		virtual MoaError get(MoaUlong &size, PIMoaStream writeStreamInterfacePointer) const;
+
+		virtual MoaError replaceExistingFile(
+			PIMoaFile fileInterfacePointer
+		);
+
+		virtual MoaError get(
+			PMoaVoid &data, MoaUlong &size
+		) const;
+
+		virtual MoaError get(
+			MoaUlong &size, PIMoaStream writeStreamInterfacePointer
+		) const;
 	};
 
 	// in the Format Factory
 	// where your horrors and fears come true
 	namespace FormatFactory {
 		Format::POINTER createMediaInfoFormat(
-			Label::TYPE labelType, PMoaVoid mediaData, unsigned long productVersionMajor,
-			PIMoaHandle handleInterfacePointer, PIMoaCalloc callocInterfacePointer
+			Label::TYPE labelType,
+			PMoaVoid mediaData,
+			unsigned long productVersionMajor,
+			PIMoaHandle handleInterfacePointer,
+			PIMoaCalloc callocInterfacePointer
 		);
 
 		#ifdef MACINTOSH
 		Format::POINTER createMediaInfoFormat(
-			Label::TYPE labelType, bool resource, GlobalHandleLock<>::GlobalHandle mediaData, unsigned long productVersionMajor,
+			Label::TYPE labelType,
+			bool resource,
+			GlobalHandleLock<>::GlobalHandle mediaData,
+			unsigned long productVersionMajor,
 			PIMoaCalloc callocInterfacePointer
 		);
 		#endif
 
 		#ifdef WINDOWS
 		Format::POINTER createMediaInfoFormat(
-			Label::TYPE labelType, HMODULE moduleHandle, HRSRC resourceHandle, unsigned long productVersionMajor,
+			Label::TYPE labelType,
+			HMODULE moduleHandle,
+			HRSRC resourceHandle,
+			unsigned long productVersionMajor,
 			PIMoaCalloc callocInterfacePointer
 		);
 		#endif
 
 		Format::POINTER createMemberPropertyFormat(
-			Label::TYPE labelType, PMoaVoid mediaData, unsigned long productVersionMajor,
-			PIMoaMmValue mmValueInterfacePointer, PIMoaCalloc callocInterfacePointer
+			Label::TYPE labelType,
+			PMoaVoid mediaData,
+			unsigned long productVersionMajor,
+			PIMoaMmValue mmValueInterfacePointer,
+			PIMoaCalloc callocInterfacePointer
 		);
 
 		Format::POINTER createMemberPropertyFormat(
-			Label::TYPE labelType, PMoaVoid mediaData, unsigned long productVersionMajor,
+			Label::TYPE labelType, PMoaVoid mediaData,
+			unsigned long productVersionMajor,
 			PIMoaHandle handleInterfacePointer,
 			PIMoaDrMediaValue drMediaValueInterfacePointer,
 			PIMoaMmValue mmValueInterfacePointer,
@@ -86,12 +124,14 @@ namespace Formats {
 		);
 
 		Format::POINTER createXtraMediaFormat(
-			Label::TYPE labelType, PMoaVoid mediaData, unsigned long productVersionMajor,
+			Label::TYPE labelType, PMoaVoid mediaData,
+			unsigned long productVersionMajor,
 			PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer
 		);
 
 		Format::POINTER createXtraMediaFormat(
-			Label::TYPE labelType, PMoaVoid mediaData, unsigned long productVersionMajor,
+			Label::TYPE labelType, PMoaVoid mediaData,
+			unsigned long productVersionMajor,
 			PIMoaDrCastMem drCastMemInterfacePointer,
 			PIMoaMmValue mmValueInterfacePointer,
 			PIMoaCallback callbackInterfacePointer,

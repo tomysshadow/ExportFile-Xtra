@@ -15,8 +15,11 @@ namespace Registry {
 		MoaClassID* classIDPointer;
 		MoaInterfaceID* interfaceIDPointer;
 
-		static MoaError getValueLong(ConstPMoaChar keyStringPointer, MoaLong &value, PIMoaRegistryEntryDict registryEntryDictInterfacePointer);
-		static MoaError setValueLong(ConstPMoaChar keyStringPointer, MoaLong value, PIMoaRegistryEntryDict registryEntryDictInterfacePointer);
+		static MoaError getValueLong(ConstPMoaChar keyStringPointer, MoaLong &value,
+			PIMoaRegistryEntryDict registryEntryDictInterfacePointer);
+
+		static MoaError setValueLong(ConstPMoaChar keyStringPointer, MoaLong value,
+			PIMoaRegistryEntryDict registryEntryDictInterfacePointer);
 	};
 
 	struct ExcludedTypeSymbolSet {
