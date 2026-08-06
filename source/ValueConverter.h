@@ -12,7 +12,7 @@ class ValueConverter {
 	typedef std::map<
 		const PMoaMmValue,
 		PIMoaDict,
-		std::less<const PMoaMmValue>
+		std::less<>
 	> PROP_LIST_DICT_VALUE_MAP;
 
 	typedef std::unordered_map<

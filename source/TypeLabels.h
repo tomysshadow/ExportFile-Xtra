@@ -4,7 +4,7 @@
 #include <map>
 
 namespace TypeLabel {
-	typedef std::map<SYMBOL_VARIANT, Label::MAPPED_VECTOR, std::less<SYMBOL_VARIANT>> MAP;
+	typedef std::map<SYMBOL_VARIANT, Label::MAPPED_VECTOR> MAP;
 
 	class TypeLabels {
 		private:
