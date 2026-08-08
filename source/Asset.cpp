@@ -202,7 +202,7 @@ namespace Asset {
 		// (NULL is a valid value for myCookie)
 		//RETURN_NULL(myCookie);
 
-		//Formats::Format::POINTER formatPointer = 0;
+		//Formats::Format::POINTER formatPointer = nullptr;
 
 		baseResourceID += resourceID;
 

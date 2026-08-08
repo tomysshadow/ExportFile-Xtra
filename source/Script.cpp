@@ -791,37 +791,37 @@ STDMETHODIMP_(void) MoaDestroy_TStdXtra(TStdXtra* This) {
 		}
 
 		delete This->registryEntryVariantPointer;
-		This->registryEntryVariantPointer = 0;
+		This->registryEntryVariantPointer = nullptr;
 	}
 
 	if (This->exportFileValueConverterPointer) {
 		delete This->exportFileValueConverterPointer;
-		This->exportFileValueConverterPointer = 0;
+		This->exportFileValueConverterPointer = nullptr;
 	}
 
 	if (This->labelsInfoPointer) {
 		delete This->labelsInfoPointer;
-		This->labelsInfoPointer = 0;
+		This->labelsInfoPointer = nullptr;
 	}
 
 	if (This->typeLabelsPointer) {
 		delete This->typeLabelsPointer;
-		This->typeLabelsPointer = 0;
+		This->typeLabelsPointer = nullptr;
 	}
 
 	if (This->assetsInfoPointer) {
 		delete This->assetsInfoPointer;
-		This->assetsInfoPointer = 0;
+		This->assetsInfoPointer = nullptr;
 	}
 
 	if (This->labelAgentInfoMapPointer) {
 		delete This->labelAgentInfoMapPointer;
-		This->labelAgentInfoMapPointer = 0;
+		This->labelAgentInfoMapPointer = nullptr;
 	}
 
 	if (This->assetInfoMapPointer) {
 		delete This->assetInfoMapPointer;
-		This->assetInfoMapPointer = 0;
+		This->assetInfoMapPointer = nullptr;
 	}
 
 	moa_catch
@@ -1870,7 +1870,7 @@ MoaError TStdXtra_IMoaMmXScript::FindXtraAssetInfo(
 	moa_catch_end
 
 	if (directorMediaPointer) {
-		directorMediaPointer->bitmapImporterPointer = 0;
+		directorMediaPointer->bitmapImporterPointer = nullptr;
 	}
 
 	releaseInterface((PPMoaVoid)&drCastMemInterfacePointer);
@@ -1885,7 +1885,7 @@ MoaError TStdXtra_IMoaMmXScript::CreateMixerThread(
 ) {
 	PIMoaDrCastMem drCastMemInterfacePointer = NULL;
 
-	Media::MixerMedia* mixerMediaPointer = 0;
+	Media::MixerMedia* mixerMediaPointer = nullptr;
 
 	moa_try
 
@@ -4294,11 +4294,11 @@ MoaError TStdXtra_IMoaMmXScript::GetArgAgentDefault(
 				// so we don't want an outdated reader, data object, etc. to be
 				// used under any circumstance
 				directorMediaPointer->agentInfoMapOptional = std::nullopt;
-				directorMediaPointer->contentPointer = 0;
+				directorMediaPointer->contentPointer = nullptr;
 			}
 		} else {
 			directorMediaPointer->agentInfoMapOptional = std::nullopt;
-			directorMediaPointer->contentPointer = 0;
+			directorMediaPointer->contentPointer = nullptr;
 		}
 	}
 
@@ -4306,7 +4306,7 @@ MoaError TStdXtra_IMoaMmXScript::GetArgAgentDefault(
 
 	if (directorMediaPointer) {
 		directorMediaPointer->agentInfoMapOptional = std::nullopt;
-		directorMediaPointer->contentPointer = 0;
+		directorMediaPointer->contentPointer = nullptr;
 	}
 
 	moa_catch_end
@@ -5279,7 +5279,7 @@ MoaError TStdXtra_IMoaMmXScript::GetAgentHiddenReaderSet(
 
 	if (directorMediaPointer) {
 		directorMediaPointer->agentMoaIDsHash = 0;
-		directorMediaPointer->agentHiddenReaderSetPointer = 0;
+		directorMediaPointer->agentHiddenReaderSetPointer = nullptr;
 	}
 
 	moa_catch_end

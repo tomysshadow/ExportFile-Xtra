@@ -24,7 +24,7 @@ namespace Registry {
 
 	struct ExcludedTypeSymbolSet {
 		PIMoaMmValue mmValueInterfacePointer = NULL;
-		SYMBOL_SET* excludedTypeSymbolSetPointer = 0;
+		SYMBOL_SET* excludedTypeSymbolSetPointer = nullptr;
 	};
 
 	struct AssetInfoMap {
@@ -33,17 +33,17 @@ namespace Registry {
 
 		PIMoaMmImage mmImageInterfacePointer = NULL;
 
-		BitmapImporter* bitmapImporterPointer = 0;
-		Asset::Info::MAP* assetInfoMapPointer = 0;
+		BitmapImporter* bitmapImporterPointer = nullptr;
+		Asset::Info::MAP* assetInfoMapPointer = nullptr;
 	};
 
 	struct AgentHiddenReaderSet {
-		size_t* agentMoaIDsHashPointer = 0;
-		Agent::HIDDEN_READER_SET* agentHiddenReaderSetPointer = 0;
+		size_t* agentMoaIDsHashPointer = nullptr;
+		Agent::HIDDEN_READER_SET* agentHiddenReaderSetPointer = nullptr;
 	};
 
 	struct Reader {
-		AgentHiddenReaderSet* registryEntriesAgentHiddenReaderSetPointer = 0;
+		AgentHiddenReaderSet* registryEntriesAgentHiddenReaderSetPointer = nullptr;
 		Entry::VARIANT* readerRegistryEntryVariantPointer = NULL;
 	};
 }

@@ -73,16 +73,16 @@ EXTERN_BEGIN_DEFINE_CLASS_INSTANCE_VARS(TStdXtra)
 
 	Registry::Entry::VARIANT* registryEntryVariantPointer = NULL;
 
-	ExportFileValueConverter* exportFileValueConverterPointer = 0;
-	Label::Labels::Info* labelsInfoPointer = 0;
-	TypeLabel::TypeLabels* typeLabelsPointer = 0;
-	Asset::Assets::Info* assetsInfoPointer = 0;
+	ExportFileValueConverter* exportFileValueConverterPointer = nullptr;
+	Label::Labels::Info* labelsInfoPointer = nullptr;
+	TypeLabel::TypeLabels* typeLabelsPointer = nullptr;
+	Asset::Assets::Info* assetsInfoPointer = nullptr;
 
 	size_t agentMoaIDsHash = 0;
-	Label::AGENT_INFO_MAP* labelAgentInfoMapPointer = 0;
+	Label::AGENT_INFO_MAP* labelAgentInfoMapPointer = nullptr;
 
 	size_t assetMoaIDsHash = 0;
-	Asset::Info::MAP* assetInfoMapPointer = 0;
+	Asset::Info::MAP* assetInfoMapPointer = nullptr;
 
 	unsigned long productVersionMajor = 0;
 

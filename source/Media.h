@@ -26,12 +26,12 @@ namespace Media {
 		DirectorMedia(Label::Info::MAP::const_iterator labelInfoNotFound);
 
 		size_t agentMoaIDsHash = 0;
-		std::shared_ptr<Agent::HIDDEN_READER_SET> agentHiddenReaderSetPointer = 0;
+		std::shared_ptr<Agent::HIDDEN_READER_SET> agentHiddenReaderSetPointer = nullptr;
 		std::optional<Label::MAPPED_VECTOR> labelMappedVectorOptional = std::nullopt;
 		std::optional<Agent::Info::MAP> agentInfoMapOptional = std::nullopt;
 		Label::Info::MAP::const_iterator labelInfoMapIterator = {};
 		std::optional<Agent::Info> agentInfoOptional = std::nullopt;
-		std::shared_ptr<BitmapImporter> bitmapImporterPointer = 0;
+		std::shared_ptr<BitmapImporter> bitmapImporterPointer = nullptr;
 		std::optional<Asset::Info> assetInfoOptional = std::nullopt;
 
 		class Content : NonCopyable {
@@ -59,11 +59,11 @@ namespace Media {
 				PIMoaDataObject dataObjectInterfacePointer
 			);
 
-			Formats::Format::POINTER formatPointer = 0;
-			std::unique_ptr<Stream> streamPointer = 0;
+			Formats::Format::POINTER formatPointer = nullptr;
+			std::unique_ptr<Stream> streamPointer = nullptr;
 		};
 
-		std::shared_ptr<Content> contentPointer = 0;
+		std::shared_ptr<Content> contentPointer = nullptr;
 	};
 
 	class MixerMedia {
@@ -110,7 +110,7 @@ namespace Media {
 
 		ExportFileValueConverter exportFileValueConverter;
 
-		Formats::Format::POINTER formatPointer = 0;
+		Formats::Format::POINTER formatPointer = nullptr;
 
 		class Lingo {
 			void destroy();
@@ -172,14 +172,14 @@ namespace Media {
 
 		HANDLE fileMapping = NULL;
 
-		std::shared_ptr<char[]> bitmapInfoPointer = 0;
+		std::shared_ptr<char[]> bitmapInfoPointer = nullptr;
 		size_t bitmapInfoSize = 0;
 
 		DWORD imageSize = 0;
 
 		std::optional<BITMAPFILEHEADER> sourceBitmapFileHeaderOptional = std::nullopt;
 
-		std::shared_ptr<char[]> sourceBitmapInfoPointer = 0;
+		std::shared_ptr<char[]> sourceBitmapInfoPointer = nullptr;
 		size_t sourceBitmapInfoSize = 0;
 
 		DWORD sourceBitmapInfoColorsSize = 0;

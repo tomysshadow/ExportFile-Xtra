@@ -446,7 +446,7 @@ namespace Media {
 
 		MAKE_SCOPE_EXIT(sourceBitmapScopeExit) {
 			sourceBitmapFileHeaderOptional = std::nullopt;
-			sourceBitmapInfoPointer = 0;
+			sourceBitmapInfoPointer = nullptr;
 		};
 
 		// first, the source bitmap file header

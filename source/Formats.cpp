@@ -436,7 +436,7 @@ namespace Formats {
 		protected:
 		using MEDIA_DATA_GLOBAL_HANDLE_LOCK = GlobalHandleLock<MediaData>;
 
-		std::unique_ptr<MEDIA_DATA_GLOBAL_HANDLE_LOCK> globalHandleLockPointer = 0;
+		std::unique_ptr<MEDIA_DATA_GLOBAL_HANDLE_LOCK> globalHandleLockPointer = nullptr;
 		public:
 		GlobalHandleLockFormat(
 			GlobalHandleLock<>::GlobalHandle mediaData,
@@ -1176,7 +1176,7 @@ namespace Formats {
 	MoaError WinPALETTEFormat::get(
 		PMoaVoid &data, MoaUlong &size
 	) const {
-		std::unique_ptr<GlobalHandleLock<char>> paletteGlobalHandleLockPointer = 0;
+		std::unique_ptr<GlobalHandleLock<char>> paletteGlobalHandleLockPointer = nullptr;
 		RETURN_ERR(getPaletteGlobalHandleLock(paletteGlobalHandleLockPointer));
 	
 		if (!paletteGlobalHandleLockPointer) {
@@ -1195,7 +1195,7 @@ namespace Formats {
 	) const {
 		RETURN_NULL(writeStreamInterfacePointer);
 
-		std::unique_ptr<GlobalHandleLock<char>> paletteGlobalHandleLockPointer = 0;
+		std::unique_ptr<GlobalHandleLock<char>> paletteGlobalHandleLockPointer = nullptr;
 		RETURN_ERR(getPaletteGlobalHandleLock(paletteGlobalHandleLockPointer));
 	
 		if (!paletteGlobalHandleLockPointer) {
@@ -2109,7 +2109,7 @@ namespace Formats {
 		PIMoaHandle handleInterfacePointer, PIMoaCalloc callocInterfacePointer
 	) {
 		if (!(labelType & Label::TYPE_MEDIA_INFO)) {
-			return 0;
+			return nullptr;
 		}
 
 		if (labelType & Label::TYPE_MEDIA_INFO_GLOBAL_HANDLE) {
@@ -2164,7 +2164,7 @@ namespace Formats {
 		PIMoaCalloc callocInterfacePointer
 	) {
 		if (!(labelType & Label::TYPE_MEDIA_INFO)) {
-			return 0;
+			return nullptr;
 		}
 
 		if (labelType & Label::TYPE_MEDIA_INFO_GLOBAL_HANDLE) {
@@ -2175,7 +2175,7 @@ namespace Formats {
 				callocInterfacePointer
 			);
 		}
-		return 0;
+		return nullptr;
 	}
 	#endif
 
@@ -2188,7 +2188,7 @@ namespace Formats {
 		PIMoaCalloc callocInterfacePointer
 	) {
 		if (!(labelType & Label::TYPE_MEDIA_INFO)) {
-			return 0;
+			return nullptr;
 		}
 
 		if (labelType & Label::TYPE_MEDIA_INFO_GLOBAL_HANDLE) {
@@ -2208,7 +2208,7 @@ namespace Formats {
 				callocInterfacePointer
 			);
 		}
-		return 0;
+		return nullptr;
 	}
 	#endif
 
@@ -2218,7 +2218,7 @@ namespace Formats {
 		PIMoaMmValue mmValueInterfacePointer, PIMoaCalloc callocInterfacePointer
 	) {
 		if (!(labelType & Label::TYPE_MEMBER_PROPERTY)) {
-			return 0;
+			return nullptr;
 		}
 
 		return std::make_shared<MemberPropertyFormat>(
@@ -2238,7 +2238,7 @@ namespace Formats {
 		PIMoaCalloc callocInterfacePointer
 	) {
 		if (!(labelType & Label::TYPE_MEMBER_PROPERTY)) {
-			return 0;
+			return nullptr;
 		}
 
 		if (labelType & Label::TYPE_MEMBER_PROPERTY_PICTURE) {
@@ -2251,7 +2251,7 @@ namespace Formats {
 				callocInterfacePointer
 			);
 		}
-		return 0;
+		return nullptr;
 	}
 
 	Format::POINTER FormatFactory::createXtraMediaFormat(
@@ -2260,7 +2260,7 @@ namespace Formats {
 		PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer
 	) {
 		if (!(labelType & Label::TYPE_XTRA_MEDIA)) {
-			return 0;
+			return nullptr;
 		}
 
 		if (labelType & Label::TYPE_XTRA_MEDIA_SWF) {
@@ -2296,7 +2296,7 @@ namespace Formats {
 		PIMoaCalloc callocInterfacePointer
 	) {
 		if (!(labelType & Label::TYPE_XTRA_MEDIA)) {
-			return 0;
+			return nullptr;
 		}
 
 		if (labelType & Label::TYPE_XTRA_MEDIA_MIXER_ASYNC) {
@@ -2322,6 +2322,6 @@ namespace Formats {
 				);
 			}
 		}
-		return 0;
+		return nullptr;
 	}
 }
