@@ -320,7 +320,7 @@ unsigned int Mixer::thread(void* argList) {
 
 		// this doesn't really need to be precise
 		// just needs to be some kinda small amount of time
-		static const std::chrono::milliseconds MILLISECONDS(25);
+		static constexpr std::chrono::milliseconds MILLISECONDS(25);
 
 		MoaError err = kMoaErr_NoErr;
 

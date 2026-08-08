@@ -15,7 +15,7 @@ namespace Path {
 		// clear because we want to pass out a new mapped vector instead of appending
 		extensions.clear();
 
-		static const std::regex FILTER_PATTERN_EXTENSIONS("^\\*\\.([^\\.;]+);*");
+		static const std::regex FILTER_PATTERN_EXTENSIONS(R"(^\*\.([^\.;]+);*)");
 
 		std::smatch matches = {};
 
@@ -661,7 +661,7 @@ namespace Path {
 		unsigned long number = 2;
 
 		{
-			static const std::regex INCREMENT_FILENAME("^([^\\(]*)\\((\\d{0,3})\\)(.*)$");
+			static const std::regex INCREMENT_FILENAME(R"(^([^\(]*)\((\d{0,3})\)(.*)$)");
 
 			std::smatch matches = {};
 
