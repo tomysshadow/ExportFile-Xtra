@@ -475,7 +475,7 @@ namespace Formats {
 				= std::make_unique<MEDIA_DATA_GLOBAL_HANDLE_LOCK>(resource, mediaData);
 
 			if (!globalHandleLockPointer) {
-				throw std::logic_error("globalHandleLockPointer must not be zero");
+				throw std::logic_error("globalHandleLockPointer must not be nullptr");
 			}
 		}
 		#endif
@@ -500,7 +500,7 @@ namespace Formats {
 			);
 
 			if (!globalHandleLockPointer) {
-				throw std::logic_error("globalHandleLockPointer must not be zero");
+				throw std::logic_error("globalHandleLockPointer must not be nullptr");
 			}
 		}
 		#endif
