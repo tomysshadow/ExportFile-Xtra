@@ -1632,7 +1632,7 @@ namespace Formats {
 	) const {
 		// this is (as close as possible) a recreation of the behaviour
 		// of the Flash Asset's StreamInMedia method
-		// first, read a ChunkID
+		// first, read a ChunkId
 		ChunkId chunkId = 0;
 		RETURN_ERR(stream.readSafe(&chunkId, sizeof(chunkId)));
 
@@ -1644,7 +1644,7 @@ namespace Formats {
 		// mask it to get just three bytes
 		chunkId &= 0x00FFFFFF;
 
-		// check if the ChunkID is SWF or SWC
+		// check if the ChunkId is SWF or SWC
 		static constexpr ChunkId SWF_CHUNK_ID = 0x00535746;
 		static constexpr ChunkId SWC_CHUNK_ID = 0x00535743;
 
@@ -1691,7 +1691,7 @@ namespace Formats {
 	MoaError XtraMediaW3DFormat::seekStream(Stream &stream, MoaUlong &size) const {
 		// this is (as close as possible) a recreation of the behaviour
 		// of the Shockwave 3D Asset's StreamInMedia method
-		// first, read a ChunkID
+		// first, read a ChunkId
 		ChunkId chunkId = 0;
 		RETURN_ERR(stream.readSafe(&chunkId, sizeof(chunkId)));
 
@@ -1700,7 +1700,7 @@ namespace Formats {
 		chunkId = (ChunkId)mem_XLong((long)chunkId);
 		#endif
 
-		// check if the ChunkID is 3DEM
+		// check if the ChunkId is 3DEM
 		// it may also be 3DMD if the W3D is linked
 		// however, this is not checked when reading the asset stream
 		// it doesn't need to, because the minimum W3D size is 16 bytes
