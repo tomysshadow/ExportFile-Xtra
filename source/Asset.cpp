@@ -70,7 +70,7 @@ namespace Asset {
 		assetInfoMap = info.assetInfoMap;
 	}
 
-	MoaError Assets::Info::findIconValue(IconValues::VARIANT &iconValuesVariant) {
+	MoaError Assets::Info::findIconValue(IconValues::Variant &iconValuesVariant) {
 		if (!mmImageInterfacePointer) {
 			return kMoaErr_NoErr;
 		}
@@ -80,7 +80,7 @@ namespace Asset {
 		}
 
 		if (auto index = std::get_if<MoaLong>(&iconValuesVariant)) {
-			IconValues::ICON_VALUE_MAP iconValueMap
+			IconValues::IconValueMap iconValueMap
 				= iconValuesOptional.value().toIconValueMap();
 
 			MoaRect rect = {};
@@ -99,7 +99,7 @@ namespace Asset {
 
 			MoaMmValue foundIconValue = kVoidMoaMmValueInitializer;
 
-			IconValues::POINTER foundIconValues = std::make_shared<IconValues>(
+			IconValues::Pointer foundIconValues = std::make_shared<IconValues>(
 				mmValueInterfacePointer, mmImageInterfacePointer);
 
 			for (
@@ -138,26 +138,26 @@ namespace Asset {
 		return kMoaErr_NoErr;
 	}
 
-	RESOURCE_ID Assets::Info::getBaseResourceID(unsigned long productVersionMajor) {
+	ResourceId Assets::Info::getBaseResourceId(unsigned long productVersionMajor) {
 		// 8, 9, 10, 11, 12
 		static constexpr unsigned long MIN_PRODUCT_VERSION_MAJOR = 8;
 		static constexpr unsigned long MAX_PRODUCT_VERSION_MAJOR = 12;
 
-		static constexpr RESOURCE_ID ASSET_INFO_MAP_ICON_RESOURCES_COUNT = 6;
+		static constexpr ResourceId ASSET_INFO_MAP_ICON_RESOURCES_COUNT = 6;
 
 		productVersionMajor = min(
 			max(MIN_PRODUCT_VERSION_MAJOR, productVersionMajor),
 			MAX_PRODUCT_VERSION_MAJOR
 		);
 
-		return (RESOURCE_ID)((productVersionMajor - MIN_PRODUCT_VERSION_MAJOR)
+		return (ResourceId)((productVersionMajor - MIN_PRODUCT_VERSION_MAJOR)
 			* ASSET_INFO_MAP_ICON_RESOURCES_COUNT);
 	}
 
 	MoaError Assets::Info::getAssetInfoMapSymbols() {
-		Asset::Info::MAP symbolAssetInfoMap = {};
-		IconValues::MAP symbolIconValuesMap = {};
-		SYMBOL_VARIANT symbolVariant = 0;
+		Asset::Info::Map symbolAssetInfoMap = {};
+		IconValues::Map symbolIconValuesMap = {};
+		SymbolVariant symbolVariant = 0;
 
 		for (
 			auto assetInfoMapIterator = assetInfoMap.begin();
@@ -169,7 +169,7 @@ namespace Asset {
 				mmValueInterfacePointer
 			));
 
-			IconValues::MAP &iconValuesMap
+			IconValues::Map &iconValuesMap
 				= assetInfoMapIterator->second.iconValuesMap;
 
 			for (
@@ -197,19 +197,19 @@ namespace Asset {
 
 	MoaError Assets::Info::getAssetInfoMapIcon(
 		BitmapImporter &bitmapImporter, IconValues &iconValues,
-		RESOURCE_ID resourceID, RESOURCE_ID baseResourceID, XtraResourceCookie myCookie
+		ResourceId resourceId, ResourceId baseResourceId, XtraResourceCookie myCookie
 	) {
 		// (NULL is a valid value for myCookie)
 		//RETURN_NULL(myCookie);
 
-		//Formats::Format::POINTER formatPointer = nullptr;
+		//Formats::Format::Pointer formatPointer = nullptr;
 
-		baseResourceID += resourceID;
+		baseResourceId += resourceId;
 
 		#ifdef MACINTOSH
 		// this has not been tested
 		GlobalHandleLock<>::GlobalHandle iconGlobalHandle
-			= GetResource('PICT', baseResourceID);
+			= GetResource('PICT', baseResourceId);
 
 		RETURN_ERR(osErr(iconGlobalHandle));
 
@@ -227,7 +227,7 @@ namespace Asset {
 		#ifdef WINDOWS
 		HRSRC resourceHandle = FindResource(
 			(HINSTANCE)myCookie,
-			MAKEINTRESOURCE(baseResourceID),
+			MAKEINTRESOURCE(baseResourceId),
 			RT_BITMAP
 		);
 
@@ -268,7 +268,7 @@ namespace Asset {
 		return bitmapImporter.insertIntoIconValues(
 			iconGlobalHandleLock.getGlobalHandle(),
 			iconValues,
-			resourceID
+			resourceId
 		);
 
 		/*
@@ -332,9 +332,9 @@ namespace Asset {
 		iconValuesOptional.emplace(mmValueInterfacePointer, mmImageInterfacePointer);
 
 		IconValues &iconValues = iconValuesOptional.value();
-		IconValues::ICON_VALUE_MAP iconValueMap = iconValues.toIconValueMap();
+		IconValues::IconValueMap iconValueMap = iconValues.toIconValueMap();
 
-		RESOURCE_ID baseResourceID = getBaseResourceID(productVersionMajor);
+		ResourceId baseResourceId = getBaseResourceId(productVersionMajor);
 
 		XtraResourceCookie saveCookie = NULL;
 
@@ -363,7 +363,7 @@ namespace Asset {
 					bitmapImporter,
 					iconValues,
 					iconValueMapIterator->first,
-					baseResourceID,
+					baseResourceId,
 					myCookie
 				)
 			);
@@ -420,7 +420,7 @@ namespace Asset {
 		return *this;
 	}
 
-	std::optional<Info> Assets::Info::find(SYMBOL_VARIANT typeSymbol) {
+	std::optional<Info> Assets::Info::find(SymbolVariant typeSymbol) {
 		auto foundAssetInfo = assetInfoMap.find(typeSymbol);
 
 		if (foundAssetInfo == assetInfoMap.cend()) {
@@ -443,7 +443,7 @@ namespace Asset {
 		return foundAssetInfo->second;
 	}
 
-	bool Assets::Info::insert(SYMBOL_VARIANT typeSymbol, const Asset::Info &assetInfo) {
+	bool Assets::Info::insert(SymbolVariant typeSymbol, const Asset::Info &assetInfo) {
 		return assetInfoMap.try_emplace(typeSymbol, assetInfo).second;
 	}
 }

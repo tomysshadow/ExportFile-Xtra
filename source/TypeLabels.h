@@ -4,11 +4,11 @@
 #include <map>
 
 namespace TypeLabel {
-	typedef std::map<SYMBOL_VARIANT, Label::MAPPED_VECTOR> MAP;
+	using Map = std::map<SymbolVariant, Label::MappedVector>;
 
 	class TypeLabels {
 		private:
-		MAP typeLabelMap = {
+		Map typeLabelMap = {
 			{"Text", {"RTF", "HTML", "Text", "Image", "PICT"}},
 			{"RichText", {"RTF", "HTML", "Text", "Image", "PICT"}},
 			{"Field", {"Text", "TextStyles", "PICT", "Image"}},
@@ -33,6 +33,6 @@ namespace TypeLabel {
 
 		public:
 		TypeLabels(PIMoaMmValue mmValueInterfacePointer);
-		const MAP &get() const;
+		const Map &get() const;
 	};
 };

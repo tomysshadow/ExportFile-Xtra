@@ -5,16 +5,16 @@ namespace TypeLabel {
 	MoaError TypeLabels::getTypeLabelMapSymbols(PIMoaMmValue mmValueInterfacePointer) {
 		RETURN_NULL(mmValueInterfacePointer);
 
-		MAP symbolTypeLabelMap = {};
-		SYMBOL_VARIANT symbolVariant = 0;
-		std::vector<SYMBOL_VARIANT> symbolVariantVector = {};
+		Map symbolTypeLabelMap = {};
+		SymbolVariant symbolVariant = 0;
+		std::vector<SymbolVariant> symbolVariantVector = {};
 
 		for (
 			auto typeLabelMapIterator = typeLabelMap.begin();
 			typeLabelMapIterator != typeLabelMap.end();
 			typeLabelMapIterator++
 		) {
-			Label::MAPPED_VECTOR &labelMappedVector = typeLabelMapIterator->second;
+			Label::MappedVector &labelMappedVector = typeLabelMapIterator->second;
 
 			symbolVariantVector = {};
 
@@ -51,7 +51,7 @@ namespace TypeLabel {
 		}
 	}
 
-	const MAP& TypeLabels::get() const {
+	const Map& TypeLabels::get() const {
 		return typeLabelMap;
 	}
 }

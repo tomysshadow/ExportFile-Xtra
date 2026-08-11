@@ -4,8 +4,8 @@ namespace Label {
 	MoaError Labels::Info::getLabelInfoMapSymbols(PIMoaMmValue mmValueInterfacePointer) {
 		RETURN_NULL(mmValueInterfacePointer);
 
-		Label::Info::MAP symbolsLabelInfoMap = {};
-		SYMBOL_VARIANT symbolVariant = 0;
+		Label::Info::Map symbolsLabelInfoMap = {};
+		SymbolVariant symbolVariant = 0;
 
 		for (
 			auto labelInfoMapIterator = labelInfoMap.begin();
@@ -39,7 +39,7 @@ namespace Label {
 		}
 	}
 
-	const Info::MAP& Labels::Info::get() const {
+	const Info::Map& Labels::Info::get() const {
 		return labelInfoMap;
 	}
 }

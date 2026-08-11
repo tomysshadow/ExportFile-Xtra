@@ -102,10 +102,9 @@ MoaError BitmapImporter::getSymbols() {
 }
 
 MoaError BitmapImporter::getFormatSymbol(const Label::Labels::Info &labelsInfo) {
-	const Label::Info::MAP &labelInfoMap = labelsInfo.get();
+	const Label::Info::Map &labelInfoMap = labelsInfo.get();
 
-	Label::Info::MAP::const_iterator foundLabelInfo
-		= labelInfoMap.find(symbols.Image);
+	auto foundLabelInfo = labelInfoMap.find(symbols.Image);
 
 	if (foundLabelInfo == labelInfoMap.cend()) {
 		return kMoaDrErr_LabelNotFound;
@@ -368,7 +367,7 @@ MoaError BitmapImporter::toImageValue(
 MoaError BitmapImporter::insertIntoIconValues(
 	GlobalHandleLock<>::GlobalHandle mediaData,
 	IconValues &iconValues,
-	RESOURCE_ID resourceID
+	ResourceId resourceId
 ) {
 	MoaMmValue memberStageImageValue = kVoidMoaMmValueInitializer;
 
@@ -378,11 +377,11 @@ MoaError BitmapImporter::insertIntoIconValues(
 
 	RETURN_ERR(getMemberImageValue(mediaData, memberStageImageValue,
 
-		resourceID == IDB_ASSET_INFO_MAP_ICON_COLOR
-		|| resourceID == IDB_ASSET_INFO_MAP_ICON_COLOR_LINKED
+		resourceId == IDB_ASSET_INFO_MAP_ICON_COLOR
+		|| resourceId == IDB_ASSET_INFO_MAP_ICON_COLOR_LINKED
 	));
 
-	return iconValues.setValue(resourceID, memberStageImageValue);
+	return iconValues.setValue(resourceId, memberStageImageValue);
 }
 
 MoaError BitmapImporter::getMedia(

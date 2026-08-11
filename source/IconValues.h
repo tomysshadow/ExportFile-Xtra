@@ -7,11 +7,11 @@
 
 class IconValues {
 	public:
-	typedef std::unordered_map<RESOURCE_ID, MoaMmValue> ICON_VALUE_MAP;
+	using IconValueMap = std::unordered_map<ResourceId, MoaMmValue>;
 
-	typedef std::shared_ptr<IconValues> POINTER;
-	typedef std::variant<MoaLong, POINTER> VARIANT;
-	typedef std::map<SYMBOL_VARIANT, VARIANT> MAP;
+	using Pointer = std::shared_ptr<IconValues>;
+	using Variant = std::variant<MoaLong, Pointer>;
+	using Map = std::map<SymbolVariant, Variant>;
 
 	private:
 	void destroy();
@@ -28,7 +28,7 @@ class IconValues {
 	since the icon stream can grow (but not be shrunk back down) so the whole contents
 	can be overwritten with the next icon in the map
 	*/
-	ICON_VALUE_MAP iconValueMap = {
+	IconValueMap iconValueMap = {
 		{IDB_ASSET_INFO_MAP_ICON_MASK, kVoidMoaMmValueInitializer},
 		{IDB_ASSET_INFO_MAP_ICON_MASK_LINKED, kVoidMoaMmValueInitializer},
 		{IDB_ASSET_INFO_MAP_ICON_BW, kVoidMoaMmValueInitializer},
@@ -44,6 +44,6 @@ class IconValues {
 	IconValues(IconValues &&iconValues) noexcept;
 	IconValues &operator=(const IconValues &iconValues);
 	IconValues &operator=(IconValues &&iconValues) noexcept;
-	MoaError setValue(RESOURCE_ID resourceID, const MoaMmValue &value);
-	const IconValues::ICON_VALUE_MAP& toIconValueMap() const;
+	MoaError setValue(ResourceId resourceId, const MoaMmValue &value);
+	const IconValues::IconValueMap& toIconValueMap() const;
 };

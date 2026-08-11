@@ -434,9 +434,9 @@ namespace Formats {
 	template <typename MediaData = void*>
 	class GlobalHandleLockFormat : public MemoryFormat {
 		protected:
-		using MEDIA_DATA_GLOBAL_HANDLE_LOCK = GlobalHandleLock<MediaData>;
+		using MediaDataGlobalHandleLock = GlobalHandleLock<MediaData>;
 
-		std::unique_ptr<MEDIA_DATA_GLOBAL_HANDLE_LOCK> globalHandleLockPointer = nullptr;
+		std::unique_ptr<MediaDataGlobalHandleLock> globalHandleLockPointer = nullptr;
 		public:
 		GlobalHandleLockFormat(
 			GlobalHandleLock<>::GlobalHandle mediaData,
@@ -453,13 +453,13 @@ namespace Formats {
 			)
 		{
 			globalHandleLockPointer
-				= std::make_unique<MEDIA_DATA_GLOBAL_HANDLE_LOCK>(mediaData);
+				= std::make_unique<MediaDataGlobalHandleLock>(mediaData);
 		}
 
 		#ifdef MACINTOSH
 		GlobalHandleLockFormat(
 			bool resource,
-			MEDIA_DATA_GLOBAL_HANDLE_LOCK::GlobalHandle mediaData,
+			MediaDataGlobalHandleLock::GlobalHandle mediaData,
 			unsigned long productVersionMajor,
 			PIMoaCalloc callocInterfacePointer
 		)
@@ -472,7 +472,7 @@ namespace Formats {
 				callocInterfacePointer
 			) {
 			globalHandleLockPointer
-				= std::make_unique<MEDIA_DATA_GLOBAL_HANDLE_LOCK>(resource, mediaData);
+				= std::make_unique<MediaDataGlobalHandleLock>(resource, mediaData);
 
 			if (!globalHandleLockPointer) {
 				throw std::logic_error("globalHandleLockPointer must not be nullptr");
@@ -494,7 +494,7 @@ namespace Formats {
 				callocInterfacePointer
 			)
 		{
-			globalHandleLockPointer = std::make_unique<MEDIA_DATA_GLOBAL_HANDLE_LOCK>(
+			globalHandleLockPointer = std::make_unique<MediaDataGlobalHandleLock>(
 				moduleHandle,
 				resourceHandle
 			);
@@ -857,7 +857,7 @@ namespace Formats {
 
 		// http://learn.microsoft.com/en-us/windows/win32/gdi/storing-an-image
 		// http://learn.microsoft.com/en-us/windows/win32/api/wingdi/ns-wingdi-bitmapinfoheader
-		bitmapFileHeader.bfType = Media::WinBMPMedia::TYPE; // BM
+		bitmapFileHeader.bfType = Media::WinBMPMedia::Type; // BM
 		//bitmapFileHeader.bfReserved1 = 0;
 		//bitmapFileHeader.bfReserved2 = 0;
 
@@ -1633,22 +1633,22 @@ namespace Formats {
 		// this is (as close as possible) a recreation of the behaviour
 		// of the Flash Asset's StreamInMedia method
 		// first, read a ChunkID
-		CHUNK_ID chunkID = 0;
-		RETURN_ERR(stream.readSafe(&chunkID, sizeof(chunkID)));
+		ChunkId chunkId = 0;
+		RETURN_ERR(stream.readSafe(&chunkId, sizeof(chunkId)));
 
 		// little endian, so we need to byteswap it on Mac
 		#ifdef MACINTOSH
-		chunkID = (CHUNK_ID)mem_XLong((long)chunkID);
+		chunkId = (ChunkId)mem_XLong((long)chunkId);
 		#endif
 
 		// mask it to get just three bytes
-		chunkID &= 0x00FFFFFF;
+		chunkId &= 0x00FFFFFF;
 
 		// check if the ChunkID is SWF or SWC
-		static constexpr CHUNK_ID SWF_CHUNK_ID = 0x00535746;
-		static constexpr CHUNK_ID SWC_CHUNK_ID = 0x00535743;
+		static constexpr ChunkId SWF_CHUNK_ID = 0x00535746;
+		static constexpr ChunkId SWC_CHUNK_ID = 0x00535743;
 
-		if (chunkID == SWF_CHUNK_ID || chunkID == SWC_CHUNK_ID) {
+		if (chunkId == SWF_CHUNK_ID || chunkId == SWC_CHUNK_ID) {
 			// if it is, the entire stream is the SWF
 			RETURN_ERR(stream.resetPosition());
 			return determineSize(stream, size);
@@ -1692,12 +1692,12 @@ namespace Formats {
 		// this is (as close as possible) a recreation of the behaviour
 		// of the Shockwave 3D Asset's StreamInMedia method
 		// first, read a ChunkID
-		CHUNK_ID chunkID = 0;
-		RETURN_ERR(stream.readSafe(&chunkID, sizeof(chunkID)));
+		ChunkId chunkId = 0;
+		RETURN_ERR(stream.readSafe(&chunkId, sizeof(chunkId)));
 
 		// big endian, so we need to byteswap it on Windows
 		#ifdef WINDOWS
-		chunkID = (CHUNK_ID)mem_XLong((long)chunkID);
+		chunkId = (ChunkId)mem_XLong((long)chunkId);
 		#endif
 
 		// check if the ChunkID is 3DEM
@@ -1707,10 +1707,10 @@ namespace Formats {
 		// if the W3D size is less than 16 bytes, it is invalid
 		// the 3DMD ChunkID is likely just a placeholder
 		// so that the stream is not empty
-		static constexpr CHUNK_ID THREEDEM_CHUNK_ID = 0x3344454D;
+		static constexpr ChunkId THREEDEM_CHUNK_ID = 0x3344454D;
 		static constexpr uint32_t MIN_W3D_SIZE = 16;
 
-		if (chunkID == THREEDEM_CHUNK_ID) {
+		if (chunkId == THREEDEM_CHUNK_ID) {
 			// the next two values are unused when reading the asset stream
 			// I suspect they are only used for integration with 3DS Max
 			// the size and constant value 0x20000000 look suspiciously similar to
@@ -2103,8 +2103,8 @@ namespace Formats {
 	{
 	}
 
-	Format::POINTER FormatFactory::createMediaInfoFormat(
-		Label::TYPE labelType, PMoaVoid mediaData,
+	Format::Pointer FormatFactory::createMediaInfoFormat(
+		Label::Type labelType, PMoaVoid mediaData,
 		unsigned long productVersionMajor,
 		PIMoaHandle handleInterfacePointer, PIMoaCalloc callocInterfacePointer
 	) {
@@ -2156,8 +2156,8 @@ namespace Formats {
 	}
 
 	#ifdef MACINTOSH
-	Format::POINTER FormatFactory::createMediaInfoFormat(
-		Label::TYPE labelType,
+	Format::Pointer FormatFactory::createMediaInfoFormat(
+		Label::Type labelType,
 		bool resource,
 		GlobalHandleLock<>::GlobalHandle mediaData,
 		unsigned long productVersionMajor,
@@ -2180,8 +2180,8 @@ namespace Formats {
 	#endif
 
 	#ifdef WINDOWS
-	Format::POINTER FormatFactory::createMediaInfoFormat(
-		Label::TYPE labelType,
+	Format::Pointer FormatFactory::createMediaInfoFormat(
+		Label::Type labelType,
 		HMODULE moduleHandle,
 		HRSRC resourceHandle,
 		unsigned long productVersionMajor,
@@ -2212,8 +2212,8 @@ namespace Formats {
 	}
 	#endif
 
-	Format::POINTER FormatFactory::createMemberPropertyFormat(
-		Label::TYPE labelType, PMoaVoid mediaData,
+	Format::Pointer FormatFactory::createMemberPropertyFormat(
+		Label::Type labelType, PMoaVoid mediaData,
 		unsigned long productVersionMajor,
 		PIMoaMmValue mmValueInterfacePointer, PIMoaCalloc callocInterfacePointer
 	) {
@@ -2229,8 +2229,8 @@ namespace Formats {
 		);
 	}
 
-	Format::POINTER FormatFactory::createMemberPropertyFormat(
-		Label::TYPE labelType, PMoaVoid mediaData,
+	Format::Pointer FormatFactory::createMemberPropertyFormat(
+		Label::Type labelType, PMoaVoid mediaData,
 		unsigned long productVersionMajor,
 		PIMoaHandle handleInterfacePointer,
 		PIMoaDrMediaValue drMediaValueInterfacePointer,
@@ -2254,8 +2254,8 @@ namespace Formats {
 		return nullptr;
 	}
 
-	Format::POINTER FormatFactory::createXtraMediaFormat(
-		Label::TYPE labelType, PMoaVoid mediaData,
+	Format::Pointer FormatFactory::createXtraMediaFormat(
+		Label::Type labelType, PMoaVoid mediaData,
 		unsigned long productVersionMajor,
 		PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer
 	) {
@@ -2287,8 +2287,8 @@ namespace Formats {
 		);
 	}
 
-	Format::POINTER FormatFactory::createXtraMediaFormat(
-		Label::TYPE labelType, PMoaVoid mediaData,
+	Format::Pointer FormatFactory::createXtraMediaFormat(
+		Label::Type labelType, PMoaVoid mediaData,
 		unsigned long productVersionMajor,
 		PIMoaDrCastMem drCastMemInterfacePointer,
 		PIMoaMmValue mmValueInterfacePointer,

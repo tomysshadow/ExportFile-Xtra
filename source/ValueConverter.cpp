@@ -40,9 +40,9 @@ MoaError ValueConverter::getSymbols() {
 	return kMoaErr_NoErr;
 }
 
-typedef std::unordered_map<MoaDictTypeID, MoaLong> VALUE_SIZE_MAP;
+using ValueSizeMap = std::unordered_map<MoaDictTypeID, MoaLong>;
 
-static const VALUE_SIZE_MAP DICT_TYPE_ID_VALUE_SIZE_MAP = {
+static const ValueSizeMap DICT_TYPE_ID_VALUE_SIZE_MAP = {
 	{kMoaDictType_Dict, sizeof(PIMoaDict)},
 	{kMoaDictType_PIMoaUnknown, sizeof(PIMoaUnknown)},
 	{kMoaDictType_Long, sizeof(MoaLong)},
@@ -57,7 +57,7 @@ static const VALUE_SIZE_MAP DICT_TYPE_ID_VALUE_SIZE_MAP = {
 
 MoaError ValueConverter::appendToDictInterfacePointer(
 	const MoaMmValue &propListValue,
-	PROP_LIST_DICT_VALUE_MAP &propListDictValueMap,
+	PropListDictValueMap &propListDictValueMap,
 	MoaDictTypeID dictTypeID,
 	ConstPMoaChar keyStringPointer,
 	PIMoaDict dictInterfacePointer
@@ -72,8 +72,7 @@ MoaError ValueConverter::appendToDictInterfacePointer(
 		freeMemory(valueBuffer, callocInterfacePointer);
 	};
 
-	VALUE_SIZE_MAP::const_iterator dictTypeIDValueSizeMapIterator
-		= DICT_TYPE_ID_VALUE_SIZE_MAP.find(dictTypeID);
+	auto dictTypeIDValueSizeMapIterator = DICT_TYPE_ID_VALUE_SIZE_MAP.find(dictTypeID);
 
 	if (dictTypeIDValueSizeMapIterator != DICT_TYPE_ID_VALUE_SIZE_MAP.end()) {
 		valueSize = dictTypeIDValueSizeMapIterator->second;
@@ -196,7 +195,7 @@ MoaError ValueConverter::appendToDictInterfacePointer(
 MoaError ValueConverter::appendToPropList(
 	MoaMmValue &propListValue,
 	bool appendInterfaceValue,
-	DICT_VALUE_PROP_LIST_MAP &dictValuePropListMap,
+	DictValuePropListMap &dictValuePropListMap,
 	MoaDictTypeID dictTypeID,
 	MoaLong valueSize,
 	ConstPMoaChar keyStringPointer,
@@ -205,8 +204,7 @@ MoaError ValueConverter::appendToPropList(
 	RETURN_NULL(keyStringPointer);
 	RETURN_NULL(dictInterfacePointer);
 
-	VALUE_SIZE_MAP::const_iterator dictTypeIDValueSizeMapIterator
-		= DICT_TYPE_ID_VALUE_SIZE_MAP.find(dictTypeID);
+	auto dictTypeIDValueSizeMapIterator = DICT_TYPE_ID_VALUE_SIZE_MAP.find(dictTypeID);
 
 	if (dictTypeIDValueSizeMapIterator != DICT_TYPE_ID_VALUE_SIZE_MAP.end()
 		&& dictTypeIDValueSizeMapIterator->second < valueSize) {
@@ -323,7 +321,7 @@ MoaError ValueConverter::appendToPropList(
 
 MoaError ValueConverter::concatToDictInterfacePointer(
 	const MoaMmValue &propListValue,
-	PROP_LIST_DICT_VALUE_MAP &propListDictValueMap,
+	PropListDictValueMap &propListDictValueMap,
 	bool &empty,
 	PIMoaDict dictInterfacePointer
 ) {
@@ -363,7 +361,7 @@ MoaError ValueConverter::concatToDictInterfacePointer(
 
 MoaError ValueConverter::concatToDictInterfacePointer(
 	const MoaMmValue &propListValue,
-	PROP_LIST_DICT_VALUE_MAP &propListDictValueMap,
+	PropListDictValueMap &propListDictValueMap,
 	PIMoaDict dictInterfacePointer
 ) {
 	RETURN_NULL(dictInterfacePointer);
@@ -377,7 +375,7 @@ MoaError ValueConverter::concatToDictInterfacePointer(
 MoaError ValueConverter::concatToPropList(
 	MoaMmValue &propListValue,
 	bool appendInterfaceValues,
-	DICT_VALUE_PROP_LIST_MAP &dictValuePropListMap,
+	DictValuePropListMap &dictValuePropListMap,
 	PIMoaDict dictInterfacePointer
 ) {
 	RETURN_NULL(dictInterfacePointer);
@@ -575,7 +573,7 @@ MoaError ValueConverter::toBytes(
 }
 
 MoaError ValueConverter::toValue(
-	const SYMBOL_VARIANT &symbolVariant, MoaMmValue &value
+	const SymbolVariant &symbolVariant, MoaMmValue &value
 ) {
 	MoaMmSymbol symbol = 0;
 
@@ -756,7 +754,7 @@ MoaError ValueConverter::appendToList(
 }
 
 MoaError ValueConverter::appendToList(
-	const SYMBOL_VARIANT &symbolVariant, MoaMmValue &listValue
+	const SymbolVariant &symbolVariant, MoaMmValue &listValue
 ) {
 	MoaMmValue symbolValue = kVoidMoaMmValueInitializer;
 
@@ -920,7 +918,7 @@ MoaError ValueConverter::appendToPropList(
 }
 
 MoaError ValueConverter::appendToPropList(
-	SYMBOL_VARIANT propertySymbolVariant,
+	SymbolVariant propertySymbolVariant,
 	const MoaMmValue &value,
 	MoaMmValue &propListValue
 ) {
@@ -934,7 +932,7 @@ MoaError ValueConverter::appendToPropList(
 }
 
 MoaError ValueConverter::appendToPropList(
-	SYMBOL_VARIANT propertySymbolVariant,
+	SymbolVariant propertySymbolVariant,
 	ConstPMoaChar stringPointer,
 	MoaMmValue &propListValue
 ) {
@@ -955,7 +953,7 @@ MoaError ValueConverter::concatToDictInterfacePointer(
 ) {
 	RETURN_NULL(dictInterfacePointer);
 
-	PROP_LIST_DICT_VALUE_MAP propListDictValueMap = {};
+	PropListDictValueMap propListDictValueMap = {};
 
 	return concatToDictInterfacePointer(propListValue,
 		propListDictValueMap, empty, dictInterfacePointer);
@@ -979,7 +977,7 @@ MoaError ValueConverter::concatToPropList(
 ) {
 	RETURN_NULL(dictInterfacePointer);
 
-	DICT_VALUE_PROP_LIST_MAP dictValuePropListMap = {};
+	DictValuePropListMap dictValuePropListMap = {};
 
 	return concatToPropList(propListValue,
 		appendInterfaceValues, dictValuePropListMap, dictInterfacePointer);
@@ -1069,7 +1067,7 @@ MoaError ValueConverter::getProp(
 
 MoaError ValueConverter::getProp(
 	const MoaMmValue &propListValue,
-	SYMBOL_VARIANT propertySymbolVariant,
+	SymbolVariant propertySymbolVariant,
 	MoaMmValue &value
 ) {
 	MoaMmSymbol propertySymbol = 0;
@@ -1108,7 +1106,7 @@ MoaError ValueConverter::getAProp(
 
 MoaError ValueConverter::getAProp(
 	const MoaMmValue &propListValue,
-	SYMBOL_VARIANT propertySymbolVariant,
+	SymbolVariant propertySymbolVariant,
 	MoaMmValue &value
 ) {
 	MoaError err = getProp(propListValue, propertySymbolVariant, value);

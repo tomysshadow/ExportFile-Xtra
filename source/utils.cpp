@@ -1,6 +1,6 @@
 #include "utils.h"
 
-MoaError getSymbol(SYMBOL_VARIANT &symbolVariant,
+MoaError getSymbol(SymbolVariant &symbolVariant,
 	PIMoaMmValue mmValueInterfacePointer) {
 	RETURN_NULL(mmValueInterfacePointer);
 
@@ -25,11 +25,11 @@ MoaError getSymbol(SYMBOL_VARIANT &symbolVariant,
 	return kMoaErr_InternalError;
 }
 
-MoaError getSymbol(const SYMBOL_VARIANT &symbolVariant,
+MoaError getSymbol(const SymbolVariant &symbolVariant,
 	MoaMmSymbol &symbol, PIMoaMmValue mmValueInterfacePointer) {
 	RETURN_NULL(mmValueInterfacePointer);
 
-	SYMBOL_VARIANT gotSymbolVariant = symbolVariant;
+	SymbolVariant gotSymbolVariant = symbolVariant;
 	RETURN_ERR(getSymbol(gotSymbolVariant, mmValueInterfacePointer));
 
 	if (!std::holds_alternative<MoaMmSymbol>(gotSymbolVariant)) {

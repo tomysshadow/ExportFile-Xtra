@@ -9,16 +9,16 @@ class ValueConverter {
 	void duplicate(const ValueConverter &valueConverter);
 
 	protected:
-	typedef std::map<
+	using PropListDictValueMap = std::map<
 		const PMoaMmValue,
 		PIMoaDict,
 		std::less<>
-	> PROP_LIST_DICT_VALUE_MAP;
+	>;
 
-	typedef std::unordered_map<
+	using DictValuePropListMap = std::unordered_map<
 		PIMoaDict,
 		PMoaMmValue
-	> DICT_VALUE_PROP_LIST_MAP;
+	>;
 
 	PIMoaDrPlayer drPlayerInterfacePointer = NULL;
 	PIMoaMmValue mmValueInterfacePointer = NULL;
@@ -38,7 +38,7 @@ class ValueConverter {
 
 	MoaError appendToDictInterfacePointer(
 		const MoaMmValue &propListValue,
-		PROP_LIST_DICT_VALUE_MAP &propListDictValueMap,
+		PropListDictValueMap &propListDictValueMap,
 		MoaDictTypeID dictTypeID,
 		ConstPMoaChar keyStringPointer,
 		PIMoaDict dictInterfacePointer
@@ -47,7 +47,7 @@ class ValueConverter {
 	MoaError appendToPropList(
 		MoaMmValue &propListValue,
 		bool appendInterfaceValue,
-		DICT_VALUE_PROP_LIST_MAP &dictValuePropListMap,
+		DictValuePropListMap &dictValuePropListMap,
 		MoaDictTypeID dictTypeID,
 		MoaLong valueSize,
 		ConstPMoaChar keyStringPointer,
@@ -56,21 +56,21 @@ class ValueConverter {
 
 	MoaError concatToDictInterfacePointer(
 		const MoaMmValue &propListValue,
-		PROP_LIST_DICT_VALUE_MAP &propListDictValueMap,
+		PropListDictValueMap &propListDictValueMap,
 		bool &empty,
 		PIMoaDict dictInterfacePointer
 	);
 
 	MoaError concatToDictInterfacePointer(
 		const MoaMmValue &propListValue,
-		PROP_LIST_DICT_VALUE_MAP &propListDictValueMap,
+		PropListDictValueMap &propListDictValueMap,
 		PIMoaDict dictInterfacePointer
 	);
 
 	MoaError concatToPropList(
 		MoaMmValue &propListValue,
 		bool appendInterfaceValues,
-		DICT_VALUE_PROP_LIST_MAP &dictValuePropListMap,
+		DictValuePropListMap &dictValuePropListMap,
 		PIMoaDict dictInterfacePointer
 	);
 
@@ -98,7 +98,7 @@ class ValueConverter {
 	);
 
 	MoaError toValue(
-		const SYMBOL_VARIANT &symbolVariant, MoaMmValue &value
+		const SymbolVariant &symbolVariant, MoaMmValue &value
 	);
 
 	MoaError toValue(
@@ -140,7 +140,7 @@ class ValueConverter {
 	);
 
 	MoaError appendToList(
-		const SYMBOL_VARIANT &symbolVariant, MoaMmValue &listValue
+		const SymbolVariant &symbolVariant, MoaMmValue &listValue
 	);
 
 	MoaError appendToList(
@@ -182,13 +182,13 @@ class ValueConverter {
 	);
 
 	MoaError appendToPropList(
-		SYMBOL_VARIANT propertySymbolVariant,
+		SymbolVariant propertySymbolVariant,
 		const MoaMmValue &value,
 		MoaMmValue &propListValue
 	);
 
 	MoaError appendToPropList(
-		SYMBOL_VARIANT propertySymbolVariant,
+		SymbolVariant propertySymbolVariant,
 		ConstPMoaChar stringPointer,
 		MoaMmValue &propListValue
 	);
@@ -234,7 +234,7 @@ class ValueConverter {
 
 	MoaError getProp(
 		const MoaMmValue &propListValue,
-		SYMBOL_VARIANT propertySymbolVariant,
+		SymbolVariant propertySymbolVariant,
 		MoaMmValue &value
 	);
 
@@ -252,7 +252,7 @@ class ValueConverter {
 
 	MoaError getAProp(
 		const MoaMmValue &propListValue,
-		SYMBOL_VARIANT propertySymbolVariant,
+		SymbolVariant propertySymbolVariant,
 		MoaMmValue &value
 	);
 };

@@ -77,7 +77,7 @@ class BitmapImporter {
 	MoaError insertIntoIconValues(
 		GlobalHandleLock<>::GlobalHandle mediaData,
 		IconValues &iconValues,
-		RESOURCE_ID resourceID
+		ResourceId resourceId
 	);
 
 	MoaError getMedia(

@@ -244,7 +244,7 @@ MoaError ExportFileValueConverter::toValue(
 }
 
 MoaError ExportFileValueConverter::toValue(
-	const Label::MAPPED_VECTOR &labelMappedVector, MoaMmValue &value
+	const Label::MappedVector &labelMappedVector, MoaMmValue &value
 ) {
 	value = kVoidMoaMmValueInitializer;
 
@@ -267,7 +267,7 @@ MoaError ExportFileValueConverter::toValue(
 }
 
 MoaError ExportFileValueConverter::toValue(
-	const Agent::Info::MAP &agentInfoMap, MoaMmValue &value
+	const Agent::Info::Map &agentInfoMap, MoaMmValue &value
 ) {
 	value = kVoidMoaMmValueInitializer;
 
@@ -413,7 +413,7 @@ MoaError ExportFileValueConverter::toValue(
 }
 
 MoaError ExportFileValueConverter::toValue(
-	const IconValues::ICON_VALUE_MAP &iconValueMap,
+	const IconValues::IconValueMap &iconValueMap,
 	MoaMmValue &value,
 	PIMoaDrCastMem drCastMemInterfacePointer
 ) {
@@ -430,11 +430,11 @@ MoaError ExportFileValueConverter::toValue(
 
 	RETURN_ERR(mmListInterfacePointer->NewPropListValue(&value));
 
-	IconValues::ICON_VALUE_MAP::const_iterator foundIconValue = {};
+	IconValues::IconValueMap::const_iterator foundIconValue = {};
 
-	#define FIND_ICON_VALUE(propertySymbol, resourceID, resourceIDLinked) do {\
+	#define FIND_ICON_VALUE(propertySymbol, resourceId, resourceIdLinked) do {\
 		foundIconValue = iconValueMap.find(\
-			(RESOURCE_ID)(linked ? (resourceIDLinked) : (resourceID))\
+			(ResourceId)(linked ? (resourceIdLinked) : (resourceId))\
 		);\
 		\
 		if (foundIconValue != iconValueMap.cend()) {\

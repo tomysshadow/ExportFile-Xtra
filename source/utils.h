@@ -39,19 +39,19 @@
 
 #include "resource.h"
 
-typedef uint32_t CHUNK_ID;
+using ChunkId = uint32_t;
 
 #ifdef MACINTOSH
-typedef ResID RESOURCE_ID;
+using ResourceId = ResID;
 #endif
 #ifdef WINDOWS
-typedef WORD RESOURCE_ID;
+using ResourceId = WORD;
 #endif
 
-typedef std::variant<std::string, MoaMmSymbol> SYMBOL_VARIANT;
+using SymbolVariant = std::variant<std::string, MoaMmSymbol>;
 
 #ifdef WINDOWS
-typedef std::vector<HANDLE> HANDLE_VECTOR;
+using HandleVector = std::vector<HANDLE>;
 #endif
 
 //#define kWriterRegKey_AgentRegDict MOADICT_RUNTIME_KEY_PREFIX "%%AgentRegDict%%"
@@ -635,10 +635,10 @@ inline bool unmapMappedView(LPVOID &mappedView) {
 }
 #endif
 
-MoaError getSymbol(SYMBOL_VARIANT &symbolVariant,
+MoaError getSymbol(SymbolVariant &symbolVariant,
 	PIMoaMmValue mmValueInterfacePointer);
 
-MoaError getSymbol(const SYMBOL_VARIANT &symbolVariant,
+MoaError getSymbol(const SymbolVariant &symbolVariant,
 	MoaMmSymbol &symbol, PIMoaMmValue mmValueInterfacePointer);
 
 MoaError readStreamSafe(PMoaVoid buffer,

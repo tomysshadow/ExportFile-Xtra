@@ -9,7 +9,7 @@
 namespace Formats {
 	class Format : NonCopyable {
 		public:
-		typedef std::shared_ptr<Format> POINTER;
+		using Pointer = std::shared_ptr<Format>;
 
 		// MUST not exceed three characters (8.3 filename compatible)
 		const std::string tempFileExtension = "tmp";
@@ -78,8 +78,8 @@ namespace Formats {
 	// in the Format Factory
 	// where your horrors and fears come true
 	namespace FormatFactory {
-		Format::POINTER createMediaInfoFormat(
-			Label::TYPE labelType,
+		Format::Pointer createMediaInfoFormat(
+			Label::Type labelType,
 			PMoaVoid mediaData,
 			unsigned long productVersionMajor,
 			PIMoaHandle handleInterfacePointer,
@@ -87,8 +87,8 @@ namespace Formats {
 		);
 
 		#ifdef MACINTOSH
-		Format::POINTER createMediaInfoFormat(
-			Label::TYPE labelType,
+		Format::Pointer createMediaInfoFormat(
+			Label::Type labelType,
 			bool resource,
 			GlobalHandleLock<>::GlobalHandle mediaData,
 			unsigned long productVersionMajor,
@@ -97,8 +97,8 @@ namespace Formats {
 		#endif
 
 		#ifdef WINDOWS
-		Format::POINTER createMediaInfoFormat(
-			Label::TYPE labelType,
+		Format::Pointer createMediaInfoFormat(
+			Label::Type labelType,
 			HMODULE moduleHandle,
 			HRSRC resourceHandle,
 			unsigned long productVersionMajor,
@@ -106,16 +106,16 @@ namespace Formats {
 		);
 		#endif
 
-		Format::POINTER createMemberPropertyFormat(
-			Label::TYPE labelType,
+		Format::Pointer createMemberPropertyFormat(
+			Label::Type labelType,
 			PMoaVoid mediaData,
 			unsigned long productVersionMajor,
 			PIMoaMmValue mmValueInterfacePointer,
 			PIMoaCalloc callocInterfacePointer
 		);
 
-		Format::POINTER createMemberPropertyFormat(
-			Label::TYPE labelType, PMoaVoid mediaData,
+		Format::Pointer createMemberPropertyFormat(
+			Label::Type labelType, PMoaVoid mediaData,
 			unsigned long productVersionMajor,
 			PIMoaHandle handleInterfacePointer,
 			PIMoaDrMediaValue drMediaValueInterfacePointer,
@@ -123,14 +123,14 @@ namespace Formats {
 			PIMoaCalloc callocInterfacePointer
 		);
 
-		Format::POINTER createXtraMediaFormat(
-			Label::TYPE labelType, PMoaVoid mediaData,
+		Format::Pointer createXtraMediaFormat(
+			Label::Type labelType, PMoaVoid mediaData,
 			unsigned long productVersionMajor,
 			PIMoaCallback callbackInterfacePointer, PIMoaCalloc callocInterfacePointer
 		);
 
-		Format::POINTER createXtraMediaFormat(
-			Label::TYPE labelType, PMoaVoid mediaData,
+		Format::Pointer createXtraMediaFormat(
+			Label::Type labelType, PMoaVoid mediaData,
 			unsigned long productVersionMajor,
 			PIMoaDrCastMem drCastMemInterfacePointer,
 			PIMoaMmValue mmValueInterfacePointer,

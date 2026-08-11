@@ -4,10 +4,10 @@
 template <typename T = void*> class GlobalHandleLock {
 	public:
 	#ifdef MACINTOSH
-	typedef Handle GlobalHandle;
+	using GlobalHandle = Handle;
 	#endif
 	#ifdef WINDOWS
-	typedef HGLOBAL GlobalHandle;
+	using GlobalHandle = HGLOBAL;
 	#endif
 
 	private:

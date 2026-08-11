@@ -23,13 +23,13 @@
 namespace Media {
 	class DirectorMedia {
 		public:
-		DirectorMedia(Label::Info::MAP::const_iterator labelInfoNotFound);
+		DirectorMedia(Label::Info::Map::const_iterator labelInfoNotFound);
 
 		size_t agentMoaIDsHash = 0;
-		std::shared_ptr<Agent::HIDDEN_READER_SET> agentHiddenReaderSetPointer = nullptr;
-		std::optional<Label::MAPPED_VECTOR> labelMappedVectorOptional = std::nullopt;
-		std::optional<Agent::Info::MAP> agentInfoMapOptional = std::nullopt;
-		Label::Info::MAP::const_iterator labelInfoMapIterator = {};
+		std::shared_ptr<Agent::HiddenReaderSet> agentHiddenReaderSetPointer = nullptr;
+		std::optional<Label::MappedVector> labelMappedVectorOptional = std::nullopt;
+		std::optional<Agent::Info::Map> agentInfoMapOptional = std::nullopt;
+		Label::Info::Map::const_iterator labelInfoMapIterator = {};
 		std::optional<Agent::Info> agentInfoOptional = std::nullopt;
 		std::shared_ptr<BitmapImporter> bitmapImporterPointer = nullptr;
 		std::optional<Asset::Info> assetInfoOptional = std::nullopt;
@@ -59,7 +59,7 @@ namespace Media {
 				PIMoaDataObject dataObjectInterfacePointer
 			);
 
-			Formats::Format::POINTER formatPointer = nullptr;
+			Formats::Format::Pointer formatPointer = nullptr;
 			std::unique_ptr<Stream> streamPointer = nullptr;
 		};
 
@@ -110,7 +110,7 @@ namespace Media {
 
 		ExportFileValueConverter exportFileValueConverter;
 
-		Formats::Format::POINTER formatPointer = nullptr;
+		Formats::Format::Pointer formatPointer = nullptr;
 
 		class Lingo {
 			void destroy();
@@ -215,7 +215,7 @@ namespace Media {
 		);
 
 		public:
-		static constexpr WORD TYPE = 0x4D42;
+		static constexpr WORD Type = 0x4D42;
 
 		static bool validateBitmapFileHeader(
 			const BITMAPFILEHEADER &bitmapFileHeader, DWORD end

@@ -74,11 +74,11 @@ class ExportFileValueConverter : public ValueConverter {
 	);
 
 	MoaError toValue(
-		const Label::MAPPED_VECTOR &labelMappedVector, MoaMmValue &value
+		const Label::MappedVector &labelMappedVector, MoaMmValue &value
 	);
 
 	MoaError toValue(
-		const Agent::Info::MAP &agentInfoMap, MoaMmValue &value
+		const Agent::Info::Map &agentInfoMap, MoaMmValue &value
 	);
 
 	MoaError toValue(
@@ -86,7 +86,7 @@ class ExportFileValueConverter : public ValueConverter {
 	);
 
 	MoaError toValue(
-		const IconValues::ICON_VALUE_MAP &iconValueMap,
+		const IconValues::IconValueMap &iconValueMap,
 		MoaMmValue &value,
 		PIMoaDrCastMem drCastMemInterfacePointer
 	);

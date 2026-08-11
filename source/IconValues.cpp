@@ -103,8 +103,8 @@ IconValues &IconValues::operator=(IconValues &&iconValues) noexcept {
 	return *this;
 }
 
-MoaError IconValues::setValue(RESOURCE_ID resourceID, const MoaMmValue &value) {
-	auto foundIconValue = iconValueMap.find(resourceID);
+MoaError IconValues::setValue(ResourceId resourceId, const MoaMmValue &value) {
+	auto foundIconValue = iconValueMap.find(resourceId);
 
 	if (foundIconValue == iconValueMap.end()) {
 		return kMoaErr_BadParam;
@@ -120,6 +120,6 @@ MoaError IconValues::setValue(RESOURCE_ID resourceID, const MoaMmValue &value) {
 	return kMoaErr_NoErr;
 }
 
-const IconValues::ICON_VALUE_MAP& IconValues::toIconValueMap() const {
+const IconValues::IconValueMap& IconValues::toIconValueMap() const {
 	return iconValueMap;
 }

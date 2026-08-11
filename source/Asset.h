@@ -20,13 +20,13 @@ namespace Asset {
 	*/
 
 	struct Info {
-		typedef std::map<SYMBOL_VARIANT, Info> MAP;
+		using Map = std::map<SymbolVariant, Info>;
 
 		//MoaChar type[kMoaMmMaxXtraDisplayName] = "";
 
-		SYMBOL_VARIANT subType = "";
-		Path::EXTENSION_MAPPED_VECTOR pathExtensions = {};
-		IconValues::MAP iconValuesMap = {};
+		SymbolVariant subType = "";
+		Path::ExtensionMappedVector pathExtensions = {};
+		IconValues::Map iconValuesMap = {};
 	};
 
 	namespace Assets {
@@ -43,7 +43,7 @@ namespace Asset {
 			//std::optional<AssetStream> streamOptional = std::nullopt;
 
 			// extensions are not defined here because these only apply to #composite
-			Asset::Info::MAP assetInfoMap = {
+			Asset::Info::Map assetInfoMap = {
 				{"", {"", {}, {{"", 16}}}},
 				{"Bitmap", {"", {}, {{"", 0}}}},
 				{"FilmLoop", {"", {}, {{"", 5}}}},
@@ -68,13 +68,13 @@ namespace Asset {
 				{"Transition", {"", {}, {{"", 7}}}}
 			};
 
-			MoaError findIconValue(IconValues::VARIANT &iconValuesVariant);
-			RESOURCE_ID getBaseResourceID(unsigned long productVersionMajor);
+			MoaError findIconValue(IconValues::Variant &iconValuesVariant);
+			ResourceId getBaseResourceId(unsigned long productVersionMajor);
 			MoaError getAssetInfoMapSymbols();
 
 			MoaError getAssetInfoMapIcon(
 				BitmapImporter &bitmapImporter, IconValues &iconValues,
-				RESOURCE_ID resourceID, RESOURCE_ID baseResourceID, XtraResourceCookie myCookie
+				ResourceId resourceId, ResourceId baseResourceId, XtraResourceCookie myCookie
 			);
 
 			MoaError getAssetInfoMapIcons(
@@ -91,8 +91,8 @@ namespace Asset {
 			~Info();
 			Info(const Info &info);
 			Info &operator=(const Info &info);
-			std::optional<Asset::Info> find(SYMBOL_VARIANT typeSymbol);
-			bool insert(SYMBOL_VARIANT typeSymbol, const Asset::Info &assetInfo);
+			std::optional<Asset::Info> find(SymbolVariant typeSymbol);
+			bool insert(SymbolVariant typeSymbol, const Asset::Info &assetInfo);
 		};
 	};
 };

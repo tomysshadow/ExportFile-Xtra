@@ -7,10 +7,10 @@
 #include "mmiimage.h"
 
 namespace Registry {
-	typedef std::unordered_set<MoaMmSymbol> SYMBOL_SET;
+	using SymbolSet = std::unordered_set<MoaMmSymbol>;
 
 	struct Entry {
-		typedef std::variant<Entry, PIMoaRegistryEntryDict> VARIANT;
+		using Variant = std::variant<Entry, PIMoaRegistryEntryDict>;
 
 		MoaClassID* classIDPointer;
 		MoaInterfaceID* interfaceIDPointer;
@@ -24,7 +24,7 @@ namespace Registry {
 
 	struct ExcludedTypeSymbolSet {
 		PIMoaMmValue mmValueInterfacePointer = NULL;
-		SYMBOL_SET* excludedTypeSymbolSetPointer = nullptr;
+		SymbolSet* excludedTypeSymbolSetPointer = nullptr;
 	};
 
 	struct AssetInfoMap {
@@ -34,16 +34,16 @@ namespace Registry {
 		PIMoaMmImage mmImageInterfacePointer = NULL;
 
 		BitmapImporter* bitmapImporterPointer = nullptr;
-		Asset::Info::MAP* assetInfoMapPointer = nullptr;
+		Asset::Info::Map* assetInfoMapPointer = nullptr;
 	};
 
 	struct AgentHiddenReaderSet {
 		size_t* agentMoaIDsHashPointer = nullptr;
-		Agent::HIDDEN_READER_SET* agentHiddenReaderSetPointer = nullptr;
+		Agent::HiddenReaderSet* agentHiddenReaderSetPointer = nullptr;
 	};
 
 	struct Reader {
 		AgentHiddenReaderSet* registryEntriesAgentHiddenReaderSetPointer = nullptr;
-		Entry::VARIANT* readerRegistryEntryVariantPointer = NULL;
+		Entry::Variant* readerRegistryEntryVariantPointer = NULL;
 	};
 }

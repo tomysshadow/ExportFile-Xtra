@@ -26,9 +26,9 @@ class Args {
 	std::optional<Path::Info> pathInfoOptional = std::nullopt;
 	std::optional<MoaLong> infoOptional = std::nullopt;
 
-	Label::SYMBOL_VARIANT labelSymbolVariant = "";
+	Label::SymbolVariant labelSymbolVariant = "";
 
-	std::optional<Agent::STRING> agentStringOptional = std::nullopt;
+	std::optional<Agent::String> agentStringOptional = std::nullopt;
 
 	// strictly speaking this does not need to be an optional
 	// but I prefer it to be

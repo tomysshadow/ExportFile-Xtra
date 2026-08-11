@@ -58,13 +58,13 @@ DEFINE_GUID(CLSID_CScriptAgent,
 	0x9A60E1E1, 0x5CA5, 0x11D3, 0xAE, 0x51, 0x00, 0x90, 0x27, 0x25, 0x0B, 0x86);
 
 namespace Agent {
-	typedef std::string STRING;
+	using String = std::string;
 
-	typedef std::unordered_set<MoaClassID> HIDDEN_READER_SET;
+	using HiddenReaderSet = std::unordered_set<MoaClassID>;
 
 	class Info {
 		public:
-		typedef std::map<std::string, Info, IgnoreCaseComparer> MAP;
+		using Map = std::map<std::string, Info, IgnoreCaseComparer>;
 
 		class Writer {
 			private:
@@ -84,11 +84,11 @@ namespace Agent {
 			MoaClassID classID = IID_NULL;
 		};
 
-		typedef std::vector<Writer> WRITER_VECTOR;
+		using WriterVector = std::vector<Writer>;
 
 		std::string name = "";
-		Path::EXTENSION_MAPPED_VECTOR pathExtensions = {};
+		Path::ExtensionMappedVector pathExtensions = {};
 		MoaBool hidden = FALSE;
-		WRITER_VECTOR writerVector = {};
+		WriterVector writerVector = {};
 	};
 };

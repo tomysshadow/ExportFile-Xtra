@@ -7,56 +7,56 @@
 #include <variant>
 
 namespace Label {
-	typedef ::SYMBOL_VARIANT SYMBOL_VARIANT;
-	typedef MappedVector<SYMBOL_VARIANT> MAPPED_VECTOR;
+	using SymbolVariant = ::SymbolVariant;
+	using MappedVector = ::MappedVector<SymbolVariant>;
 
-	typedef unsigned int TYPE;
+	using Type = unsigned int;
 
-	static constexpr TYPE TYPE_MEDIA_INFO = 0x00000001;
-	static constexpr TYPE TYPE_MEMBER_PROPERTY = 0x00000002;
-	static constexpr TYPE TYPE_XTRA_MEDIA = 0x00000004;
+	static constexpr Type TYPE_MEDIA_INFO = 0x00000001;
+	static constexpr Type TYPE_MEMBER_PROPERTY = 0x00000002;
+	static constexpr Type TYPE_XTRA_MEDIA = 0x00000004;
 
-	static constexpr TYPE TYPE_MEDIA_INFO_GLOBAL_HANDLE = 0x00000100;
-	static constexpr TYPE TYPE_MEDIA_INFO_COMPOSITE = 0x00000200;
+	static constexpr Type TYPE_MEDIA_INFO_GLOBAL_HANDLE = 0x00000100;
+	static constexpr Type TYPE_MEDIA_INFO_COMPOSITE = 0x00000200;
 	#ifdef MACINTOSH
 	// reserved in case the Mac labels need their own types
 	// because I legitimately don't know if they can use the Global Handle Format or
 	// will need their own Format classes
 
 	// reserved in case Mac #image label needs its own type
-	static constexpr TYPE TYPE_MEDIA_INFO_MAC_RESERVED = 0x00000400;
+	static constexpr Type TYPE_MEDIA_INFO_MAC_RESERVED = 0x00000400;
 
 	// reserved in case Mac #sound label needs its own type
-	static constexpr TYPE TYPE_MEDIA_INFO_MAC_RESERVED2 = 0x00000800;
+	static constexpr Type TYPE_MEDIA_INFO_MAC_RESERVED2 = 0x00000800;
 
 	// reserved in case Mac #palette label needs its own type
-	static constexpr TYPE TYPE_MEDIA_INFO_MAC_RESERVED3 = 0x00001000;
+	static constexpr Type TYPE_MEDIA_INFO_MAC_RESERVED3 = 0x00001000;
 	#endif
 	#ifdef WINDOWS
-	static constexpr TYPE TYPE_MEDIA_INFO_WIN_DIB = 0x00002000;
-	static constexpr TYPE TYPE_MEDIA_INFO_WIN_PALETTE = 0x00004000;
+	static constexpr Type TYPE_MEDIA_INFO_WIN_DIB = 0x00002000;
+	static constexpr Type TYPE_MEDIA_INFO_WIN_PALETTE = 0x00004000;
 	#endif
 
-	static constexpr TYPE TYPE_MEMBER_PROPERTY_PICTURE = 0x00000100;
+	static constexpr Type TYPE_MEMBER_PROPERTY_PICTURE = 0x00000100;
 
-	static constexpr TYPE TYPE_XTRA_MEDIA_SWF = 0x00000100;
-	static constexpr TYPE TYPE_XTRA_MEDIA_W3D = 0x00000200;
-	static constexpr TYPE TYPE_XTRA_MEDIA_MIXER_ASYNC = 0x00000400;
+	static constexpr Type TYPE_XTRA_MEDIA_SWF = 0x00000100;
+	static constexpr Type TYPE_XTRA_MEDIA_W3D = 0x00000200;
+	static constexpr Type TYPE_XTRA_MEDIA_MIXER_ASYNC = 0x00000400;
 
-	static constexpr TYPE TYPE_XTRA_MEDIA_MIXER_WAV_ASYNC = 0x00010000;
-	static constexpr TYPE TYPE_XTRA_MEDIA_MIXER_MP4_ASYNC = 0x00020000;
+	static constexpr Type TYPE_XTRA_MEDIA_MIXER_WAV_ASYNC = 0x00010000;
+	static constexpr Type TYPE_XTRA_MEDIA_MIXER_MP4_ASYNC = 0x00020000;
 
-	typedef std::unordered_map<MoaMmSymbol, Agent::Info::MAP> AGENT_INFO_MAP;
+	using AgentInfoMap = std::unordered_map<MoaMmSymbol, Agent::Info::Map>;
 
 	struct Info {
-		typedef std::map<SYMBOL_VARIANT, Info> MAP;
+		using Map = std::map<SymbolVariant, Info>;
 
 		std::string name = "";
 
-		Path::EXTENSION_MAPPED_VECTOR pathExtensions = {};
+		Path::ExtensionMappedVector pathExtensions = {};
 
-		TYPE labelType = TYPE_MEDIA_INFO;
-		::SYMBOL_VARIANT labelFormat = "";
+		Type labelType = TYPE_MEDIA_INFO;
+		::SymbolVariant labelFormat = "";
 
 		std::string agentFormatName = "";
 		MoaClassID agentReaderClassID = {};
@@ -89,7 +89,7 @@ namespace Label {
 			so it'll probably be better to design for this when the problem comes up
 			and for the time being, YAGNI
 			*/
-			Label::Info::MAP labelInfoMap = {
+			Label::Info::Map labelInfoMap = {
 				{"RTF", {"Rich Text Document", {"rtf"},
 					TYPE_MEMBER_PROPERTY, "RTF", "", IID_NULL}},
 
@@ -197,7 +197,7 @@ namespace Label {
 
 			public:
 			Info(PIMoaMmValue mmValueInterfacePointer);
-			const Label::Info::MAP &get() const;
+			const Label::Info::Map &get() const;
 		};
 	}
 };

@@ -9,16 +9,16 @@
 #endif
 
 namespace Path {
-	typedef MappedVector<std::string, IgnoreCaseComparer> EXTENSION_MAPPED_VECTOR;
+	using ExtensionMappedVector = MappedVector<std::string, IgnoreCaseComparer>;
 
 	bool filterPatternExtensions(
 		std::string filterPattern,
-		EXTENSION_MAPPED_VECTOR &extensions
+		ExtensionMappedVector &extensions
 	);
 
 	bool filterExtensions(
 		ConstPMoaChar filterPointer,
-		EXTENSION_MAPPED_VECTOR &extensions);
+		ExtensionMappedVector &extensions);
 
 	bool testValidName(const std::string &name);
 	std::string getValidName(const std::string &name);
@@ -44,7 +44,7 @@ namespace Path {
 		std::optional<std::string> filenameOptional = std::nullopt;
 
 		#ifdef WINE_BUGFIX
-		HANDLE_VECTOR findVector = {};
+		HandleVector findVector = {};
 		#endif
 
 		unsigned long productVersionMajor = 0;

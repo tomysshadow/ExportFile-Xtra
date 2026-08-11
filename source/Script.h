@@ -71,7 +71,7 @@ EXTERN_BEGIN_DEFINE_CLASS_INSTANCE_VARS(TStdXtra)
 	PIMoaDataObjectServices dataObjectServicesInterfacePointer = NULL;
 	PIMoaAgentServices agentServicesInterfacePointer = NULL;
 
-	Registry::Entry::VARIANT* registryEntryVariantPointer = NULL;
+	Registry::Entry::Variant* registryEntryVariantPointer = NULL;
 
 	ExportFileValueConverter* exportFileValueConverterPointer = nullptr;
 	Label::Labels::Info* labelsInfoPointer = nullptr;
@@ -79,10 +79,10 @@ EXTERN_BEGIN_DEFINE_CLASS_INSTANCE_VARS(TStdXtra)
 	Asset::Assets::Info* assetsInfoPointer = nullptr;
 
 	size_t agentMoaIDsHash = 0;
-	Label::AGENT_INFO_MAP* labelAgentInfoMapPointer = nullptr;
+	Label::AgentInfoMap* labelAgentInfoMapPointer = nullptr;
 
 	size_t assetMoaIDsHash = 0;
-	Asset::Info::MAP* assetInfoMapPointer = nullptr;
+	Asset::Info::Map* assetInfoMapPointer = nullptr;
 
 	unsigned long productVersionMajor = 0;
 
@@ -193,7 +193,7 @@ EXTERN_BEGIN_DEFINE_CLASS_INTERFACE(TStdXtra, IMoaMmXScript)
 	/* Enum */
 	// Agent
 	EXTERN_DEFINE_METHOD(MoaError, EnumWriter, (
-		Agent::Info::MAP*, Agent::HIDDEN_READER_SET*, PIMoaEnumMixAgentInfo))
+		Agent::Info::Map*, Agent::HiddenReaderSet*, PIMoaEnumMixAgentInfo))
 
 	/* Handle */
 	// File
@@ -223,7 +223,7 @@ EXTERN_BEGIN_DEFINE_CLASS_INTERFACE(TStdXtra, IMoaMmXScript)
 	/* Add */
 	// Agent
 	EXTERN_DEFINE_METHOD(MoaError, AddAgentInfoExtensions, (ConstPMoaChar,
-		Path::EXTENSION_MAPPED_VECTOR*, PIMoaMixFormatInfo))
+		Path::ExtensionMappedVector*, PIMoaMixFormatInfo))
 
 	/* Get */
 	// Registry
@@ -282,7 +282,7 @@ EXTERN_BEGIN_DEFINE_CLASS_INTERFACE(TStdXtra, IMoaMmXScript)
 	EXTERN_DEFINE_METHOD(MoaError, GetFormatName, (MixFormat, std::string*))
 
 	EXTERN_DEFINE_METHOD(MoaError, GetAgentInfoHidden, (
-		Agent::HIDDEN_READER_SET*, MoaClassID*, MoaBool*, PIMoaMixAgentInfo))
+		Agent::HiddenReaderSet*, MoaClassID*, MoaBool*, PIMoaMixAgentInfo))
 
 	EXTERN_DEFINE_METHOD(MoaError, GetAgentInfoName, (
 		std::string*, PIMoaMixAgentInfo))

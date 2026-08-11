@@ -37,24 +37,24 @@ can't erase them - only pop, and you can't set them - use replace instead
 */
 template <typename ValueType, typename Comparer = std::less<ValueType>> class MappedVector {
 	private:
-	using MAPPED_VECTOR = MappedVector<ValueType, Comparer>;
-	using INITIALIZER_LIST = std::initializer_list<ValueType>;
+	using Type = MappedVector<ValueType, Comparer>;
+	using InitializerList = std::initializer_list<ValueType>;
 
 	public:
-	using VECTOR = std::vector<ValueType>;
-	using SIZE_TYPE = typename VECTOR::size_type;
-	using CONST_ITERATOR = typename VECTOR::const_iterator;
+	using Vector = std::vector<ValueType>;
+	using SizeType = typename Vector::size_type;
+	using ConstIterator = typename Vector::const_iterator;
 
-	static constexpr SIZE_TYPE NPOS = (SIZE_TYPE)-1;
+	static constexpr SizeType NPOS = (SizeType)-1;
 
 	private:
-	using MAP = std::map<ValueType, SIZE_TYPE, Comparer>;
+	using Map = std::map<ValueType, SizeType, Comparer>;
 
-	MAP _map = {};
-	VECTOR _vector = {};
+	Map _map = {};
+	Vector _vector = {};
 
 	public:
-	SIZE_TYPE findIndex(const ValueType &value) const {
+	SizeType findIndex(const ValueType &value) const {
 		auto mapIterator = _map.find(value);
 
 		if (mapIterator == _map.cend()) {
@@ -63,8 +63,8 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 		return mapIterator->second;
 	}
 
-	CONST_ITERATOR findIterator(const ValueType &value) const {
-		SIZE_TYPE index = findIndex(value);
+	ConstIterator findIterator(const ValueType &value) const {
+		SizeType index = findIndex(value);
 		
 		if (index != NPOS) {
 			return _vector.cbegin() + index;
@@ -86,11 +86,11 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 
 	// allow getting const iterators only
 	// to modify the values, the other more specific methods must be used instead
-	CONST_ITERATOR cbegin() const {
+	ConstIterator cbegin() const {
 		return _vector.cbegin();
 	}
 
-	CONST_ITERATOR cend() const {
+	ConstIterator cend() const {
 		return _vector.cend();
 	}
 
@@ -98,11 +98,11 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 		return _vector.empty();
 	}
 
-	SIZE_TYPE size() const {
+	SizeType size() const {
 		return _vector.size();
 	}
 
-	void reserve(SIZE_TYPE size) {
+	void reserve(SizeType size) {
 		_vector.reserve(size);
 	}
 
@@ -117,8 +117,8 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 	// the intention is that you can still get the index/iterator if it was
 	// already in the vector, saving you a call to find if you
 	// still wanted that information in that scenario
-	bool push(const ValueType &value, SIZE_TYPE &index) {
-		std::pair<MAP::iterator, bool> emplaced = _map.emplace(value, _vector.size());
+	bool push(const ValueType &value, SizeType &index) {
+		std::pair<Map::iterator, bool> emplaced = _map.emplace(value, _vector.size());
 
 		if (!emplaced.second) {
 			index = emplaced.first->second;
@@ -136,15 +136,15 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 		return true;
 	}
 
-	bool push(const ValueType &value, CONST_ITERATOR &iterator) {
-		SIZE_TYPE index = 0;
+	bool push(const ValueType &value, ConstIterator &iterator) {
+		SizeType index = 0;
 		bool result = push(value, index);
 		iterator = _vector.cbegin() + index;
 		return result;
 	}
 
 	bool push(const ValueType &value) {
-		SIZE_TYPE index = NPOS;
+		SizeType index = NPOS;
 		return push(value, index);
 	}
 
@@ -158,8 +158,8 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 	// this is implemented using an index
 	// because we need to insert one into the map anyway
 	// (the map needs to use indices to avoid iterator invalidation on vector erase)
-	bool replace(const ValueType &value, SIZE_TYPE index) {
-		SIZE_TYPE size = _vector.size();
+	bool replace(const ValueType &value, SizeType index) {
+		SizeType size = _vector.size();
 		
 		if (index >= size) {
 			throw std::invalid_argument("index must not be greater than or equal to size");
@@ -176,7 +176,7 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 		return true;
 	}
 
-	bool replace(const ValueType &value, CONST_ITERATOR iterator) {
+	bool replace(const ValueType &value, ConstIterator iterator) {
 		return replace(value, iterator - _vector.cbegin());
 	}
 
@@ -185,7 +185,7 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 	// and we need that information in order to correct the map
 	// these methods have iterator and index in the name to differentiate them from erase
 	// (what if ValueType is an iterator or index?)
-	CONST_ITERATOR eraseIterator(CONST_ITERATOR beginIterator, CONST_ITERATOR endIterator) {
+	ConstIterator eraseIterator(ConstIterator beginIterator, ConstIterator endIterator) {
 		// having an iterator outside of the vector is undefined behaviour
 		// we don't check for that, since the UB has already been "committed" in that case
 		// so, we shouldn't try and make sense of that
@@ -203,8 +203,8 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 			_map.erase(*vectorIterator);
 		}
 
-		SIZE_TYPE index = (SIZE_TYPE)(endIterator - beginIterator);
-		CONST_ITERATOR iterator = _vector.erase(beginIterator, endIterator);
+		SizeType index = (SizeType)(endIterator - beginIterator);
+		ConstIterator iterator = _vector.erase(beginIterator, endIterator);
 
 		// may be zero if begin and end are the same (which is valid)
 		if (index) {
@@ -219,9 +219,9 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 		return iterator;
 	}
 
-	CONST_ITERATOR eraseIterator(CONST_ITERATOR iterator) {
+	ConstIterator eraseIterator(ConstIterator iterator) {
 		// would cause undefined behaviour if allowed to continue
-		CONST_ITERATOR endIterator = _vector.cend();
+		ConstIterator endIterator = _vector.cend();
 
 		if (iterator == endIterator) {
 			throw std::invalid_argument("iterator must not be equal to endIterator");
@@ -229,12 +229,12 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 		return eraseIterator(iterator, iterator + 1);
 	}
 
-	MappedVector &eraseIndex(SIZE_TYPE beginIndex, SIZE_TYPE endIndex) {
+	Type &eraseIndex(SizeType beginIndex, SizeType endIndex) {
 		if (endIndex < beginIndex) {
 			throw std::invalid_argument("endIndex must not be less than beginIndex");
 		}
 
-		SIZE_TYPE size = _vector.size();
+		SizeType size = _vector.size();
 
 		if (endIndex > size) {
 			throw std::invalid_argument("endIndex must not be greater than size");
@@ -245,8 +245,8 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 		return *this;
 	}
 
-	MappedVector &eraseIndex(SIZE_TYPE index) {
-		SIZE_TYPE size = _vector.size();
+	Type &eraseIndex(SizeType index) {
+		SizeType size = _vector.size();
 
 		if (index >= size) {
 			throw std::invalid_argument("index must not be greater than or equal to size");
@@ -280,7 +280,7 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 	}
 
 	// these return the MappedVector reference to allow use with a temporary
-	MappedVector &concat(const VECTOR &concatVector) {
+	Type &concat(const Vector &concatVector) {
 		_vector.reserve(_vector.size() + concatVector.size());
 		
 		for (
@@ -293,15 +293,15 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 		return *this;
 	}
 
-	MappedVector &concat(const INITIALIZER_LIST &concatInitializerList) {
-		return concat(VECTOR(concatInitializerList));
+	Type &concat(const InitializerList &concatInitializerList) {
+		return concat(Vector(concatInitializerList));
 	}
 
-	MappedVector &concat(const MAPPED_VECTOR &concatMappedVector) {
+	Type &concat(const Type &concatMappedVector) {
 		return concat(concatMappedVector._vector);
 	}
 
-	MappedVector &difference(const VECTOR &differenceVector) {
+	Type &difference(const Vector &differenceVector) {
 		for (
 			auto differenceVectorIterator = differenceVector.cbegin();
 			differenceVectorIterator != differenceVector.cend();
@@ -312,66 +312,66 @@ template <typename ValueType, typename Comparer = std::less<ValueType>> class Ma
 		return *this;
 	}
 
-	MappedVector &difference(const INITIALIZER_LIST &differenceInitializerList) {
-		return difference(VECTOR(differenceInitializerList));
+	Type &difference(const InitializerList &differenceInitializerList) {
+		return difference(Vector(differenceInitializerList));
 	}
 
-	MappedVector &difference(const MAPPED_VECTOR &differenceMappedVector) {
+	Type &difference(const Type &differenceMappedVector) {
 		return difference(differenceMappedVector._vector);
 	}
 
-	MappedVector() = default;
+	Type() = default;
 
 	// we don't need a copy constructor that takes in this class
 	// (this class only uses RAII types so can be safely copied with the default behaviour)
-	MappedVector(const VECTOR &copyVector) {
+	Type(const Vector &copyVector) {
 		concat(copyVector);
 	}
 
-	MappedVector(const INITIALIZER_LIST &copyInitializerList) {
+	Type(const InitializerList &copyInitializerList) {
 		concat(copyInitializerList);
 	}
 
-	MappedVector &operator=(const VECTOR &assignVector) {
+	Type &operator=(const Vector &assignVector) {
 		clear();
 		return concat(assignVector);
 	}
 
-	MappedVector &operator=(const INITIALIZER_LIST &assignInitializerList) {
+	Type &operator=(const InitializerList &assignInitializerList) {
 		clear();
 		return concat(assignInitializerList);
 	}
 
-	MappedVector &operator+=(const VECTOR &addVector) {
+	Type &operator+=(const Vector &addVector) {
 		return concat(addVector);
 	}
 
-	MappedVector &operator+=(const INITIALIZER_LIST &addInitializerList) {
+	Type &operator+=(const InitializerList &addInitializerList) {
 		return concat(addInitializerList);
 	}
 
-	MappedVector &operator+=(const MAPPED_VECTOR &addMappedVector) {
+	Type &operator+=(const Type &addMappedVector) {
 		return concat(addMappedVector);
 	}
 
-	MappedVector &operator-=(const VECTOR &subtractVector) {
+	Type &operator-=(const Vector &subtractVector) {
 		return difference(subtractVector);
 	}
 
-	MappedVector &operator-=(const INITIALIZER_LIST &subtractInitializerList) {
+	Type &operator-=(const InitializerList &subtractInitializerList) {
 		return difference(subtractInitializerList);
 	}
 
-	MappedVector &operator-=(const MAPPED_VECTOR &subtractMappedVector) {
+	Type &operator-=(const Type &subtractMappedVector) {
 		return difference(subtractMappedVector);
 	}
 
 	// these are const as to not allow modifying vector values without map values
-	const ValueType &operator[](SIZE_TYPE index) const {
+	const ValueType &operator[](SizeType index) const {
 		return _vector[index];
 	}
 
-	const VECTOR &get() const {
+	const Vector &get() const {
 		return _vector;
 	}
 };

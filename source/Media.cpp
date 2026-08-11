@@ -72,7 +72,7 @@ namespace Media {
 			dataObjectInterfacePointer);
 	}
 
-	DirectorMedia::DirectorMedia(Label::Info::MAP::const_iterator labelInfoNotFound)
+	DirectorMedia::DirectorMedia(Label::Info::Map::const_iterator labelInfoNotFound)
 		: labelInfoMapIterator(labelInfoNotFound) {
 	}
 
@@ -594,19 +594,18 @@ namespace Media {
 		imageSize = 0;
 
 		#if defined READ_RPCS_INDEXED_RGB || defined READ_RPCS_RGB16
-		typedef std::unordered_map<MoaLong, WORD> BIT_COUNT_MAP;
+		using BitCountMap = std::unordered_map<MoaLong, WORD>;
 
-		static const BIT_COUNT_MAP _BIT_COUNT_MAP = {
+		static const BitCountMap BIT_COUNT_MAP = {
 			{ RPCS_INDEXED_RGB, 8 },
 			{ RPCS_RGB16, 16 },
 			{ RPCS_RGB, 24 },
 			{ RPCS_RGBA, 32 }
 		};
 
-		BIT_COUNT_MAP::const_iterator foundBitCount
-			= _BIT_COUNT_MAP.find(colorSpace);
+		auto foundBitCount = BIT_COUNT_MAP.find(colorSpace);
 
-		if (foundBitCount == _BIT_COUNT_MAP.end()) {
+		if (foundBitCount == BIT_COUNT_MAP.end()) {
 			return false;
 		}
 
@@ -630,19 +629,18 @@ namespace Media {
 		samplesPerPixel = 0;
 
 		#if defined READ_RPCS_INDEXED_RGB || defined READ_RPCS_RGB16
-		typedef std::unordered_map<MoaLong, MoaShort> SAMPLES_PER_PIXEL_MAP;
+		using SamplesPerPixelMap = std::unordered_map<MoaLong, MoaShort>;
 
-		static const SAMPLES_PER_PIXEL_MAP _SAMPLES_PER_PIXEL_MAP = {
+		static const SamplesPerPixelMap SAMPLES_PER_PIXEL_MAP = {
 			{ RPCS_INDEXED_RGB, 1 },
 			{ RPCS_RGB16, 3 },
 			{ RPCS_RGB, 3 },
 			{ RPCS_RGBA, 4 }
 		};
 
-		SAMPLES_PER_PIXEL_MAP::const_iterator foundSamplesPerPixel
-			= _SAMPLES_PER_PIXEL_MAP.find(colorSpace);
+		auto foundSamplesPerPixel = SAMPLES_PER_PIXEL_MAP.find(colorSpace);
 
-		if (foundSamplesPerPixel == _SAMPLES_PER_PIXEL_MAP.end()) {
+		if (foundSamplesPerPixel == SAMPLES_PER_PIXEL_MAP.end()) {
 			return false;
 		}
 
@@ -739,7 +737,7 @@ namespace Media {
 	bool WinBMPMedia::validateBitmapFileHeader(
 		const BITMAPFILEHEADER &bitmapFileHeader, DWORD end
 	) {
-		return bitmapFileHeader.bfType == TYPE
+		return bitmapFileHeader.bfType == Type
 		&& end > bitmapFileHeader.bfOffBits; // must actually be greater, so not empty
 	}
 

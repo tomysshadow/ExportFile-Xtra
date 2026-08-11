@@ -208,8 +208,8 @@ STDMETHODIMP_(MoaError) GetAssetInfoExtensions_TStdXtra(
 STDMETHODIMP_(MoaError) GetAssetInfoIcon_TStdXtra(
 	MoaDictTypeID dictTypeID,
 	ConstPMoaChar keyStringPointer,
-	IconValues::POINTER iconValuesPointer,
-	RESOURCE_ID resourceID,
+	IconValues::Pointer iconValuesPointer,
+	ResourceId resourceId,
 	Registry::AssetInfoMap* registryEntriesAssetInfoMapPointer,
 	PIMoaRegistryEntryDict registryEntryDictInterfacePointer
 ) {
@@ -249,7 +249,7 @@ STDMETHODIMP_(MoaError) GetAssetInfoIcon_TStdXtra(
 		ThrowErr(registryEntriesAssetInfoMap.bitmapImporterPointer->insertIntoIconValues(
 			iconGlobalHandleLock.getGlobalHandle(),
 			*iconValuesPointer,
-			resourceID
+			resourceId
 		));
 	}
 
@@ -275,17 +275,17 @@ STDMETHODIMP_(MoaError) GetAssetInfoIcons_TStdXtra(
 	ThrowNull(registryEntriesAssetInfoMap.mmValueInterfacePointer);
 
 	if (registryEntriesAssetInfoMap.mmImageInterfacePointer) {
-		IconValues::POINTER iconValuesPointer = std::make_shared<IconValues>(
+		IconValues::Pointer iconValuesPointer = std::make_shared<IconValues>(
 			registryEntriesAssetInfoMap.mmValueInterfacePointer,
 			registryEntriesAssetInfoMap.mmImageInterfacePointer
 		);
 
-		#define SET_ICON_VALUE(dictTypeID, keyStringPointer, resourceID) \
+		#define SET_ICON_VALUE(dictTypeID, keyStringPointer, resourceId) \
 		(GetAssetInfoIcon_TStdXtra(\
 			(dictTypeID),\
 			(keyStringPointer),\
 			iconValuesPointer,\
-			(resourceID),\
+			(resourceId),\
 			&registryEntriesAssetInfoMap,\
 			registryEntryDictInterfacePointer\
 		))
@@ -329,8 +329,8 @@ STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_RegistryEntryDict_TStdXtra
 	ThrowNull(interfaceIDPointer);
 	ThrowNull(refCon);
 
-	Registry::Entry::VARIANT &registryEntryVariant
-		= *(Registry::Entry::VARIANT*)refCon;
+	Registry::Entry::Variant &registryEntryVariant
+		= *(Registry::Entry::Variant*)refCon;
 
 	if (std::holds_alternative<PIMoaRegistryEntryDict>(registryEntryVariant)) {
 		result = true;
@@ -366,8 +366,8 @@ STDMETHODIMP_(MoaError) MoaCacheRegistryEntryEnumProc_RegistryEntryDict_TStdXtra
 	// so we need a redundant result boolean
 	if (!result) {
 		if (refCon) {
-			Registry::Entry::VARIANT &registryEntryVariant
-				= *(Registry::Entry::VARIANT*)refCon;
+			Registry::Entry::Variant &registryEntryVariant
+				= *(Registry::Entry::Variant*)refCon;
 
 			if (auto registryEntry = std::get_if<PIMoaRegistryEntryDict>(&registryEntryVariant)) {
 				releaseInterface((PPMoaVoid)&*registryEntry);
@@ -719,10 +719,10 @@ STDMETHODIMP_(MoaError) MoaCreate_TStdXtra(TStdXtra* This) {
 		This->drMediaValueInterfacePointer = NULL;
 	}
 
-	This->registryEntryVariantPointer = new Registry::Entry::VARIANT({});
+	This->registryEntryVariantPointer = new Registry::Entry::Variant({});
 	ThrowNull(This->registryEntryVariantPointer);
 
-	Registry::Entry::VARIANT &registryEntryVariant
+	Registry::Entry::Variant &registryEntryVariant
 		= *This->registryEntryVariantPointer;
 
 	Registry::Entry &registryEntry = std::get<Registry::Entry>(registryEntryVariant);
@@ -748,10 +748,10 @@ STDMETHODIMP_(MoaError) MoaCreate_TStdXtra(TStdXtra* This) {
 	//This->assetsInfoPointer = new Asset::Assets::Info(...);
 	//ThrowNull(This->assetsInfoPointer);
 
-	This->labelAgentInfoMapPointer = new Label::AGENT_INFO_MAP;
+	This->labelAgentInfoMapPointer = new Label::AgentInfoMap;
 	ThrowNull(This->labelAgentInfoMapPointer);
 
-	This->assetInfoMapPointer = new Asset::Info::MAP;
+	This->assetInfoMapPointer = new Asset::Info::Map;
 	ThrowNull(This->assetInfoMapPointer);
 
 	ThrowErr(GetProductVersionMajor_TStdXtra(This));
@@ -783,7 +783,7 @@ STDMETHODIMP_(void) MoaDestroy_TStdXtra(TStdXtra* This) {
 	releaseInterface((PPMoaVoid)&This->agentServicesInterfacePointer);
 
 	if (This->registryEntryVariantPointer) {
-		Registry::Entry::VARIANT &registryEntryVariant
+		Registry::Entry::Variant &registryEntryVariant
 			= *This->registryEntryVariantPointer;
 
 		if (auto registryEntry = std::get_if<PIMoaRegistryEntryDict>(&registryEntryVariant)) {
@@ -860,7 +860,7 @@ STDMETHODIMP TStdXtra_IMoaRegister::Register(
 
 		const char* VER_MAJORVERSION_STRING = "0";
 		const char* VER_MINORVERSION_STRING = "5";
-		const char* VER_BUGFIXVERSION_STRING = "6";
+		const char* VER_BUGFIXVERSION_STRING = "7";
 
 		const size_t VERSION_STRING_SIZE = min(256, kMoaMmMaxXtraMessageTable);
 		char versionString[VERSION_STRING_SIZE] = "";
@@ -894,7 +894,7 @@ STDMETHODIMP TStdXtra_IMoaRegister::Register(
 			kMoaDrDictKey_MessageTable
 		));
 
-		Registry::Entry::VARIANT &registryEntryVariant
+		Registry::Entry::Variant &registryEntryVariant
 			= *pObj->registryEntryVariantPointer;
 
 		registryEntryVariant = (PIMoaRegistryEntryDict)NULL;
@@ -1383,7 +1383,7 @@ MoaError TStdXtra_IMoaMmXScript::GetExportFileDisplayName(PMoaDrCallInfo callPtr
 }
 
 MoaError TStdXtra_IMoaMmXScript::GetExportFileTypePropList(PMoaDrCallInfo callPtr) {
-	Registry::SYMBOL_SET excludedTypeSymbolSet = {};
+	Registry::SymbolSet excludedTypeSymbolSet = {};
 	std::string typeDisplayName = "";
 
 	moa_try
@@ -1440,7 +1440,7 @@ MoaError TStdXtra_IMoaMmXScript::GetExportFileIconPropList(PMoaDrCallInfo callPt
 	Media::DirectorMedia directorMedia(LABEL_INFO_NOT_FOUND);
 	MoaMmValue typeValue = kVoidMoaMmValueInitializer;
 	MoaMmValue subTypeValue = kVoidMoaMmValueInitializer;
-	IconValues::MAP::const_iterator foundIconValues = {};
+	IconValues::Map::const_iterator foundIconValues = {};
 
 	moa_try
 
@@ -1561,7 +1561,7 @@ MoaError TStdXtra_IMoaMmXScript::GetExportFileIconPropList(PMoaDrCallInfo callPt
 		}
 	}
 
-	if (auto iconValuesPointer = std::get_if<IconValues::POINTER>(&foundIconValues->second)) {
+	if (auto iconValuesPointer = std::get_if<IconValues::Pointer>(&foundIconValues->second)) {
 		// intentional copy of icon values for Lingo so scripts can't
 		// modify a direct reference to our cached icons occurs HERE
 		// so if you call getExportFileIconPropList once, modify the image,
@@ -1700,7 +1700,7 @@ MoaError TStdXtra_IMoaMmXScript::FindLabelInfo(
 			Throw(kMoaErr_InternalError);
 		}
 
-		const Label::Info::MAP &labelInfoMap = pObj->labelsInfoPointer->get();
+		const Label::Info::Map &labelInfoMap = pObj->labelsInfoPointer->get();
 
 		directorMediaPointer->labelInfoMapIterator = labelInfoMap.find(
 			std::get<MoaMmSymbol>(argsPointer->labelSymbolVariant));
@@ -1727,7 +1727,7 @@ MoaError TStdXtra_IMoaMmXScript::FindLabelInfo(
 MoaError TStdXtra_IMoaMmXScript::FindAgentInfo(
 	Args* argsPointer, Media::DirectorMedia* directorMediaPointer
 ) {
-	Agent::Info::MAP::const_iterator foundAgentMapInfo = {};
+	Agent::Info::Map::const_iterator foundAgentMapInfo = {};
 
 	moa_try
 
@@ -1741,7 +1741,7 @@ MoaError TStdXtra_IMoaMmXScript::FindAgentInfo(
 			Throw(kMoaErr_InternalError);
 		}
 
-		const Agent::Info::MAP &agentInfoMap
+		const Agent::Info::Map &agentInfoMap
 			= directorMediaPointer->agentInfoMapOptional.value();
 
 		if (!argsPointer->agentStringOptional.has_value()) {
@@ -1775,7 +1775,7 @@ MoaError TStdXtra_IMoaMmXScript::FindXtraAssetInfo(
 	PIMoaDrCastMem drCastMemInterfacePointer = NULL;
 
 	MoaMmValue typeValue = kVoidMoaMmValueInitializer;
-	Asset::Info::MAP::iterator foundAssetInfo = {};
+	Asset::Info::Map::iterator foundAssetInfo = {};
 
 	moa_try
 
@@ -1795,7 +1795,7 @@ MoaError TStdXtra_IMoaMmXScript::FindXtraAssetInfo(
 			)
 		);
 
-		Asset::Info::MAP &assetInfoMap = *pObj->assetInfoMapPointer;
+		Asset::Info::Map &assetInfoMap = *pObj->assetInfoMapPointer;
 
 		if (assetMoaIDsHash != pObj->assetMoaIDsHash) {
 			Registry::AssetInfoMap registryEntriesAssetInfoMap = {};
@@ -2424,8 +2424,8 @@ MoaError TStdXtra_IMoaMmXScript::CreateContentDataObject(
 }
 
 MoaError TStdXtra_IMoaMmXScript::EnumWriter(
-	Agent::Info::MAP* agentInfoMapPointer,
-	Agent::HIDDEN_READER_SET* agentHiddenReaderSetPointer,
+	Agent::Info::Map* agentInfoMapPointer,
+	Agent::HiddenReaderSet* agentHiddenReaderSetPointer,
 	PIMoaEnumMixAgentInfo enumMixWriterInfoInterfacePointer
 ) {
 	PIMoaMixAgentInfo mixWriterInfoInterfacePointer = NULL;
@@ -2433,7 +2433,7 @@ MoaError TStdXtra_IMoaMmXScript::EnumWriter(
 	PIMoaWriter writerInterfacePointer = NULL;
 
 	std::string formatName = "";
-	Agent::Info::MAP::iterator foundAgentInfo = {};
+	Agent::Info::Map::iterator foundAgentInfo = {};
 	Agent::Info agentInfo;
 	Agent::Info::Writer writer;
 
@@ -2467,7 +2467,7 @@ MoaError TStdXtra_IMoaMmXScript::EnumWriter(
 		if (err == kMoaErr_NoErr
 		&& writerInterfacePointer) {
 			// test if the agent for this format already exists in the agent info map
-			Agent::Info::MAP &agentInfoMap = *agentInfoMapPointer;
+			Agent::Info::Map &agentInfoMap = *agentInfoMapPointer;
 
 			foundAgentInfo = agentInfoMap.find(formatName);
 
@@ -2882,7 +2882,7 @@ MoaError TStdXtra_IMoaMmXScript::WriteFile(
 	PIMoaReader readerInterfacePointer = NULL;
 	PIMoaDataObject dataObjectInterfacePointer = NULL;
 	
-	Agent::Info::WRITER_VECTOR::const_iterator writerVectorIterator = {};
+	Agent::Info::WriterVector::const_iterator writerVectorIterator = {};
 	MoaMmValue agentOptionsValue = kVoidMoaMmValueInitializer;
 
 	moa_try
@@ -2921,7 +2921,7 @@ MoaError TStdXtra_IMoaMmXScript::WriteFile(
 			Throw(kMoaErr_InternalError);
 		}
 
-		const Agent::Info::WRITER_VECTOR &writerVector
+		const Agent::Info::WriterVector &writerVector
 			= directorMediaPointer->agentInfoOptional.value().writerVector;
 
 		if (!argsPointer->optionsOptional.has_value()) {
@@ -3096,12 +3096,12 @@ MoaError TStdXtra_IMoaMmXScript::WriteFileAgent(
 
 MoaError TStdXtra_IMoaMmXScript::AddAgentInfoExtensions(
 	ConstPMoaChar agentInfoNameStringPointer,
-	Path::EXTENSION_MAPPED_VECTOR* agentInfoPathExtensionsPointer,
+	Path::ExtensionMappedVector* agentInfoPathExtensionsPointer,
 	PIMoaMixFormatInfo mixFormatInfoInterfacePointer
 ) {
 	PMoaVoid fileExtListPointer = NULL;
 
-	Path::EXTENSION_MAPPED_VECTOR pathExtensions = {};
+	Path::ExtensionMappedVector pathExtensions = {};
 
 	moa_try
 
@@ -3161,7 +3161,7 @@ MoaError TStdXtra_IMoaMmXScript::GetRegistryEntryDict(
 
 	registryEntryDictInterfacePointer = NULL;
 
-	Registry::Entry::VARIANT &registryEntryVariant
+	Registry::Entry::Variant &registryEntryVariant
 		= *pObj->registryEntryVariantPointer;
 
 	if (!std::holds_alternative<PIMoaRegistryEntryDict>(registryEntryVariant)) {
@@ -3949,7 +3949,7 @@ MoaError TStdXtra_IMoaMmXScript::GetArgLabel(
 					Throw(kMoaErr_InternalError);
 				}
 
-				Label::MAPPED_VECTOR &labelMappedVector
+				Label::MappedVector &labelMappedVector
 					= directorMediaPointer->labelMappedVectorOptional.value();
 
 				if (!labelMappedVector.find(labelSymbol)) {
@@ -3971,8 +3971,8 @@ MoaError TStdXtra_IMoaMmXScript::GetArgLabel(
 
 MoaError TStdXtra_IMoaMmXScript::GetArgLabelDefault(Args* argsPointer, Media::DirectorMedia* directorMediaPointer) {
 	std::optional<std::string> extensionOptional = std::nullopt;
-	Label::MAPPED_VECTOR::CONST_ITERATOR labelMappedVectorIterator = {};
-	Label::SYMBOL_VARIANT labelSymbolVariant = "";
+	Label::MappedVector::ConstIterator labelMappedVectorIterator = {};
+	Label::SymbolVariant labelSymbolVariant = "";
 	MoaMmValue agentOptionsValue = kVoidMoaMmValueInitializer;
 
 	moa_try
@@ -4006,7 +4006,7 @@ MoaError TStdXtra_IMoaMmXScript::GetArgLabelDefault(Args* argsPointer, Media::Di
 			Throw(kMoaErr_InternalError);
 		}
 
-		Label::MAPPED_VECTOR &labelMappedVector
+		Label::MappedVector &labelMappedVector
 			= directorMediaPointer->labelMappedVectorOptional.value();
 
 		if (labelMappedVector.empty()) {
@@ -4234,7 +4234,7 @@ MoaError TStdXtra_IMoaMmXScript::GetArgAgentDefault(
 	Args* argsPointer, Media::DirectorMedia* directorMediaPointer
 ) {
 	std::optional<std::string> extensionOptional = std::nullopt;
-	Agent::Info::MAP::const_iterator agentInfoMapIterator = {};
+	Agent::Info::Map::const_iterator agentInfoMapIterator = {};
 
 	moa_try
 
@@ -4266,7 +4266,7 @@ MoaError TStdXtra_IMoaMmXScript::GetArgAgentDefault(
 				Throw(kMoaErr_InternalError);
 			}
 
-			const Agent::Info::MAP &agentInfoMap
+			const Agent::Info::Map &agentInfoMap
 				= directorMediaPointer->agentInfoMapOptional.value();
 
 			const std::string &extension = extensionOptional.value();
@@ -4276,7 +4276,7 @@ MoaError TStdXtra_IMoaMmXScript::GetArgAgentDefault(
 				agentInfoMapIterator != agentInfoMap.end();
 				agentInfoMapIterator++
 			) {
-				const Path::EXTENSION_MAPPED_VECTOR &pathExtensions
+				const Path::ExtensionMappedVector &pathExtensions
 					= agentInfoMapIterator->second.pathExtensions;
 
 				if ((pathExtensions.empty() && extension.empty())
@@ -4541,7 +4541,7 @@ MoaError TStdXtra_IMoaMmXScript::GetArgOptionsDefaultAgentOptions(Args* argsPoin
 
 	MoaMmValue agentOptionsValue = kVoidMoaMmValueInitializer;
 	MoaMmValue propListValue = kVoidMoaMmValueInitializer;
-	Agent::Info::WRITER_VECTOR::iterator writerVectorIterator = {};
+	Agent::Info::WriterVector::iterator writerVectorIterator = {};
 	MoaMmValue emptyPropListValue = kVoidMoaMmValueInitializer;
 
 	moa_try
@@ -4579,7 +4579,7 @@ MoaError TStdXtra_IMoaMmXScript::GetArgOptionsDefaultAgentOptions(Args* argsPoin
 				Throw(kMoaErr_InternalError);
 			}
 
-			Agent::Info::WRITER_VECTOR &writerVector
+			Agent::Info::WriterVector &writerVector
 				= directorMediaPointer->agentInfoOptional.value().writerVector;
 
 			ThrowErr(CreateContentReader(argsPointer, directorMediaPointer));
@@ -4809,8 +4809,8 @@ MoaError TStdXtra_IMoaMmXScript::GetLabelMappedVector(
 	MoaMmValue typeValue = kVoidMoaMmValueInitializer;
 	MoaMmValue scriptTextValue = kVoidMoaMmValueInitializer;
 	MoaMmValue scriptSyntaxValue = kVoidMoaMmValueInitializer;
-	TypeLabel::MAP::const_iterator foundTypeLabel = {};
-	Label::MAPPED_VECTOR::CONST_ITERATOR labelMappedVectorIterator = {};
+	TypeLabel::Map::const_iterator foundTypeLabel = {};
+	Label::MappedVector::ConstIterator labelMappedVectorIterator = {};
 	Args getLabelMappedVectorArgs;
 	Media::DirectorMedia getLabelMappedVectorDirectorMedia(LABEL_INFO_NOT_FOUND);
 
@@ -4822,7 +4822,7 @@ MoaError TStdXtra_IMoaMmXScript::GetLabelMappedVector(
 	if (!directorMediaPointer->labelMappedVectorOptional.has_value()) {
 		directorMediaPointer->labelMappedVectorOptional.emplace();
 
-		Label::MAPPED_VECTOR &labelMappedVector
+		Label::MappedVector &labelMappedVector
 			= directorMediaPointer->labelMappedVectorOptional.value();
 
 		drCastMemInterfacePointer
@@ -4896,7 +4896,7 @@ MoaError TStdXtra_IMoaMmXScript::GetLabelMappedVector(
 					labelMappedVector = { scriptSyntaxSymbol };
 				}
 			} else {
-				const TypeLabel::MAP &typeLabelMap = pObj->typeLabelsPointer->get();
+				const TypeLabel::Map &typeLabelMap = pObj->typeLabelsPointer->get();
 
 				foundTypeLabel = typeLabelMap.find(typeSymbol);
 
@@ -4986,7 +4986,7 @@ MoaError TStdXtra_IMoaMmXScript::GetLabelMappedVector(
 MoaError TStdXtra_IMoaMmXScript::GetLabelAgentInfoMap(
 	Args* argsPointer, Media::DirectorMedia* directorMediaPointer
 ) {
-	Label::AGENT_INFO_MAP::iterator labelAgentInfoMapIterator = {};
+	Label::AgentInfoMap::iterator labelAgentInfoMapIterator = {};
 
 	moa_try
 
@@ -5049,7 +5049,7 @@ MoaError TStdXtra_IMoaMmXScript::GetContentReaderRegistryEntryDict(
 ) {
 	PIMoaRegistryEntryDict readerRegistryEntryDictInterfacePointer = NULL;
 
-	Registry::Entry::VARIANT registryEntryVariant = {};
+	Registry::Entry::Variant registryEntryVariant = {};
 
 	moa_try
 
@@ -5262,7 +5262,7 @@ MoaError TStdXtra_IMoaMmXScript::GetAgentHiddenReaderSet(
 			= &directorMediaPointer->agentMoaIDsHash;
 
 		directorMediaPointer->agentHiddenReaderSetPointer
-			= std::make_shared<Agent::HIDDEN_READER_SET>();
+			= std::make_shared<Agent::HiddenReaderSet>();
 
 		registryEntriesAgentHiddenReaderSet.agentHiddenReaderSetPointer
 			= directorMediaPointer->agentHiddenReaderSetPointer.get();
@@ -5340,7 +5340,7 @@ MoaError TStdXtra_IMoaMmXScript::GetFormatName(
 }
 
 MoaError TStdXtra_IMoaMmXScript::GetAgentInfoHidden(
-	Agent::HIDDEN_READER_SET* agentHiddenReaderSetPointer,
+	Agent::HiddenReaderSet* agentHiddenReaderSetPointer,
 	MoaClassID* classIDPointer,
 	MoaBool* agentInfoHiddenPointer,
 	PIMoaMixAgentInfo mixWriterInfoInterfacePointer
@@ -5359,7 +5359,7 @@ MoaError TStdXtra_IMoaMmXScript::GetAgentInfoHidden(
 	agentInfoHidden = (MoaBool)(flags & kMoaAgentInfoFlags_Hidden);
 
 	if (!agentInfoHidden) {
-		Agent::HIDDEN_READER_SET &agentHiddenReaderSet
+		Agent::HiddenReaderSet &agentHiddenReaderSet
 			= *agentHiddenReaderSetPointer;
 
 		agentInfoHidden = agentHiddenReaderSet.find(*classIDPointer)

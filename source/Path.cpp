@@ -10,7 +10,7 @@
 namespace Path {
 	bool filterPatternExtensions(
 		std::string filterPattern,
-		EXTENSION_MAPPED_VECTOR &extensions
+		ExtensionMappedVector &extensions
 	) {
 		// clear because we want to pass out a new mapped vector instead of appending
 		extensions.clear();
@@ -39,13 +39,13 @@ namespace Path {
 
 	bool filterExtensions(
 		ConstPMoaChar filterPointer,
-		EXTENSION_MAPPED_VECTOR &extensions
+		ExtensionMappedVector &extensions
 	) {
 		extensions.clear();
 
 		RETURN_NULL_BOOL(filterPointer);
 
-		EXTENSION_MAPPED_VECTOR patternExtensions = {};
+		ExtensionMappedVector patternExtensions = {};
 
 		while (*filterPointer) {
 			filterPointer += stringSize(filterPointer);
@@ -555,9 +555,9 @@ namespace Path {
 	}
 
 	MoaError Info::newFolder() {
-		typedef std::vector<PIMoaFile> FILE_INTERFACE_POINTER_VECTOR;
+		using FileInterfacePointerVector = std::vector<PIMoaFile>;
 
-		FILE_INTERFACE_POINTER_VECTOR fileInterfacePointerVector = { NULL };
+		FileInterfacePointerVector fileInterfacePointerVector = { NULL };
 
 		auto fileInterfacePointerVectorIterator
 			= fileInterfacePointerVector.begin();

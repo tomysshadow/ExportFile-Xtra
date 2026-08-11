@@ -22,7 +22,7 @@ class Options {
 	MoaLong incrementFilename = FALSE;
 	MoaLong replaceExistingFile = TRUE;
 	MoaLong newFolder = FALSE;
-	Path::EXTENSION_MAPPED_VECTOR::SIZE_TYPE alternatePathExtension = 0;
+	Path::ExtensionMappedVector::SizeType alternatePathExtension = 0;
 	MoaMmSymbol locationSymbol = 0;
 	MoaClassID writerClassID = IID_NULL;
 };
