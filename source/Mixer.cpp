@@ -130,16 +130,12 @@ MoaError mixerSaved(Media::MixerMedia* mixerMediaPointer) {
 			&drContextState));
 	}
 
-	MoaError err = kMoaErr_NoErr;
+	MoaError err = mixerSavedContext(*mixerMediaPointer);
 
-	SCOPE_EXIT {
-		if (drMovieContextInterfacePointer) {
-			err = errOrDefaultErr(drMovieContextInterfacePointer->PopXtraContext(
-				&drContextState), err);
-		}
-	};
-	
-	err = mixerSavedContext(*mixerMediaPointer);
+	if (drMovieContextInterfacePointer) {
+		err = errOrDefaultErr(drMovieContextInterfacePointer->PopXtraContext(
+			&drContextState), err);
+	}
 
 	if (err != kMoaStatus_OK) {
 		return err;

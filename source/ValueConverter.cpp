@@ -490,13 +490,10 @@ MoaError ValueConverter::toString(
 	RETURN_ERR(err);
 	RETURN_NULL(stringPointer);
 
-	SCOPE_EXIT {
-		err = errOrDefaultErr(mmValueInterfacePointer->ValueReleaseStringPtr(
-			&stringValue), err);
-	};
-
 	string = stringPointer;
-	return err;
+
+	return errOrDefaultErr(mmValueInterfacePointer->ValueReleaseStringPtr(
+		&stringValue), err);
 }
 
 MoaError ValueConverter::toWide(const MoaMmValue &value, MoaWide &wide) {

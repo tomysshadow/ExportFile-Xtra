@@ -16,26 +16,21 @@ namespace Formats {
 	) const {
 		RETURN_NULL(fileInterfacePointer);
 
-		MoaError err = kMoaErr_NoErr;
-
 		// because file is empty, initialize size to zero
 		RETURN_ERR(fileInterfacePointer->GetStream(0, &streamInterfacePointer));
 		RETURN_NULL(streamInterfacePointer);
 
-		MAKE_SCOPE_EXIT(closeStreamInterfacePointerScopeExit) {
-			err = errOrDefaultErr(closeStream(streamInterfacePointer), err);
-		};
-
 		// close the stream in case it's open already
 		// (it shouldn't be)
-		err = streamInterfacePointer->Close();
+		MoaError err = streamInterfacePointer->Close();
 
 		if (err == kMoaStreamErr_StreamNotOpen) {
 			err = kMoaErr_NoErr;
 		}
 
-		RETURN_ERR(err);
-		closeStreamInterfacePointerScopeExit.dismiss();
+		if (err != kMoaErr_NoErr) {
+			return errOrDefaultErr(closeStream(streamInterfacePointer), err);
+		}
 		return err;
 	}
 
@@ -44,8 +39,6 @@ namespace Formats {
 	) const {
 		RETURN_NULL(fileInterfacePointer);
 
-		MoaError err = kMoaErr_NoErr;
-
 		RETURN_ERR(getClosedFileStream(
 			fileInterfacePointer,
 			writeStreamInterfacePointer
@@ -53,16 +46,14 @@ namespace Formats {
 
 		RETURN_NULL(writeStreamInterfacePointer);
 
-		MAKE_SCOPE_EXIT(closeStreamInterfacePointerScopeExit) {
-			err = errOrDefaultErr(closeStream(writeStreamInterfacePointer), err);
-		};
-
 		// because we just created the file, it should be empty at this stage
 		// now, we must acquire these permissions, otherwise it's a fail
-		RETURN_ERR(openStream(kMoaStreamOpenAccess_WriteOnly, false,
-			writeStreamInterfacePointer));
+		MoaError err = openStream(kMoaStreamOpenAccess_WriteOnly, false,
+			writeStreamInterfacePointer);
 
-		closeStreamInterfacePointerScopeExit.dismiss();
+		if (err != kMoaErr_NoErr) {
+			return errOrDefaultErr(closeStream(writeStreamInterfacePointer), err);
+		}
 		return err;
 	}
 
@@ -187,15 +178,9 @@ namespace Formats {
 			return kMoaErr_InternalError;
 		}
 
-		MoaError err = kMoaErr_NoErr;
-
-		SCOPE_EXIT {
-			err = errOrDefaultErr(deleteTempFile(tempFileInterfacePointer), err);
-		};
-
 		// this thankfully doesn't allow swapping with directories (that would be very bad)
-		RETURN_ERR(tempFileInterfacePointer->SwapFile(swapFileInterfacePointer));
-		return err;
+		MoaError err = tempFileInterfacePointer->SwapFile(swapFileInterfacePointer);
+		return errOrDefaultErr(deleteTempFile(tempFileInterfacePointer), err);
 	}
 
 	#ifdef WINDOWS
@@ -206,17 +191,19 @@ namespace Formats {
 
 		MoaError err = kMoaErr_NoErr;
 
-		MAKE_SCOPE_EXIT(deleteTempFileInterfacePointerScopeExit) {
-			err = errOrDefaultErr(deleteTempFile(tempFileInterfacePointer), err);
-		};
+		{
+			MAKE_SCOPE_EXIT(deleteTempFileInterfacePointerScopeExit) {
+				err = errOrDefaultErr(deleteTempFile(tempFileInterfacePointer), err);
+			};
 
-		MoaSystemFileSpec sysSpec = "";
-		RETURN_ERR(tempFileInterfacePointer->GetSysSpec(sysSpec, sizeof(sysSpec)));
+			MoaSystemFileSpec sysSpec = "";
+			RETURN_ERR(tempFileInterfacePointer->GetSysSpec(sysSpec, sizeof(sysSpec)));
 
-		RETURN_ERR(setFileAttributeHiddenWide(hidden,
-			CA2W(sysSpec, CP_DIRECTOR(productVersionMajor))));
+			RETURN_ERR(setFileAttributeHiddenWide(hidden,
+				CA2W(sysSpec, CP_DIRECTOR(productVersionMajor))));
 
-		deleteTempFileInterfacePointerScopeExit.dismiss();
+			deleteTempFileInterfacePointerScopeExit.dismiss();
+		}
 		return err;
 	}
 	#endif
@@ -251,8 +238,6 @@ namespace Formats {
 		}
 
 		// the default implementation of this calls get
-		MoaError err = kMoaErr_NoErr;
-
 		PIMoaStream writeStreamInterfacePointer = NULL;
 
 		RETURN_ERR(getOpenFileStream(
@@ -260,13 +245,9 @@ namespace Formats {
 
 		RETURN_NULL(writeStreamInterfacePointer);
 
-		SCOPE_EXIT {
-			err = errOrDefaultErr(closeStream(writeStreamInterfacePointer), err);
-		};
-
 		MoaUlong size = 0;
-		RETURN_ERR(get(size, writeStreamInterfacePointer));
-		return err;
+		MoaError err = get(size, writeStreamInterfacePointer);
+		return errOrDefaultErr(closeStream(writeStreamInterfacePointer), err);
 	}
 
 	MoaError Format::cancelFile() {
@@ -998,40 +979,42 @@ namespace Formats {
 
 		MoaError err = kMoaErr_NoErr;
 
-		HMMIO mmioHandle = mmioOpen(NULL, &mmioinfo,
-			MMIO_WRITE | MMIO_DENYREAD | MMIO_DENYWRITE);
+		{
+			HMMIO mmioHandle = mmioOpen(NULL, &mmioinfo,
+				MMIO_WRITE | MMIO_DENYREAD | MMIO_DENYWRITE);
 
-		SCOPE_EXIT {
-			err = errOrDefaultErr(osErr(closeMMIOHandle(mmioHandle)), err);
-		};
+			SCOPE_EXIT {
+				err = errOrDefaultErr(osErr(closeMMIOHandle(mmioHandle)), err);
+			};
 
-		RETURN_ERR(osErr(mmioHandle));
+			RETURN_ERR(osErr(mmioHandle));
 
-		MMCKINFO mmckinfoParent = {};
-		mmckinfoParent.fccType = mmioFOURCC('P', 'A', 'L', ' ');
+			MMCKINFO mmckinfoParent = {};
+			mmckinfoParent.fccType = mmioFOURCC('P', 'A', 'L', ' ');
 
-		RETURN_ERR(osErr(mmioCreateChunk(
-			mmioHandle, &mmckinfoParent, MMIO_CREATERIFF) == MMSYSERR_NOERROR));
+			RETURN_ERR(osErr(mmioCreateChunk(
+				mmioHandle, &mmckinfoParent, MMIO_CREATERIFF) == MMSYSERR_NOERROR));
 
-		SCOPE_EXIT {
-			err = errOrDefaultErr(osErr(mmioAscend(
-				mmioHandle, &mmckinfoParent, 0) == MMSYSERR_NOERROR), err);
-		};
+			SCOPE_EXIT {
+				err = errOrDefaultErr(osErr(mmioAscend(
+					mmioHandle, &mmckinfoParent, 0) == MMSYSERR_NOERROR), err);
+			};
 
-		MMCKINFO mmckinfoSubchunk = {};
-		mmckinfoSubchunk.ckid = mmioFOURCC('d', 'a', 't', 'a');
-		mmckinfoSubchunk.cksize = logicalPaletteSize;
+			MMCKINFO mmckinfoSubchunk = {};
+			mmckinfoSubchunk.ckid = mmioFOURCC('d', 'a', 't', 'a');
+			mmckinfoSubchunk.cksize = logicalPaletteSize;
 
-		RETURN_ERR(osErr(mmioCreateChunk(
-			mmioHandle, &mmckinfoSubchunk, 0) == MMSYSERR_NOERROR));
+			RETURN_ERR(osErr(mmioCreateChunk(
+				mmioHandle, &mmckinfoSubchunk, 0) == MMSYSERR_NOERROR));
 
-		SCOPE_EXIT {
-			err = errOrDefaultErr(osErr(mmioAscend(
-				mmioHandle, &mmckinfoSubchunk, 0) == MMSYSERR_NOERROR), err);
-		};
+			SCOPE_EXIT {
+				err = errOrDefaultErr(osErr(mmioAscend(
+					mmioHandle, &mmckinfoSubchunk, 0) == MMSYSERR_NOERROR), err);
+			};
 
-		RETURN_ERR(osErr(mmioWrite(
-			mmioHandle, logicalPalettePointer.get(), (LONG)logicalPaletteSize) != -1));
+			RETURN_ERR(osErr(mmioWrite(
+				mmioHandle, logicalPalettePointer.get(), (LONG)logicalPaletteSize) != -1));
+		}
 		return err;
 	}
 
@@ -1152,24 +1135,26 @@ namespace Formats {
 
 		MoaError err = kMoaErr_NoErr;
 
-		// we use CreateFile here to circumvent MMIO's 128 character filename limit
-		// the file should already be created, so we use TRUNCATE_EXISTING instead
-		// of CREATE_ALWAYS because it doesn't complain about hidden files
-		HANDLE file = CreateFileW(sysSpecWide, GENERIC_WRITE, 0, NULL,
-			TRUNCATE_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+		{
+			// we use CreateFile here to circumvent MMIO's 128 character filename limit
+			// the file should already be created, so we use TRUNCATE_EXISTING instead
+			// of CREATE_ALWAYS because it doesn't complain about hidden files
+			HANDLE file = CreateFileW(sysSpecWide, GENERIC_WRITE, 0, NULL,
+				TRUNCATE_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
-		SCOPE_EXIT {
-			err = errOrDefaultErr(osErr(closeHandle(file)), err);
-		};
+			SCOPE_EXIT {
+				err = errOrDefaultErr(osErr(closeHandle(file)), err);
+			};
 
-		RETURN_ERR(osErr(file));
+			RETURN_ERR(osErr(file));
 
-		// this implementation calls makeMMIO instead of get
-		MMIOINFO mmioinfo = {};
-		mmioinfo.fccIOProc = FOURCC_DOS;
-		*mmioinfo.adwInfo = (DWORD)file;
+			// this implementation calls makeMMIO instead of get
+			MMIOINFO mmioinfo = {};
+			mmioinfo.fccIOProc = FOURCC_DOS;
+			*mmioinfo.adwInfo = (DWORD)file;
 
-		RETURN_ERR(makeMMIO(logicalPalettePointer, logicalPaletteSize, mmioinfo));
+			RETURN_ERR(makeMMIO(logicalPalettePointer, logicalPaletteSize, mmioinfo));
+		}
 		return err;
 	}
 
@@ -1575,18 +1560,20 @@ namespace Formats {
 
 		MoaError err = kMoaErr_NoErr;
 
-		PIMoaStream writeStreamInterfacePointer = NULL;
+		{
+			PIMoaStream writeStreamInterfacePointer = NULL;
 
-		RETURN_ERR(getOpenFileStream(
-			this->writeFileInterfacePointer, writeStreamInterfacePointer));
+			RETURN_ERR(getOpenFileStream(
+				this->writeFileInterfacePointer, writeStreamInterfacePointer));
 
-		RETURN_NULL(writeStreamInterfacePointer);
+			RETURN_NULL(writeStreamInterfacePointer);
 
-		SCOPE_EXIT {
-			err = errOrDefaultErr(closeStream(writeStreamInterfacePointer), err);
-		};
+			SCOPE_EXIT {
+				err = errOrDefaultErr(closeStream(writeStreamInterfacePointer), err);
+			};
 
-		RETURN_ERR(stream.copy(writeStreamInterfacePointer, size));
+			RETURN_ERR(stream.copy(writeStreamInterfacePointer, size));
+		}
 		return err;
 	}
 
@@ -1777,18 +1764,20 @@ namespace Formats {
 
 		MoaError err = kMoaErr_NoErr;
 
-		SCOPE_EXIT {
-			err = errOrDefaultErr(
-				deleteTempFile(tempFileInterfacePointer), err);
-		};
+		{
+			SCOPE_EXIT {
+				err = errOrDefaultErr(
+					deleteTempFile(tempFileInterfacePointer), err);
+			};
 
-		// this thankfully doesn't allow swapping with directories (that would be very bad)
-		SCOPE_EXIT {
-			err = errOrDefaultErr(
-				tempFileInterfacePointer->SwapFile(swapFileInterfacePointer), err);
-		};
+			// this thankfully doesn't allow swapping with directories (that would be very bad)
+			SCOPE_EXIT {
+				err = errOrDefaultErr(
+					tempFileInterfacePointer->SwapFile(swapFileInterfacePointer), err);
+			};
 
-		RETURN_ERR(closeStream(writeStreamInterfacePointer));
+			RETURN_ERR(closeStream(writeStreamInterfacePointer));
+		}
 		return err;
 	}
 
@@ -1804,13 +1793,15 @@ namespace Formats {
 		MoaError err = kMoaErr_NoErr;
 
 		// don't delete an existing file but do delete e.g. an incremented file
-		SCOPE_EXIT {
-			if (!replacedExistingFile) {
-				err = errOrDefaultErr(swapFileInterfacePointer->Delete(), err);
-			}
-		};
-	
-		RETURN_ERR(closeStream(writeStreamInterfacePointer));
+		{
+			SCOPE_EXIT {
+				if (!replacedExistingFile) {
+					err = errOrDefaultErr(swapFileInterfacePointer->Delete(), err);
+				}
+			};
+
+			RETURN_ERR(closeStream(writeStreamInterfacePointer));
+		}
 		return err;
 	}
 
@@ -1979,33 +1970,35 @@ namespace Formats {
 	}
 
 	MoaError XtraMediaMixerAsyncFormat::cancelFile() {
-		MoaError err = kMoaErr_NoErr;
-
 		SCOPE_EXIT {
 			releaseInterface((PPMoaVoid)&writeFileInterfacePointer);
 		};
 
-		// delete our file if we managed to create one
-		// (we can always do this here because this is never called on the mixer thread)
-		SCOPE_EXIT {
-			if (writeFileInterfacePointer) {
-				err = errOrDefaultErr(writeFileInterfacePointer->Delete(), err);
+		MoaError err = kMoaErr_NoErr;
+
+		{
+			// delete our file if we managed to create one
+			// (we can always do this here because this is never called on the mixer thread)
+			SCOPE_EXIT {
+				if (writeFileInterfacePointer) {
+					err = errOrDefaultErr(writeFileInterfacePointer->Delete(), err);
+				}
+			};
+
+			SCOPE_EXIT {
+				err = errOrDefaultErr(deleteSwapFile(), err);
+			};
+
+			// don't call Stop if we didn't call Save first
+			if (saveStatus == kMoaStatus_False) {
+				static constexpr MoaLong ARGS_SIZE = 1;
+				MoaMmValue args[ARGS_SIZE] = {kVoidMoaMmValueInitializer};
+
+				RETURN_ERR(drCastMemInterfacePointer->CallFunction(
+					symbols.Stop, ARGS_SIZE, args, NULL));
+
+				saveStatus = kMoaStatus_OK;
 			}
-		};
-
-		SCOPE_EXIT {
-			err = errOrDefaultErr(deleteSwapFile(), err);
-		};
-
-		// don't call Stop if we didn't call Save first
-		if (saveStatus == kMoaStatus_False) {
-			static constexpr MoaLong ARGS_SIZE = 1;
-			MoaMmValue args[ARGS_SIZE] = { kVoidMoaMmValueInitializer };
-
-			RETURN_ERR(drCastMemInterfacePointer->CallFunction(
-				symbols.Stop, ARGS_SIZE, args, NULL));
-
-			saveStatus = kMoaStatus_OK;
 		}
 		return err;
 	}
@@ -2016,24 +2009,19 @@ namespace Formats {
 			return saveStatus;
 		}
 
+		// we're on the mixer thread, don't return a status
 		// now we expect the swap file to exist
 		if (!swapFileInterfacePointer) {
 			return kMoaErr_InternalError;
 		}
 
-		// we're on the mixer thread, don't return a status
-		MoaError err = kMoaErr_NoErr;
-
-		// delete the swap file if we fail to swap with it
-		// (Format::swapFile handles deleting the temp file)
-		MAKE_SCOPE_EXIT(deleteSwapFileInterfacePointerScopeExit) {
-			err = errOrDefaultErr(deleteSwapFile(), err);
-		};
-
 		// NOT the status passed to us
 		// status we pass here should be true if swap file wasn't deleted
-		RETURN_ERR(Format::swapFile((bool)swapFileInterfacePointer));
-		deleteSwapFileInterfacePointerScopeExit.dismiss();
+		MoaError err = Format::swapFile((bool)swapFileInterfacePointer);
+
+		if (err != kMoaErr_NoErr) {
+			return errOrDefaultErr(deleteSwapFile(), err);
+		}
 		return err;
 	}
 
