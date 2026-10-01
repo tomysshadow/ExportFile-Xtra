@@ -870,7 +870,7 @@ STDMETHODIMP TStdXtra_IMoaRegister::Register(
 			Throw(kMoaErr_OutOfMem);
 		}
 
-		MoaUlong versionStringSize = stringSizeMax(versionString, VERSION_STRING_SIZE);
+		MoaUlong versionStringSize = strSizeMax(versionString, VERSION_STRING_SIZE);
 
 		MoaUlong memoryStringSize = versionStringSize
 			+ strnlen_s(msgTable, kMoaMmMaxXtraMessageTable - versionStringSize);
@@ -3112,7 +3112,7 @@ MoaError TStdXtra_IMoaMmXScript::AddAgentInfoExtensions(
 	static constexpr MoaUlong FILTER_PATTERN_SIZE = 7;
 
 	MoaUlong fileExtListSize
-		= stringSize(agentInfoNameStringPointer) + 1
+		= strSize(agentInfoNameStringPointer) + 1
 		+ FILTER_PATTERN_SIZE + 1;
 
 	MoaError err = kMoaErr_NoErr;
@@ -3131,7 +3131,7 @@ MoaError TStdXtra_IMoaMmXScript::AddAgentInfoExtensions(
 			(MoaLong)fileExtListSize, (PMoaChar)fileExtListPointer);
 	} while (err == kMoaMixErr_BufferTooSmall
 		/*|| (err == kMoaErr_NoErr
-		&& stringTruncated(fileExtList.get(), fileExtListSize))*/);
+		&& strTruncated(fileExtList.get(), fileExtListSize))*/);
 
 	ThrowErr(err);
 
@@ -3839,7 +3839,7 @@ MoaError TStdXtra_IMoaMmXScript::GetArgPathDefaultBasename(
 					// represented as a WinAPI string
 					// where characters are (almost) always a fixed size
 					// so to properly compare, we need to convert it first
-					valid = stringSizeWide(CA2W(
+					valid = wcsSize(CA2W(
 						path.c_str(),
 						CP_DIRECTOR(pObj->productVersionMajor)
 					)) <= MAX_PATH;
@@ -4744,7 +4744,7 @@ MoaError TStdXtra_IMoaMmXScript::GetTypeDisplayName(
 	ThrowNull(typeDisplayNamePointer);
 
 	// kMoaMmMaxXtraDisplayName includes the null byte, we only add one
-	// so stringTruncated doesn't go off when it shouldn't
+	// so strTruncated doesn't go off when it shouldn't
 	MoaUlong typeDisplayNameStringSize = kMoaMmMaxXtraDisplayName + 1;
 
 	typeDisplayNameStringPointer
@@ -4762,7 +4762,7 @@ MoaError TStdXtra_IMoaMmXScript::GetTypeDisplayName(
 	);
 
 	while (/*err == kMoaMixErr_BufferTooSmall
-		|| */stringTruncated(
+		|| */strTruncated(
 			(PMoaChar)typeDisplayNameStringPointer,
 			typeDisplayNameStringSize
 		)
@@ -5321,7 +5321,7 @@ MoaError TStdXtra_IMoaMmXScript::GetFormatName(
 			(MoaLong)formatNameStringSize, (PMoaChar)formatNameStringPointer);
 	} while (err == kMoaMixErr_BufferTooSmall
 		|| (err == kMoaErr_NoErr
-		&& stringTruncated(
+		&& strTruncated(
 			(PMoaChar)formatNameStringPointer,
 			formatNameStringSize
 		)
@@ -5429,7 +5429,7 @@ MoaError TStdXtra_IMoaMmXScript::GetAgentInfoName(
 			(MoaLong)agentNameStringSize, (PMoaChar)agentNameStringPointer);
 	} while (err == kMoaMixErr_BufferTooSmall
 		|| (err == kMoaErr_NoErr
-		&& stringTruncated((PMoaChar)agentNameStringPointer, agentNameStringSize)));
+		&& strTruncated((PMoaChar)agentNameStringPointer, agentNameStringSize)));
 
 	ThrowErr(err);
 

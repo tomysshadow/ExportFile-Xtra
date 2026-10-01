@@ -48,7 +48,7 @@ namespace Path {
 		ExtensionMappedVector patternExtensions = {};
 
 		while (*filterPointer) {
-			filterPointer += stringSize(filterPointer);
+			filterPointer += strSize(filterPointer);
 
 			// if this fails it is not a serious error
 			// we just clear out the extensions and return
@@ -58,7 +58,7 @@ namespace Path {
 
 			extensions += patternExtensions;
 
-			filterPointer += stringSize(filterPointer);
+			filterPointer += strSize(filterPointer);
 		}
 		return true;
 	}
@@ -473,14 +473,14 @@ namespace Path {
 		// we can't use the actual filesystem path compare method here because it's not case-insensitive
 		// we shouldn't need to make these lexically normal
 		// if the basename isn't, they won't match anyway
-		return stringEqualsCaseInsensitive(
+		return strEqualsIgnoreCase(
 			basename.c_str(), toBasename(filename).c_str());
 	}
 
 	bool Info::extensionEquals(
 		const std::string &extension, const std::string &filename
 	) {
-		return stringEqualsCaseInsensitive(
+		return strEqualsIgnoreCase(
 			extension.c_str(), toExtension(filename).c_str());
 	}
 
@@ -963,7 +963,7 @@ namespace Path {
 
 			// a whitespace dirname is not valid
 			// unspecified is valid, "." is valid, but not whitespace
-			if (stringWhitespace(dirname.c_str())) {
+			if (strWhitespace(dirname.c_str())) {
 				dirnameOptional = std::nullopt;
 				return false;
 			}
@@ -1055,7 +1055,7 @@ namespace Path {
 			&& basenameOptionalHasValue
 			&& !this->extensionOptional.has_value()
 
-			&& stringEqualsCaseInsensitive(
+			&& strEqualsIgnoreCase(
 				this->filenameOptional.value().c_str(),
 				this->basenameOptional.value().c_str()
 			)
@@ -1234,7 +1234,7 @@ namespace Path {
 		basenameOptional = toBasename(filenameOptional.value());
 
 		// dirname
-		if (stringWhitespace(path.c_str())) {
+		if (strWhitespace(path.c_str())) {
 			// whitespace paths should be treated as invalid
 			// because the dirname is whitespace
 			dirnameOptional = path;

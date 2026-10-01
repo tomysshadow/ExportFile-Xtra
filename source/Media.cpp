@@ -1117,7 +1117,7 @@ namespace Media {
 		// then we can just use the source, and don't need to copy it
 		// (this usually happens for RGBA)
 		bool sourceBitmap = bitmapInfoSize == sourceBitmapInfoSize
-			&& memoryEquals(
+			&& memEquals(
 				bitmapInfoPointer.get(),
 				sourceBitmapInfoPointer.get(),
 				bitmapInfoSize

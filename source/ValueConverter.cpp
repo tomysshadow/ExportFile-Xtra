@@ -743,7 +743,7 @@ MoaError ValueConverter::appendToList(
 
 	/*
 	SCOPE_EXIT {
-		if (!memoryEquals(&modifiableValue, &value, sizeof(MoaMmValue))) {
+		if (!memEquals(&modifiableValue, &value, sizeof(MoaMmValue))) {
 			releaseValue(modifiableValue, mmValueInterfacePointer);
 		}
 	};
@@ -819,7 +819,7 @@ MoaError ValueConverter::appendToPropList(
 
 	/*
 	SCOPE_EXIT {
-		if (!memoryEquals(&modifiablePropertyValue, &propertyValue, sizeof(MoaMmValue))) {
+		if (!memEquals(&modifiablePropertyValue, &propertyValue, sizeof(MoaMmValue))) {
 			releaseValue(modifiablePropertyValue, mmValueInterfacePointer);
 		}
 	};
@@ -829,7 +829,7 @@ MoaError ValueConverter::appendToPropList(
 
 	/*
 	SCOPE_EXIT {
-		if (!memoryEquals(&modifiableValue, &value, sizeof(MoaMmValue))) {
+		if (!memEquals(&modifiableValue, &value, sizeof(MoaMmValue))) {
 			releaseValue(modifiableValue, mmValueInterfacePointer);
 		}
 	};
