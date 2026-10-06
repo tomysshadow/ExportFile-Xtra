@@ -532,7 +532,7 @@ MoaError CWinBMPAgent_IMoaReader::ReadPixels(
 			Throw(kMoaErr_InternalError);
 		}
 
-		MoaPixelFormat &pixelFormat = winBMPMedia.pixelFormatOptional.value();
+		MoaPixelFormat &pixelFormat = *winBMPMedia.pixelFormatOptional;
 
 		// you like this format?
 		ThrowErr(receptorPixelsInterfacePointer->BeginPixels(&pixelFormat));

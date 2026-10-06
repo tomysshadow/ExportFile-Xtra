@@ -453,9 +453,7 @@ namespace Media {
 		// we read it here (but don't validate it yet, as we don't need to use it yet)
 		// this has the offset to the bits which will be useful for later
 		sourceBitmapFileHeaderOptional.emplace();
-
-		BITMAPFILEHEADER &sourceBitmapFileHeader
-			= sourceBitmapFileHeaderOptional.value();
+		BITMAPFILEHEADER &sourceBitmapFileHeader = *sourceBitmapFileHeaderOptional;
 
 		RETURN_ERR(readStreamSafe(
 			&sourceBitmapFileHeader,
@@ -818,7 +816,7 @@ namespace Media {
 		};
 
 		pixelFormatOptional.emplace();
-		MoaPixelFormat &pixelFormat = pixelFormatOptional.value();
+		MoaPixelFormat &pixelFormat = *pixelFormatOptional;
 
 		MoaLong colorSpaceCount = 1;
 
@@ -1043,8 +1041,7 @@ namespace Media {
 			return kMoaErr_InternalError;
 		}
 
-		BITMAPFILEHEADER &sourceBitmapFileHeader
-			= sourceBitmapFileHeaderOptional.value();
+		BITMAPFILEHEADER &sourceBitmapFileHeader = *sourceBitmapFileHeaderOptional;
 
 		MoaStreamPosition end = 0;
 		RETURN_ERR(readStreamInterfacePointer->GetEnd(&end));
@@ -1090,7 +1087,7 @@ namespace Media {
 			return kMoaErr_InternalError;
 		}
 
-		MoaPixelFormat &pixelFormat = pixelFormatOptional.value();
+		MoaPixelFormat &pixelFormat = *pixelFormatOptional;
 
 		DWORD stride = (DWORD)pixelFormat.dim.rowBytes;
 

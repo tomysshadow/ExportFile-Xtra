@@ -189,7 +189,7 @@ namespace Path {
 		bool basenameOptionalHasValue = basenameOptional.has_value();
 
 		if (basenameOptionalHasValue) {
-			if (!testValidName(basenameOptional.value())) {
+			if (!testValidName(*basenameOptional)) {
 				throw Invalid();
 			}
 		}
@@ -197,7 +197,7 @@ namespace Path {
 		bool extensionOptionalHasValue = extensionOptional.has_value();
 
 		if (extensionOptionalHasValue) {
-			if (!testValidName(extensionOptional.value())) {
+			if (!testValidName(*extensionOptional)) {
 				throw Invalid();
 			}
 		}
@@ -209,7 +209,7 @@ namespace Path {
 			return;
 		}
 
-		const std::string &filename = filenameOptional.value();
+		const std::string &filename = *filenameOptional;
 
 		if (!testValidName(filename)) {
 			throw Invalid();
@@ -221,7 +221,7 @@ namespace Path {
 		// if the basename has a value, then
 		// check for a mismatch
 		if (basenameOptionalHasValue) {
-			const std::string &basename = basenameOptional.value();
+			const std::string &basename = *basenameOptional;
 
 			if (empty) {
 				// if the extension is empty but the basename has a period in it
@@ -259,10 +259,10 @@ namespace Path {
 					)
 
 					? toExtension(
-						basenameOptional.value()
+						*basenameOptional
 					)
 
-					: extensionOptional.value(),
+					: *extensionOptional,
 					filename
 				)
 			) {
@@ -303,7 +303,7 @@ namespace Path {
 		}
 
 		if (elementOptional.has_value()) {
-			RETURN_ERR(pathNameInterfacePointer->AddFinal(elementOptional.value().c_str()));
+			RETURN_ERR(pathNameInterfacePointer->AddFinal(elementOptional->c_str()));
 		}
 
 		try {
@@ -671,7 +671,7 @@ namespace Path {
 			// can have any number inside, or empty (which counts as zero)
 			// which we add 1 to, in order to increment the filename
 			// if no (brackets) found, stick them on the end of the basename, after a space
-			if (std::regex_search(filenameOptional.value(), matches, INCREMENT_FILENAME)
+			if (std::regex_search(*filenameOptional, matches, INCREMENT_FILENAME)
 			&& matches.length() > 3) {
 				static constexpr unsigned long MIN_NUMBER = 1;
 				static constexpr unsigned long MAX_NUMBER = 999;
@@ -766,7 +766,7 @@ namespace Path {
 					uniqueName,
 
 					CA2W(
-						dirnameOptional.value().c_str(),
+						dirnameOptional->c_str(),
 						codePage
 					),
 
@@ -954,7 +954,7 @@ namespace Path {
 			// if the dirname has . or .. in it then get rid of those here
 			std::string dirname = FILESYSTEM_DIRECTOR_STRING(
 				FILESYSTEM_DIRECTOR_PATH(
-					dirnameOptional.value(),
+					*dirnameOptional,
 					productVersionMajor
 				).lexically_normal(),
 			
@@ -1002,7 +1002,7 @@ namespace Path {
 		basenameOptional = fromFilename
 	
 		? toBasename(
-			this->filenameOptional.value()
+			*this->filenameOptional
 		)
 
 		: this->basenameOptional;
@@ -1013,13 +1013,13 @@ namespace Path {
 				// if there is no extension but the basename has a period in it
 				// then after the period should be interpreted as the extension
 				// this is also responsible for fixing basename ending in ... with no extension
-				basenameOptional = toBasename(basenameOptional.value());
+				basenameOptional = toBasename(*basenameOptional);
 			}
 
 			// should be ensured by validate (when it calls getValidFileName on this)
 			/*
 			if (FILESYSTEM_DIRECTOR_PATH(
-				basenameOptional.value(), productVersionMajor).has_parent_path()) {
+				*basenameOptional, productVersionMajor).has_parent_path()) {
 				return false;
 			}
 			*/
@@ -1056,8 +1056,8 @@ namespace Path {
 			&& !this->extensionOptional.has_value()
 
 			&& strEqualsIgnoreCase(
-				this->filenameOptional.value().c_str(),
-				this->basenameOptional.value().c_str()
+				this->filenameOptional->c_str(),
+				this->basenameOptional->c_str()
 			)
 		) {
 			extensionOptional = this->extensionOptional;
@@ -1071,20 +1071,20 @@ namespace Path {
 			// if the extension is empty (so it can be implicit)
 			// and the filename has a value
 			// then this takes precedence over all else for consistency
-			extensionOptional = toExtension(this->filenameOptional.value());
+			extensionOptional = toExtension(*this->filenameOptional);
 		} else if (basenameOptionalHasValue
 		&& fromBasename) {
 			// and the extension is empty (so it can be implicit)
 			// and the basename has a value
 			// and the caller wants the extension from the basename
 			// then try that next
-			extensionOptional = toExtension(this->basenameOptional.value());
+			extensionOptional = toExtension(*this->basenameOptional);
 
 			// never allow an empty extension to materialize from toExtension here
 			// empty extensions are valid but MUST be specified explicitly
 			// the extension from the filename counts as specifying
 			// the extension explicitly, but not the basename
-			if (extensionOptional.value().empty()) {
+			if (extensionOptional->empty()) {
 				extensionOptional = this->extensionOptional;
 			}
 		} else {
@@ -1101,7 +1101,7 @@ namespace Path {
 			*/
 
 			// extension should not include the period (but may be whitespace)
-			if (extensionOptional.value().find(PERIOD) != std::string::npos) {
+			if (extensionOptional->find(PERIOD) != std::string::npos) {
 				return false;
 			}
 		}
@@ -1137,7 +1137,7 @@ namespace Path {
 				)
 			);
 		}
-		return !elementPeriodsOrWhitespace(filenameOptional.value());
+		return !elementPeriodsOrWhitespace(*filenameOptional);
 	}
 
 	MoaError Info::setPath(const std::string &path) {
@@ -1231,7 +1231,7 @@ namespace Path {
 			: "";
 		*/
 
-		basenameOptional = toBasename(filenameOptional.value());
+		basenameOptional = toBasename(*filenameOptional);
 
 		// dirname
 		if (strWhitespace(path.c_str())) {
@@ -1250,7 +1250,7 @@ namespace Path {
 				dirnameOptional = (PMoaChar)elementStringPointer;
 
 				// in the case of a relative path, empty is corrected to not specified
-				if (dirnameOptional.value().empty()) {
+				if (dirnameOptional->empty()) {
 					dirnameOptional = std::nullopt;
 				}
 			} else {

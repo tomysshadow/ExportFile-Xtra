@@ -81,7 +81,7 @@ namespace Asset {
 
 		if (auto index = std::get_if<MoaLong>(&iconValuesVariant)) {
 			IconValues::IconValueMap iconValueMap
-				= iconValuesOptional.value().toIconValueMap();
+				= iconValuesOptional->toIconValueMap();
 
 			MoaRect rect = {};
 			rect.left = 24 * *index;
@@ -292,7 +292,7 @@ namespace Asset {
 		}
 
 		// we don't need to release this (AssetStream has us covered)
-		PIMoaStream streamInterfacePointer = streamOptional.value().get();
+		PIMoaStream streamInterfacePointer = streamOptional->get();
 		RETURN_NULL(streamInterfacePointer);
 
 		// this expects the stream to still be open
@@ -331,7 +331,7 @@ namespace Asset {
 
 		iconValuesOptional.emplace(mmValueInterfacePointer, mmImageInterfacePointer);
 
-		IconValues &iconValues = iconValuesOptional.value();
+		IconValues &iconValues = *iconValuesOptional;
 		IconValues::IconValueMap iconValueMap = iconValues.toIconValueMap();
 
 		ResourceId baseResourceId = getBaseResourceId(productVersionMajor);

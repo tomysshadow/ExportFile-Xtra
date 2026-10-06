@@ -118,7 +118,7 @@ MoaError ExportFileValueConverter::toValue(
 	};
 
 	std::string path = "";
-	RETURN_ERR(toValue(args.pathInfoOptional.value(), pathInfoValue, path));
+	RETURN_ERR(toValue(*args.pathInfoOptional, pathInfoValue, path));
 
 	if (path.empty()) {
 		return kMoaErr_InternalError;
@@ -147,7 +147,7 @@ MoaError ExportFileValueConverter::toValue(
 	};
 
 	RETURN_ERR(mmValueInterfacePointer->StringToValue(
-		args.agentStringOptional.value().c_str(), &agentValue));
+		args.agentStringOptional->c_str(), &agentValue));
 
 	RETURN_ERR(appendToPropList(symbols.Agent, agentValue, value));
 
@@ -161,7 +161,7 @@ MoaError ExportFileValueConverter::toValue(
 		releaseValue(optionsPropListValue, mmValueInterfacePointer);
 	};
 
-	RETURN_ERR(toValue(args.optionsOptional.value(), optionsPropListValue));
+	RETURN_ERR(toValue(*args.optionsOptional, optionsPropListValue));
 	RETURN_ERR(appendToPropList(symbols.Options, optionsPropListValue, value));
 
 	releaseValueScopeExit.dismiss();
@@ -199,28 +199,28 @@ MoaError ExportFileValueConverter::toValue(
 	}
 
 	RETURN_ERR(appendToPropList(symbols.Dirname,
-		dirnameOptional.value().c_str(), value));
+		dirnameOptional->c_str(), value));
 
 	if (!basenameOptional.has_value()) {
 		return kMoaErr_InternalError;
 	}
 
 	RETURN_ERR(appendToPropList(symbols.Basename,
-		basenameOptional.value().c_str(), value));
+		basenameOptional->c_str(), value));
 
 	if (!extensionOptional.has_value()) {
 		return kMoaErr_InternalError;
 	}
 
 	RETURN_ERR(appendToPropList(symbols.Extension,
-		extensionOptional.value().c_str(), value));
+		extensionOptional->c_str(), value));
 
 	if (!filenameOptional.has_value()) {
 		return kMoaErr_InternalError;
 	}
 
 	RETURN_ERR(appendToPropList(symbols.Filename,
-		filenameOptional.value().c_str(), value));
+		filenameOptional->c_str(), value));
 
 	releaseValueScopeExit.dismiss();
 	return kMoaErr_NoErr;
